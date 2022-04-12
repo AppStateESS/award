@@ -1,0 +1,19 @@
+<div id="award-frontpage" style="background-image: url('<?=$imageHttp?>Award-background.jpg');"
+  class="d-flex align-items-center">
+  <div class="card">
+    <div class="card-header bg-dark text-white">
+      <h1 class="m-0">Welcome to Awards!</h1>
+    </div>
+    <div class="card-body">
+      <p class="lead">We can help you create and administrate awards for<br />students, faculty, and staff.</p>
+    </div>
+    <div class="card-footer text-muted">
+      <?php if ($signedIn):?>
+      <a href="" class="btn btn-success">Go to my dashboard</a>
+      <?php else:?>
+      <a href="./award/User/Participant/signIn" class="btn btn-success">Sign in to see your dashboard</a>
+      <a href="./award/User/Participant/createAccount" class="btn btn-primary">First time here? Create an account</a>
+      <?php endif;?>
+    </div>
+  </div>
+</div>
