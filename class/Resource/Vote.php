@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table vote 
  */
-class Vote extends AbstractResource
+class Vote extends award\AbstractResource
 {
     /**
      * @var int

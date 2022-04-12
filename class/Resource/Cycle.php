@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * MIT License
@@ -11,11 +12,13 @@ declare(strict_types=1);
  */
 
 namespace award\Cycle;
+
 /**
- * @table reference 
+ * @table reference
  */
-class Reference extends AbstractResource
+class Cycle extends award\AbstractResource
 {
+
     /**
      * @var int
      */
@@ -47,14 +50,14 @@ class Reference extends AbstractResource
     private bool $voteAllowed;
 
     /**
-     * @var int
+     * @var string
      */
-    private int $voteType;
+    private string $voteType;
 
     /**
      * @returns int
      */
-    public function getAwardId() : int
+    public function getAwardId(): int
     {
         return $this->awardId;
     }
@@ -62,7 +65,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getAwardMonth() : int
+    public function getAwardMonth(): int
     {
         return $this->awardMonth;
     }
@@ -70,7 +73,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getAwardYear() : int
+    public function getAwardYear(): int
     {
         return $this->awardYear;
     }
@@ -78,7 +81,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getEndDate() : int
+    public function getEndDate(): int
     {
         return $this->endDate;
     }
@@ -86,7 +89,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getStartDate() : int
+    public function getStartDate(): int
     {
         return $this->startDate;
     }
@@ -94,7 +97,7 @@ class Reference extends AbstractResource
     /**
      * @returns bool
      */
-    public function getVoteAllowed() : bool
+    public function getVoteAllowed(): bool
     {
         return $this->voteAllowed;
     }
@@ -102,7 +105,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getVoteType() : int
+    public function getVoteType(): int
     {
         return $this->voteType;
     }
@@ -110,7 +113,7 @@ class Reference extends AbstractResource
     /**
      * @param int $awardId
      */
-    public function setAwardId(int $awardId) : self
+    public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
         return self;
@@ -119,7 +122,7 @@ class Reference extends AbstractResource
     /**
      * @param int $awardMonth
      */
-    public function setAwardMonth(int $awardMonth) : self
+    public function setAwardMonth(int $awardMonth): self
     {
         $this->awardMonth = $awardMonth;
         return self;
@@ -128,7 +131,7 @@ class Reference extends AbstractResource
     /**
      * @param int $awardYear
      */
-    public function setAwardYear(int $awardYear) : self
+    public function setAwardYear(int $awardYear): self
     {
         $this->awardYear = $awardYear;
         return self;
@@ -137,7 +140,7 @@ class Reference extends AbstractResource
     /**
      * @param int $endDate
      */
-    public function setEndDate(int $endDate) : self
+    public function setEndDate(int $endDate): self
     {
         $this->endDate = $endDate;
         return self;
@@ -146,7 +149,7 @@ class Reference extends AbstractResource
     /**
      * @param int $startDate
      */
-    public function setStartDate(int $startDate) : self
+    public function setStartDate(int $startDate): self
     {
         $this->startDate = $startDate;
         return self;
@@ -155,7 +158,7 @@ class Reference extends AbstractResource
     /**
      * @param bool $voteAllowed
      */
-    public function setVoteAllowed(bool $voteAllowed) : self
+    public function setVoteAllowed(bool $voteAllowed): self
     {
         $this->voteAllowed = $voteAllowed;
         return self;
@@ -164,7 +167,7 @@ class Reference extends AbstractResource
     /**
      * @param int $voteType
      */
-    public function setVoteType(int $voteType) : self
+    public function setVoteType(int $voteType): self
     {
         $this->voteType = $voteType;
         return self;

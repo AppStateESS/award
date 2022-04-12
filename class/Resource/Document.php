@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table document 
  */
-class Document extends AbstractResource
+class Document extends award\AbstractResource
 {
     /**
      * @var string

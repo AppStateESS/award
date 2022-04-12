@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * MIT License
@@ -11,11 +12,13 @@ declare(strict_types=1);
  */
 
 namespace award\Resource;
+
 /**
- * @table emailtemplate 
+ * @table emailtemplate
  */
-class EmailTemplate extends AbstractResource
+class EmailTemplate extends award\AbstractResource
 {
+
     /**
      * @var int
      */
@@ -25,11 +28,6 @@ class EmailTemplate extends AbstractResource
      * @var string
      */
     private string $message;
-
-    /**
-     * @var string
-     */
-    private string $replyto;
 
     /**
      * @var string
@@ -44,7 +42,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @returns int
      */
-    public function getAwardId() : int
+    public function getAwardId(): int
     {
         return $this->awardId;
     }
@@ -52,7 +50,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @returns string
      */
-    public function getMessage() : string
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -60,7 +58,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @returns string
      */
-    public function getReplyto() : string
+    public function getReplyto(): string
     {
         return $this->replyto;
     }
@@ -68,7 +66,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @returns string
      */
-    public function getSubject() : string
+    public function getSubject(): string
     {
         return $this->subject;
     }
@@ -76,7 +74,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @returns string
      */
-    public function getTitle() : string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -84,7 +82,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @param int $awardId
      */
-    public function setAwardId(int $awardId) : self
+    public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
         return self;
@@ -93,7 +91,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @param string $message
      */
-    public function setMessage(string $message) : self
+    public function setMessage(string $message): self
     {
         $this->message = $message;
         return self;
@@ -102,7 +100,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @param string $replyto
      */
-    public function setReplyto(string $replyto) : self
+    public function setReplyto(string $replyto): self
     {
         $this->replyto = $replyto;
         return self;
@@ -111,7 +109,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @param string $subject
      */
-    public function setSubject(string $subject) : self
+    public function setSubject(string $subject): self
     {
         $this->subject = $subject;
         return self;
@@ -120,7 +118,7 @@ class EmailTemplate extends AbstractResource
     /**
      * @param string $title
      */
-    public function setTitle(string $title) : self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return self;

@@ -16,7 +16,7 @@ namespace award\Resource;
 /**
  * @table reference
  */
-class Judge extends AbstractResource
+class Judge extends award\AbstractResource
 {
 
     /**

@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table email 
  */
-class Email extends AbstractResource
+class Email extends award\AbstractResource
 {
     /**
      * @var string

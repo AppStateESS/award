@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table cyclewinner 
  */
-class CycleWinner extends AbstractResource
+class CycleWinner extends \award\AbstractResource
 {
     /**
      * @var int
@@ -25,6 +25,16 @@ class CycleWinner extends AbstractResource
      * @var int
      */
     private int $cycleId;
+
+    /**
+     * @var string
+     */
+    private string $description;
+
+    /**
+     * @var string
+     */
+    private string $image;
 
     /**
      * @var int
@@ -45,6 +55,22 @@ class CycleWinner extends AbstractResource
     public function getCycleId() : int
     {
         return $this->cycleId;
+    }
+
+    /**
+     * @returns string
+     */
+    public function getDescription() : string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @returns string
+     */
+    public function getImage() : string
+    {
+        return $this->image;
     }
 
     /**
@@ -70,6 +96,24 @@ class CycleWinner extends AbstractResource
     public function setCycleId(int $cycleId) : self
     {
         $this->cycleId = $cycleId;
+        return self;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description) : self
+    {
+        $this->description = $description;
+        return self;
+    }
+
+    /**
+     * @param string $image
+     */
+    public function setImage(string $image) : self
+    {
+        $this->image = $image;
         return self;
     }
 

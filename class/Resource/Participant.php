@@ -16,7 +16,7 @@ namespace award\Resource;
 /**
  * @table particpant
  */
-class Participant extends AbstractResource
+class Participant extends award\AbstractResource
 {
 
     /**

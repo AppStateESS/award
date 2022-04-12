@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * MIT License
@@ -11,20 +12,24 @@ declare(strict_types=1);
  */
 
 namespace award\Resource;
+
 /**
- * @table nomination 
+ * @table nomination
  */
-class Nomination extends AbstractResource
+class Nomination extends award\AbstractResource
 {
+
     /**
      * @var int
      */
     private int $awardId;
 
     /**
+     * Banner ID of student only. May be left blank for non-student
+     * or disabled.
      * @var int
      */
-    private int $bannerId;
+    private int $bannerId = 0;
 
     /**
      * @var bool
@@ -37,16 +42,13 @@ class Nomination extends AbstractResource
     private int $cycleId;
 
     /**
-     * @var int
-     */
-    private int $documentId;
-
-    /**
      * @var string
      */
     private string $email;
 
     /**
+     * If chosen/preferred name exists in data point, it will
+     * be used instead of given first name.
      * @var string
      */
     private string $firstName;
@@ -57,6 +59,8 @@ class Nomination extends AbstractResource
     private string $lastName;
 
     /**
+     * Index of participant id. Named nominator to prevent
+     * confusion with person nominated.
      * @var int
      */
     private int $nominatorId;
@@ -64,7 +68,7 @@ class Nomination extends AbstractResource
     /**
      * @returns int
      */
-    public function getAwardId() : int
+    public function getAwardId(): int
     {
         return $this->awardId;
     }
@@ -72,7 +76,7 @@ class Nomination extends AbstractResource
     /**
      * @returns int
      */
-    public function getBannerId() : int
+    public function getBannerId(): int
     {
         return $this->bannerId;
     }
@@ -80,7 +84,7 @@ class Nomination extends AbstractResource
     /**
      * @returns bool
      */
-    public function getCompleted() : bool
+    public function getCompleted(): bool
     {
         return $this->completed;
     }
@@ -88,23 +92,15 @@ class Nomination extends AbstractResource
     /**
      * @returns int
      */
-    public function getCycleId() : int
+    public function getCycleId(): int
     {
         return $this->cycleId;
     }
 
     /**
-     * @returns int
-     */
-    public function getDocumentId() : int
-    {
-        return $this->documentId;
-    }
-
-    /**
      * @returns string
      */
-    public function getEmail() : string
+    public function getEmail(): string
     {
         return $this->email;
     }
@@ -112,7 +108,7 @@ class Nomination extends AbstractResource
     /**
      * @returns string
      */
-    public function getFirstName() : string
+    public function getFirstName(): string
     {
         return $this->firstName;
     }
@@ -120,7 +116,7 @@ class Nomination extends AbstractResource
     /**
      * @returns string
      */
-    public function getLastName() : string
+    public function getLastName(): string
     {
         return $this->lastName;
     }
@@ -128,7 +124,7 @@ class Nomination extends AbstractResource
     /**
      * @returns int
      */
-    public function getNominatorId() : int
+    public function getNominatorId(): int
     {
         return $this->nominatorId;
     }
@@ -136,7 +132,7 @@ class Nomination extends AbstractResource
     /**
      * @param int $awardId
      */
-    public function setAwardId(int $awardId) : self
+    public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
         return self;
@@ -145,7 +141,7 @@ class Nomination extends AbstractResource
     /**
      * @param int $bannerId
      */
-    public function setBannerId(int $bannerId) : self
+    public function setBannerId(int $bannerId): self
     {
         $this->bannerId = $bannerId;
         return self;
@@ -154,7 +150,7 @@ class Nomination extends AbstractResource
     /**
      * @param bool $completed
      */
-    public function setCompleted(bool $completed) : self
+    public function setCompleted(bool $completed): self
     {
         $this->completed = $completed;
         return self;
@@ -163,25 +159,16 @@ class Nomination extends AbstractResource
     /**
      * @param int $cycleId
      */
-    public function setCycleId(int $cycleId) : self
+    public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
         return self;
     }
 
     /**
-     * @param int $documentId
-     */
-    public function setDocumentId(int $documentId) : self
-    {
-        $this->documentId = $documentId;
-        return self;
-    }
-
-    /**
      * @param string $email
      */
-    public function setEmail(string $email) : self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
         return self;
@@ -190,7 +177,7 @@ class Nomination extends AbstractResource
     /**
      * @param string $firstName
      */
-    public function setFirstName(string $firstName) : self
+    public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
         return self;
@@ -199,7 +186,7 @@ class Nomination extends AbstractResource
     /**
      * @param string $lastName
      */
-    public function setLastName(string $lastName) : self
+    public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
         return self;
@@ -208,9 +195,9 @@ class Nomination extends AbstractResource
     /**
      * @param int $nominatorId
      */
-    public function setNominatorId(int $nominatorId) : self
+    public function setParticipantId(int $participantId): self
     {
-        $this->nominatorId = $nominatorId;
+        $this->participantId = $participantId;
         return self;
     }
 

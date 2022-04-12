@@ -16,7 +16,7 @@ namespace award\Resource;
 /**
  * @table award
  */
-class Award extends AbstractResource
+class Award extends award\AbstractResource
 {
 
     /**
@@ -25,14 +25,9 @@ class Award extends AbstractResource
     private string $description;
 
     /**
-     * @var int
-     */
-    private int $id;
-
-    /**
      * @var string
      */
-    private string $name;
+    private string $title;
 
     /**
      * @var int
@@ -81,14 +76,6 @@ class Award extends AbstractResource
     }
 
     /**
-     * @returns string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
      * @returns int
      */
     public function getNominatedDocRequired(): int
@@ -129,6 +116,14 @@ class Award extends AbstractResource
     }
 
     /**
+     * @returns string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
      * @returns int
      */
     public function getWinnerAmount(): int
@@ -151,15 +146,6 @@ class Award extends AbstractResource
     public function setId(int $id): self
     {
         $this->id = $id;
-        return self;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name): self
-    {
-        $this->name = $name;
         return self;
     }
 
@@ -205,6 +191,15 @@ class Award extends AbstractResource
     public function setSelfNominate(bool $selfNominate): self
     {
         $this->selfNominate = $selfNominate;
+        return self;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): self
+    {
+        $this->title = $name;
         return self;
     }
 

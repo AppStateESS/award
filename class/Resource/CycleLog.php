@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table cyclelog 
  */
-class CycleLog extends AbstractResource
+class CycleLog extends award\AbstractResource
 {
     /**
      * @var string

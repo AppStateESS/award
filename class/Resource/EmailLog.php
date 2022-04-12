@@ -14,7 +14,7 @@ namespace award\Resource;
 /**
  * @table emaillog 
  */
-class EmailLog extends AbstractResource
+class EmailLog extends award\AbstractResource
 {
     /**
      * @var int

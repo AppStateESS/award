@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * MIT License
@@ -11,11 +12,18 @@ declare(strict_types=1);
  */
 
 namespace award\Resource;
+
 /**
- * @table reference 
+ * @table reference
  */
-class Reference extends AbstractResource
+class Reference extends award\AbstractResource
 {
+
+    /**
+     * @var int
+     */
+    private int $cycleId;
+
     /**
      * @var int
      */
@@ -34,7 +42,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getDocumentId() : int
+    public function getCycleId(): int
     {
         return $this->documentId;
     }
@@ -42,7 +50,15 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getNominationId() : int
+    public function getDocumentId(): int
+    {
+        return $this->documentId;
+    }
+
+    /**
+     * @returns int
+     */
+    public function getNominationId(): int
     {
         return $this->nominationId;
     }
@@ -50,7 +66,7 @@ class Reference extends AbstractResource
     /**
      * @returns int
      */
-    public function getParticipantId() : int
+    public function getParticipantId(): int
     {
         return $this->participantId;
     }
@@ -58,7 +74,16 @@ class Reference extends AbstractResource
     /**
      * @param int $documentId
      */
-    public function setDocumentId(int $documentId) : self
+    public function setCycleId(int $cycleId): self
+    {
+        $this->cycleId = $cycleId;
+        return self;
+    }
+
+    /**
+     * @param int $documentId
+     */
+    public function setDocumentId(int $documentId): self
     {
         $this->documentId = $documentId;
         return self;
@@ -67,7 +92,7 @@ class Reference extends AbstractResource
     /**
      * @param int $nominationId
      */
-    public function setNominationId(int $nominationId) : self
+    public function setNominationId(int $nominationId): self
     {
         $this->nominationId = $nominationId;
         return self;
@@ -76,7 +101,7 @@ class Reference extends AbstractResource
     /**
      * @param int $participantId
      */
-    public function setParticipantId(int $participantId) : self
+    public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
         return self;
