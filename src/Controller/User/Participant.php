@@ -14,14 +14,20 @@ declare(strict_types=1);
 
 namespace award\Controller\User;
 
-use \award\Controller\AbstractController;
+use award\Controller\AbstractController;
+use award\View\ParticipantView;
 
 class Participant extends AbstractController
 {
 
+    protected function createAccountHtml()
+    {
+        return ParticipantView::createAccount();
+    }
+
     protected function signinHtml()
     {
-        Partic
+        return ParticipantView::signin();
     }
 
 }
