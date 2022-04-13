@@ -16,10 +16,17 @@ namespace award\View;
 class ParticipantView extends AbstractView
 {
 
+    public static function createAccount()
+    {
+        $values = [];
+        self::scriptView('SignUpForm');
+        return self::getTemplate('User/createAccount', $values);
+    }
+
     public static function signIn()
     {
-
-        self::getTemplate('SignIn', $values);
+        $values = [];
+        return self::getTemplate('User/SignIn', $values);
     }
 
 }
