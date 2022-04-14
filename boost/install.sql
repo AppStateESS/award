@@ -27,8 +27,10 @@ CREATE TABLE award_participant (
     id int PRIMARY KEY,
     email varchar(255),
     firstName varchar(255),
+    hash varchar(255),
     lastName varchar(255),
-    password varchar(255)
+    password varchar(255),
+    UNIQUE KEY uemail (email)
 );
 
 CREATE TABLE award_nomination (
