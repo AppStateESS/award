@@ -16,17 +16,36 @@ namespace award\View;
 class ParticipantView extends AbstractView
 {
 
+    /**
+     * Displays the sign up form for new participant accounts.
+     *
+     * @return string
+     */
     public static function createAccount()
     {
-        $values = [];
         self::scriptView('SignUpForm');
-        return self::getTemplate('User/createAccount', $values);
+        return self::getTemplate('User/CreateAccount');
     }
 
+    /**
+     * Informs the user their account request is saved and to check
+     * their email for confirmation.
+     *
+     * @return string
+     */
+    public static function emailSent()
+    {
+        return self::getTemplate('User/EmailSent');
+    }
+
+    /**
+     * Show the sign in form for current participants.
+     *
+     * @return string
+     */
     public static function signIn()
     {
-        $values = [];
-        return self::getTemplate('User/SignIn', $values);
+        return self::getTemplate('User/SignIn');
     }
 
 }
