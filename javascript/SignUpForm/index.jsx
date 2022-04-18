@@ -1,28 +1,49 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
-import ReactDOM from 'react-dom'
+import React, {useState, useEffect, useRef} from 'react'
+import {saveNewParticipant} from '../Share/ParticipantXHR'
+import {createRoot} from 'react-dom/client'
 
 const SignUpForm = () => {
-  const [email, setEmail] = useState()
+  const [email, setEmail] = useState('')
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const tab1 = useRef()
+
+  useEffect(() => {
+    tab1.current.focus()
+  }, [])
 
   const checkAndSave = () => {
-    if (emailError || passwordError) {
+    if (emailError || passwordError || email.length === 0) {
       return
     }
+    saveNewParticipant(email, password1)
   }
 
   const matchEmail = () => {
-    setEmailError((email.match(/@/g) || []).length !== 1)
+    const search = (email.match(/@/g) || []).length
+    const correctEmail = search === 1 && email.length > 2
+    setEmailError(!correctEmail)
   }
 
   const checkPassword = () => {
     setPasswordError(password1 !== password2 || password1.length < 6)
   }
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword)
+  }
+
+  const disableSave =
+    emailError ||
+    passwordError ||
+    password1.length === 0 ||
+    password2.length === 0 ||
+    email.length === 0
 
   return (
     <div>
@@ -33,7 +54,9 @@ const SignUpForm = () => {
         <div className="col-sm-8">
           <input
             type="text"
+            tabIndex="0"
             className="form-control"
+            ref={tab1}
             name="email"
             value={email}
             onBlur={matchEmail}
@@ -51,17 +74,26 @@ const SignUpForm = () => {
           Your password
         </label>
         <div className="col-sm-8">
-          <input
-            type="password"
-            className="form-control"
-            name="email"
-            onBlur={checkPassword}
-            value={password1}
-            onChange={(e) => setPassword1(e.target.value)}
-          />
+          <div className="input-group mb-3">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              tabIndex="1"
+              className="form-control"
+              name="password1"
+              onBlur={checkPassword}
+              value={password1}
+              onChange={(e) => setPassword1(e.target.value)}
+            />
+            <div className="input-group-append">
+              <button className="btn btn-outline-dark" onClick={togglePassword}>
+                <i className="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
           {passwordError ? (
             <span className="badge badge-danger">
-              Passwords must match, be longer than 6 characters.
+              Passwords must match and exceed 6 characters.
             </span>
           ) : null}
         </div>
@@ -72,22 +104,26 @@ const SignUpForm = () => {
         </label>
         <div className="col-sm-8">
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
+            tabIndex="2"
             className="form-control"
-            name="email"
+            name="password2"
             onBlur={checkPassword}
             value={password2}
             onChange={(e) => setPassword2(e.target.value)}
           />
         </div>
       </div>
-      <button className="btn btn-success btn-block" onClick={checkAndSave}>
+      <button
+        className="btn btn-success btn-block"
+        onClick={checkAndSave}
+        disabled={disableSave}>
         Create account
       </button>
     </div>
   )
 }
 
-SignUpForm.propTypes = {}
-
-ReactDOM.render(<SignUpForm />, document.getElementById('SignUpForm'))
+const container = document.getElementById('SignUpForm')
+const root = createRoot(container)
+root.render(<SignUpForm />)
