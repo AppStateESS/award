@@ -28,7 +28,8 @@ class EmailFactory
     public static function createWarningOnExisting(Participant $participant)
     {
         $email = self::getEmail();
-        $email->to($participant->getEmail())->html(EmailView::existParticipantWarning($participant));
+        $email->to($participant->getEmail())
+            ->html(EmailView::existParticipantWarning($participant))->subject('Award account request ignored');
         return self::send($email);
     }
 
@@ -42,7 +43,7 @@ class EmailFactory
     public static function newParticipant(Participant $participant)
     {
         $email = self::getEmail();
-        $email->to($participant->getEmail())->html(EmailView::newParticipant($participant));
+        $email->to($participant->getEmail())->html(EmailView::newParticipant($participant))->subject('New Award account confirmation');
         return self::send($email);
     }
 
