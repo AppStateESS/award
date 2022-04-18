@@ -37,14 +37,6 @@ class Module extends \Canopy\Module
         \spl_autoload_register('\award\Module::autoloader', true, true);
     }
 
-    public function runTime(Request $request)
-    {
-        if (\PHPWS_Core::atHome()) {
-            $frontpage = AwardView::frontPage();
-            \Layout::add($frontpage);
-        }
-    }
-
     public static function autoloader($class_name)
     {
         static $not_found = array();
@@ -96,6 +88,14 @@ class Module extends \Canopy\Module
             } else {
                 throw $e;
             }
+        }
+    }
+
+    public function runTime(Request $request)
+    {
+        if (\PHPWS_Core::atHome()) {
+            $frontpage = AwardView::frontPage();
+            \Layout::add($frontpage);
         }
     }
 
