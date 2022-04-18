@@ -30,7 +30,10 @@ class ParticipantFactory extends \award\AbstractFactory
     public static function create(string $email, string $password)
     {
         $participant = new Participant;
-        $participant->setEmail($email)->setPassword($password)->createHash();
+        $participant->setActive(false)
+            ->setEmail($email)
+            ->setPassword($password)
+            ->createHash();
         self::save($participant);
         return $participant;
     }
