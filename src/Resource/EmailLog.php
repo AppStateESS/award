@@ -61,7 +61,7 @@ class EmailLog extends award\AbstractResource
     public function setDateSent(int $dateSent) : self
     {
         $this->dateSent = $dateSent;
-        return self;
+        return $this;
     }
 
     /**
@@ -70,7 +70,7 @@ class EmailLog extends award\AbstractResource
     public function setEmailId(int $emailId) : self
     {
         $this->emailId = $emailId;
-        return self;
+        return $this;
     }
 
     /**
@@ -79,7 +79,7 @@ class EmailLog extends award\AbstractResource
     public function setParticipantId(int $participantId) : self
     {
         $this->participantId = $participantId;
-        return self;
+        return $this;
     }
 
 }

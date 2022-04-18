@@ -77,7 +77,7 @@ class Reference extends award\AbstractResource
     public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
-        return self;
+        return $this;
     }
 
     /**
@@ -86,7 +86,7 @@ class Reference extends award\AbstractResource
     public function setDocumentId(int $documentId): self
     {
         $this->documentId = $documentId;
-        return self;
+        return $this;
     }
 
     /**
@@ -95,7 +95,7 @@ class Reference extends award\AbstractResource
     public function setNominationId(int $nominationId): self
     {
         $this->nominationId = $nominationId;
-        return self;
+        return $this;
     }
 
     /**
@@ -104,7 +104,7 @@ class Reference extends award\AbstractResource
     public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
-        return self;
+        return $this;
     }
 
 }

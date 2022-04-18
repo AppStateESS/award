@@ -16,7 +16,7 @@ namespace award\Resource;
 /**
  * @table particpant
  */
-class Participant extends award\AbstractResource
+class Participant extends \award\AbstractResource
 {
 
     /**
@@ -32,6 +32,11 @@ class Participant extends award\AbstractResource
     /**
      * @var string
      */
+    private string $hash;
+
+    /**
+     * @var string
+     */
     private string $lastName;
 
     /**
@@ -39,8 +44,22 @@ class Participant extends award\AbstractResource
      */
     private string $password;
 
+    public function __construct()
+    {
+        parent::__construct('award_participant');
+    }
+
     /**
-     * @returns string
+     * Creates a random hash.
+     */
+    public function createHash()
+    {
+        $this->setHash(md5(microtime() . rand()));
+        return $this;
+    }
+
+    /**
+     * @return string
      */
     public function getEmail(): string
     {
@@ -48,23 +67,32 @@ class Participant extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getFirstName(): string
     {
-        return $this->firstName;
+        return $this->firstName ?? '';
     }
 
     /**
-     * @returns string
+     *
+     * @return string
+     */
+    public function getHash(): string
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @return string
      */
     public function getLastName(): string
     {
-        return $this->lastName;
+        return $this->lastName ?? '';
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getPassword(): string
     {
@@ -77,7 +105,7 @@ class Participant extends award\AbstractResource
     public function setEmail(string $email): self
     {
         $this->email = $email;
-        return self;
+        return $this;
     }
 
     /**
@@ -86,7 +114,18 @@ class Participant extends award\AbstractResource
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
-        return self;
+        return $this;
+    }
+
+    /**
+     *
+     * @param string $hash
+     * @return self
+     */
+    public function setHash(string $hash): self
+    {
+        $this->hash = $hash;
+        return $this;
     }
 
     /**
@@ -95,7 +134,7 @@ class Participant extends award\AbstractResource
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
-        return self;
+        return $this;
     }
 
     /**
@@ -103,8 +142,8 @@ class Participant extends award\AbstractResource
      */
     public function setPassword(string $password): self
     {
-        $this->password = $password;
-        return self;
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        return $this;
     }
 
 }

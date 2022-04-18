@@ -61,7 +61,7 @@ class Email extends award\AbstractResource
     public function setMessage(string $message) : self
     {
         $this->message = $message;
-        return self;
+        return $this;
     }
 
     /**
@@ -70,7 +70,7 @@ class Email extends award\AbstractResource
     public function setReplyto(string $replyto) : self
     {
         $this->replyto = $replyto;
-        return self;
+        return $this;
     }
 
     /**
@@ -79,7 +79,7 @@ class Email extends award\AbstractResource
     public function setSubject(string $subject) : self
     {
         $this->subject = $subject;
-        return self;
+        return $this;
     }
 
 }

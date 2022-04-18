@@ -85,7 +85,7 @@ class EmailTemplate extends award\AbstractResource
     public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
-        return self;
+        return $this;
     }
 
     /**
@@ -94,7 +94,7 @@ class EmailTemplate extends award\AbstractResource
     public function setMessage(string $message): self
     {
         $this->message = $message;
-        return self;
+        return $this;
     }
 
     /**
@@ -103,7 +103,7 @@ class EmailTemplate extends award\AbstractResource
     public function setReplyto(string $replyto): self
     {
         $this->replyto = $replyto;
-        return self;
+        return $this;
     }
 
     /**
@@ -112,7 +112,7 @@ class EmailTemplate extends award\AbstractResource
     public function setSubject(string $subject): self
     {
         $this->subject = $subject;
-        return self;
+        return $this;
     }
 
     /**
@@ -121,7 +121,7 @@ class EmailTemplate extends award\AbstractResource
     public function setTitle(string $title): self
     {
         $this->title = $title;
-        return self;
+        return $this;
     }
 
 }

@@ -87,7 +87,7 @@ class Vote extends award\AbstractResource
     public function setAwardId(int $awardId) : self
     {
         $this->awardId = $awardId;
-        return self;
+        return $this;
     }
 
     /**
@@ -96,7 +96,7 @@ class Vote extends award\AbstractResource
     public function setCycleId(int $cycleId) : self
     {
         $this->cycleId = $cycleId;
-        return self;
+        return $this;
     }
 
     /**
@@ -105,7 +105,7 @@ class Vote extends award\AbstractResource
     public function setJudgeId(int $judgeId) : self
     {
         $this->judgeId = $judgeId;
-        return self;
+        return $this;
     }
 
     /**
@@ -114,7 +114,7 @@ class Vote extends award\AbstractResource
     public function setNominationId(int $nominationId) : self
     {
         $this->nominationId = $nominationId;
-        return self;
+        return $this;
     }
 
     /**
@@ -123,7 +123,7 @@ class Vote extends award\AbstractResource
     public function setScore(int $score) : self
     {
         $this->score = $score;
-        return self;
+        return $this;
     }
 
 }

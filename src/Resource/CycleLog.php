@@ -61,7 +61,7 @@ class CycleLog extends award\AbstractResource
     public function setAction(string $action) : self
     {
         $this->action = $action;
-        return self;
+        return $this;
     }
 
     /**
@@ -70,7 +70,7 @@ class CycleLog extends award\AbstractResource
     public function setDocumentId(int $documentId) : self
     {
         $this->documentId = $documentId;
-        return self;
+        return $this;
     }
 
     /**
@@ -79,7 +79,7 @@ class CycleLog extends award\AbstractResource
     public function setParticipantId(int $participantId) : self
     {
         $this->participantId = $participantId;
-        return self;
+        return $this;
     }
 
 }

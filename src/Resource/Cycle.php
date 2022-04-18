@@ -116,7 +116,7 @@ class Cycle extends award\AbstractResource
     public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
-        return self;
+        return $this;
     }
 
     /**
@@ -125,7 +125,7 @@ class Cycle extends award\AbstractResource
     public function setAwardMonth(int $awardMonth): self
     {
         $this->awardMonth = $awardMonth;
-        return self;
+        return $this;
     }
 
     /**
@@ -134,7 +134,7 @@ class Cycle extends award\AbstractResource
     public function setAwardYear(int $awardYear): self
     {
         $this->awardYear = $awardYear;
-        return self;
+        return $this;
     }
 
     /**
@@ -143,7 +143,7 @@ class Cycle extends award\AbstractResource
     public function setEndDate(int $endDate): self
     {
         $this->endDate = $endDate;
-        return self;
+        return $this;
     }
 
     /**
@@ -152,7 +152,7 @@ class Cycle extends award\AbstractResource
     public function setStartDate(int $startDate): self
     {
         $this->startDate = $startDate;
-        return self;
+        return $this;
     }
 
     /**
@@ -161,7 +161,7 @@ class Cycle extends award\AbstractResource
     public function setVoteAllowed(bool $voteAllowed): self
     {
         $this->voteAllowed = $voteAllowed;
-        return self;
+        return $this;
     }
 
     /**
@@ -170,7 +170,7 @@ class Cycle extends award\AbstractResource
     public function setVoteType(int $voteType): self
     {
         $this->voteType = $voteType;
-        return self;
+        return $this;
     }
 
 }

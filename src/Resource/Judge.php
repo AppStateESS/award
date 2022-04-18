@@ -51,7 +51,7 @@ class Judge extends award\AbstractResource
     public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
-        return self;
+        return $this;
     }
 
     /**
@@ -60,7 +60,7 @@ class Judge extends award\AbstractResource
     public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
-        return self;
+        return $this;
     }
 
 }

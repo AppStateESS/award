@@ -135,7 +135,7 @@ class Nomination extends award\AbstractResource
     public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
-        return self;
+        return $this;
     }
 
     /**
@@ -144,7 +144,7 @@ class Nomination extends award\AbstractResource
     public function setBannerId(int $bannerId): self
     {
         $this->bannerId = $bannerId;
-        return self;
+        return $this;
     }
 
     /**
@@ -153,7 +153,7 @@ class Nomination extends award\AbstractResource
     public function setCompleted(bool $completed): self
     {
         $this->completed = $completed;
-        return self;
+        return $this;
     }
 
     /**
@@ -162,7 +162,7 @@ class Nomination extends award\AbstractResource
     public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
-        return self;
+        return $this;
     }
 
     /**
@@ -171,7 +171,7 @@ class Nomination extends award\AbstractResource
     public function setEmail(string $email): self
     {
         $this->email = $email;
-        return self;
+        return $this;
     }
 
     /**
@@ -180,7 +180,7 @@ class Nomination extends award\AbstractResource
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
-        return self;
+        return $this;
     }
 
     /**
@@ -189,7 +189,7 @@ class Nomination extends award\AbstractResource
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
-        return self;
+        return $this;
     }
 
     /**
@@ -198,7 +198,7 @@ class Nomination extends award\AbstractResource
     public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
-        return self;
+        return $this;
     }
 
 }

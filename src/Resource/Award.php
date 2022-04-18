@@ -137,7 +137,7 @@ class Award extends award\AbstractResource
     public function setDescription(string $description): self
     {
         $this->description = $description;
-        return self;
+        return $this;
     }
 
     /**
@@ -146,7 +146,7 @@ class Award extends award\AbstractResource
     public function setId(int $id): self
     {
         $this->id = $id;
-        return self;
+        return $this;
     }
 
     /**
@@ -155,7 +155,7 @@ class Award extends award\AbstractResource
     public function setNominatedDocRequired(int $nominatedDocRequired): self
     {
         $this->nominatedDocRequired = $nominatedDocRequired;
-        return self;
+        return $this;
     }
 
     /**
@@ -164,7 +164,7 @@ class Award extends award\AbstractResource
     public function setPublicView(bool $publicView): self
     {
         $this->publicView = $publicView;
-        return self;
+        return $this;
     }
 
     /**
@@ -173,7 +173,7 @@ class Award extends award\AbstractResource
     public function setReferenceDocRequired(int $referenceDocRequired): self
     {
         $this->referenceDocRequired = $referenceDocRequired;
-        return self;
+        return $this;
     }
 
     /**
@@ -182,7 +182,7 @@ class Award extends award\AbstractResource
     public function setReferencesAmount(int $referencesAmount): self
     {
         $this->referencesAmount = $referencesAmount;
-        return self;
+        return $this;
     }
 
     /**
@@ -191,7 +191,7 @@ class Award extends award\AbstractResource
     public function setSelfNominate(bool $selfNominate): self
     {
         $this->selfNominate = $selfNominate;
-        return self;
+        return $this;
     }
 
     /**
@@ -200,7 +200,7 @@ class Award extends award\AbstractResource
     public function setName(string $name): self
     {
         $this->title = $name;
-        return self;
+        return $this;
     }
 
     /**
@@ -209,7 +209,7 @@ class Award extends award\AbstractResource
     public function setWinnerAmount(int $winnerAmount): self
     {
         $this->winnerAmount = $winnerAmount;
-        return self;
+        return $this;
     }
 
 }

@@ -61,7 +61,7 @@ class Document extends award\AbstractResource
     public function setFilename(string $filename) : self
     {
         $this->filename = $filename;
-        return self;
+        return $this;
     }
 
     /**
@@ -70,7 +70,7 @@ class Document extends award\AbstractResource
     public function setNominationId(int $nominationId) : self
     {
         $this->nominationId = $nominationId;
-        return self;
+        return $this;
     }
 
     /**
@@ -79,7 +79,7 @@ class Document extends award\AbstractResource
     public function setTitle(string $title) : self
     {
         $this->title = $title;
-        return self;
+        return $this;
     }
 
 }
