@@ -21,12 +21,13 @@ class AbstractView
     const directory = PHPWS_SOURCE_DIR . 'mod/award/';
     const http = PHPWS_SOURCE_HTTP . 'mod/award/';
 
-    public static function getTemplate(string $templateFile, array $values, bool $css = false)
+    public static function getTemplate(string $templateFile, array $values = [], bool $css = false)
     {
         if ($css) {
             $cssFile = "css/{$templateFile}.css";
             \Layout::addStyle('award', $cssFile);
         }
+        $values['siteName'] = \Layout::getPageTitle(true);
         $values['sourceHttp'] = PHPWS_SOURCE_HTTP;
         $values['homeHttp'] = PHPWS_HOME_HTTP;
         $values['imageHttp'] = PHPWS_HOME_HTTP . 'mod/award/img/';
