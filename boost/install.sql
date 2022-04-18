@@ -25,6 +25,7 @@ CREATE TABLE award_cycle (
 
 CREATE TABLE award_participant (
     id int PRIMARY KEY AUTO_INCREMENT,
+    active bool,
     email varchar(255),
     firstName varchar(255),
     hash varchar(255),
