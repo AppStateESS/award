@@ -26,7 +26,7 @@ if (is_file($defineFile)) {
     require_once PHPWS_SOURCE_DIR . 'mod/award/config/defines.dist.php';
 }
 
-class Module extends \Canopy\Module
+class Module extends \Canopy\Module implements SettingDefaults
 {
 
     public function __construct()
@@ -89,6 +89,15 @@ class Module extends \Canopy\Module
                 throw $e;
             }
         }
+    }
+
+    public function getSettingDefaults()
+    {
+        $settings = array(
+            'siteContactName' => 'Award Site',
+            'siteContactEmail' => 'no-reply@appstate.edu',
+        );
+        return $settings;
     }
 
     public function runTime(Request $request)
