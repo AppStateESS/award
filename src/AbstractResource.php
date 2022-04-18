@@ -17,10 +17,11 @@ abstract class AbstractResource extends AbstractConstruct
      * @var int
      */
     protected int $id;
+    private string $tableName;
 
     public function getId()
     {
-        return $this->id;
+        return $this->id ?? 0;
     }
 
     /**
@@ -37,6 +38,11 @@ abstract class AbstractResource extends AbstractConstruct
         return $list;
     }
 
+    public function getTable(): string
+    {
+        return $this->tableName;
+    }
+
     public function getValues()
     {
         $properties = $this->getProperties();
@@ -46,13 +52,30 @@ abstract class AbstractResource extends AbstractConstruct
         return $list;
     }
 
+    /**
+     * Sets the primary key of the resource.
+     * @param int $id
+     * @return self
+     */
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
     public function setValues(array $values)
     {
         $properties = $this->getProperties();
+
         foreach ($properties as $p) {
-            $list[$p] = self::setByMethod($values[$p]);
+            $list[$p] = self::setByMethod($p, $values[$p]);
         }
         return $list;
+    }
+
+    protected function __construct(string $tableName)
+    {
+        $this->tableName = $tableName;
     }
 
 }
