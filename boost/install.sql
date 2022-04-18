@@ -1,5 +1,5 @@
 CREATE TABLE award_award (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     description text DEFAULT NULL,
     title varchar(255) NOT NULL,
     nominatedDocRequired bool DEFAULT 0,
@@ -11,7 +11,7 @@ CREATE TABLE award_award (
 );
 
 CREATE TABLE award_cycle (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     awardMonth smallint DEFAULT 0,
     awardYear smallint DEFAULT 0,
@@ -24,7 +24,7 @@ CREATE TABLE award_cycle (
 );
 
 CREATE TABLE award_participant (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     email varchar(255),
     firstName varchar(255),
     hash varchar(255),
@@ -34,7 +34,7 @@ CREATE TABLE award_participant (
 );
 
 CREATE TABLE award_nomination (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     bannerId int,
     completed bool,
@@ -49,7 +49,7 @@ CREATE TABLE award_nomination (
 );
 
 CREATE TABLE award_document (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     filename varchar(255),
     nominationId int,
     title varchar(255),
@@ -57,7 +57,7 @@ CREATE TABLE award_document (
 );
 
 CREATE TABLE award_cyclelog (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     action varchar(255) NOT NULL,
     documentId int,
     participantId int,
@@ -66,7 +66,7 @@ CREATE TABLE award_cyclelog (
 );
 
 CREATE TABLE award_cyclewinner (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     cycleId int,
     description text,
@@ -77,14 +77,14 @@ CREATE TABLE award_cyclewinner (
 );
 
 CREATE TABLE award_email (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     message text,
     replyto varchar(255),
     subject varchar(255)
 );
 
 CREATE TABLE award_emaillog (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     dateSent timestamp DEFAULT CURRENT_TIMESTAMP,
     emailId int,
     participantId int,
@@ -93,7 +93,7 @@ CREATE TABLE award_emaillog (
 );
 
 CREATE TABLE award_emailtemplate (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     message text,
     subject varchar(255),
@@ -102,7 +102,7 @@ CREATE TABLE award_emailtemplate (
 );
 
 CREATE TABLE award_judge  (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     cycleId int,
     participantId int,
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
@@ -110,7 +110,7 @@ CREATE TABLE award_judge  (
 );
 
 CREATE TABLE award_reference (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     cycleId int,
     documentId int,
     nominationId int,
@@ -122,7 +122,7 @@ CREATE TABLE award_reference (
 );
 
 CREATE TABLE award_vote (
-    id int PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     cycleId int,
     judgeId int,
