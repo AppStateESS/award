@@ -14,9 +14,4 @@ const getItem = async (role, itemName, id) => {
   }
 }
 
-const checkEmail = async (email) => {
-  const url = 'award/User/Participant/exists'
-  return await axios.get(url, {headers})
-}
-
-export {checkEmail, getItem}
+export {getItem}
