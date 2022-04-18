@@ -55,10 +55,10 @@ class Participant extends AbstractController
         return ['success' => true];
     }
 
-//    protected function existsJson(Request $request)
-//    {
-//        return ['found' => true];
-//    }
+    protected function emailSentHtml()
+    {
+        return ParticipantView::emailSent();
+    }
 
     /**
      * Displays a form for a participant to sign in to the system.
