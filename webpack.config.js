@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
         cacheGroups: {
           defaultVendors: {
             test: /[\\/]node_modules[\\/]/,
-            minChunks: 3,
+            minChunks: 1,
             name: 'vendor',
             enforce: true,
             chunks: 'all',
