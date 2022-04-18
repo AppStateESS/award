@@ -20,6 +20,11 @@ class Participant extends \award\AbstractResource
 {
 
     /**
+     * @var bool
+     */
+    private bool $active = false;
+
+    /**
      * @var string
      */
     private string $email;
@@ -56,6 +61,16 @@ class Participant extends \award\AbstractResource
     {
         $this->setHash(md5(microtime() . rand()));
         return $this;
+    }
+
+    /**
+     * Get the value of active
+     *
+     * @return  bool
+     */
+    public function getActive()
+    {
+        return $this->active;
     }
 
     /**
@@ -97,6 +112,18 @@ class Participant extends \award\AbstractResource
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    /**
+     * Set the value of active
+     *
+     * @param  bool  $active
+     * @return  self
+     */
+    public function setActive(bool $active)
+    {
+        $this->active = $active;
+        return $this;
     }
 
     /**
