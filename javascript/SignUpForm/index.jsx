@@ -21,9 +21,17 @@ const SignUpForm = () => {
     if (emailError || passwordError || email.length === 0) {
       return
     }
-    saveNewParticipant(email, password1).then(() => {
-      location.href = './award/User/Participant/emailSent'
-    })
+    saveNewParticipant(email, password1)
+      .then((response) => {
+        if (response.data.success === true) {
+          location.href = './award/User/Participant/emailSent'
+        } else {
+          location.href = './award/User/Participant/error'
+        }
+      })
+      .catch((error) => {
+        location.href = './award/User/Participant/error'
+      })
   }
 
   const matchEmail = () => {
