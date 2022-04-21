@@ -18,14 +18,36 @@ use phpws2\Database;
 class AbstractFactory
 {
 
+    /**
+     * Returns a DB object with emulation turned off so we get
+     * properly typed values.
+     * @return phpws2\Database\DB
+     */
+    public static function getDB()
+    {
+        $db = Database::getDB();
+        $db::$PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+        return $db;
+    }
+
     public static function save(AbstractResource $resource)
     {
+        $id = $resource->getId();
+        if ($id) {
+            if (method_exists($resource, 'stampUpdated')) {
+                $resource->stampUpdated();
+            }
+        } else {
+            if (method_exists($resource, 'stampCreated')) {
+                $resource->stampCreated();
+                $resource->stampUpdated();
+            }
+        }
         $values = $resource->getValues();
         unset($values['id']);
         $db = Database::getDB();
         $table = $db->addTable($resource->getTable());
         $table->addValueArray($values);
-        $id = $resource->getId();
         if ($id) {
             return $db->update();
         } else {
