@@ -19,6 +19,18 @@ use phpws2\Database;
 class ParticipantFactory extends \award\AbstractFactory
 {
 
+    public static function authorize(string $email, string $hash)
+    {
+        $participant = self::getByEmail(filter_var($email, FILTER_SANITIZE_EMAIL));
+        if ($participant && $participant->getHash() === $hash) {
+            $participant->setActive(true);
+            self::save($participant);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Creates a new participant using email and password parameter.
      * Password is hashed by setPassword.
@@ -34,6 +46,7 @@ class ParticipantFactory extends \award\AbstractFactory
             ->setEmail($email)
             ->setPassword($password)
             ->createHash();
+
         self::save($participant);
         return $participant;
     }
@@ -46,7 +59,7 @@ class ParticipantFactory extends \award\AbstractFactory
      */
     public static function getByEmail(string $email)
     {
-        $db = Database::getDB();
+        $db = self::getDB();
         $tbl = $db->addTable('award_participant');
         $tbl->addFieldConditional('email', $email);
         $result = $db->selectOneRow();
@@ -55,7 +68,6 @@ class ParticipantFactory extends \award\AbstractFactory
             return false;
         } else {
             $participant = new Participant;
-            $result['id'] = (int) $result['id'];
             $participant->setValues($result);
             return $participant;
         }
@@ -63,7 +75,17 @@ class ParticipantFactory extends \award\AbstractFactory
 
     public static function isSignedIn()
     {
-        return isset($_SESSION['Award_Participant']);
+        return isset($_SESSION['AWARD_PARTICIPANT']);
+    }
+
+    public static function signIn(Participant $participant)
+    {
+        $_SESSION['AWARD_PARTICIPANT'] = $participant->getValues();
+    }
+
+    public static function signOff()
+    {
+        unset($_SESSION['AWARD_PARTICIPANT']);
     }
 
 }
