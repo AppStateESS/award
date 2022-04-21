@@ -23,6 +23,17 @@ use award\Factory\EmailFactory;
 class Participant extends AbstractController
 {
 
+    protected function authorizeHtml(Request $request)
+    {
+        $hash = $request->pullGetString('hash');
+        $email = $request->pullGetString('email');
+        if (ParticipantFactory::authorize($email, $hash)) {
+            return ParticipantView::authorizeComplete();
+        } else {
+            return ParticipantView::authorizeFailed();
+        }
+    }
+
     /**
      * Displays a form for a user to create a new participant. Submission is sent to
      * self::createPost()
@@ -55,9 +66,22 @@ class Participant extends AbstractController
         return ['success' => true];
     }
 
+    /**
+     * View letting the user know their confirmation email was sent.
+     * @return string
+     */
     protected function emailSentHtml()
     {
         return ParticipantView::emailSent();
+    }
+
+    /**
+     * A catch all error page for users.
+     * @return string
+     */
+    protected function errorHtml()
+    {
+        return ParticipantView::error();
     }
 
     /**
