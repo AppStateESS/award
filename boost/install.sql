@@ -31,6 +31,8 @@ CREATE TABLE award_participant (
     hash varchar(255),
     lastName varchar(255),
     password varchar(255),
+    created DateTime,
+    updated DateTime,
     UNIQUE KEY uemail (email)
 );
 
