@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace Canopy3\Traits;
+namespace award\Traits;
 
 trait TextTrait
 {
