@@ -19,9 +19,40 @@ use phpws2\Database;
 class ParticipantFactory extends \award\AbstractFactory
 {
 
+    /**
+     * Attempts to authenticate participant using email and password params. Will
+     * fail if account is not active.
+     * @param string $email
+     * @param string $password
+     * @return array
+     */
+    public static function authenticate(string $email, string $password)
+    {
+        $participant = self::getByEmail($email);
+        if ($participant === false) {
+            return ['success' => false, 'message' => 'Could not sign in this account with current email and password'];
+        } else {
+            if (!$participant->getActive()) {
+                return ['success' => false, 'message' => 'Your account has not been activated. Check your email.'];
+            } elseif ($participant->isPassword($password)) {
+                self::signIn($participant);
+                return ['success' => true];
+            } else {
+                return ['success' => false, 'Could not sign in this account with current email and password'];
+            }
+        }
+    }
+
+    /**
+     * Flips the participant account to active if their hash and email are correct.
+     *
+     * @param string $email
+     * @param string $hash
+     * @return boolean
+     */
     public static function authorize(string $email, string $hash)
     {
-        $participant = self::getByEmail(filter_var($email, FILTER_SANITIZE_EMAIL));
+        $participant = self::getByEmail($email);
         if ($participant && $participant->getHash() === $hash) {
             $participant->setActive(true);
             self::save($participant);
@@ -61,7 +92,7 @@ class ParticipantFactory extends \award\AbstractFactory
     {
         $db = self::getDB();
         $tbl = $db->addTable('award_participant');
-        $tbl->addFieldConditional('email', $email);
+        $tbl->addFieldConditional('email', filter_var($email, FILTER_SANITIZE_EMAIL));
         $result = $db->selectOneRow();
 
         if (!$result) {
@@ -80,7 +111,7 @@ class ParticipantFactory extends \award\AbstractFactory
 
     public static function signIn(Participant $participant)
     {
-        $_SESSION['AWARD_PARTICIPANT'] = $participant->getValues();
+        $_SESSION['AWARD_PARTICIPANT'] = $participant->getValues(['password']);
     }
 
     public static function signOff()
