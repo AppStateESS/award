@@ -21,6 +21,7 @@ class EmailView extends AbstractView
     public static function newParticipant(Participant $participant)
     {
         $values = self::defaultEmailValues($participant);
+        $values['email'] = $participant->getEmail();
         return self::getTemplate('User/Email/NewParticipant', $values);
     }
 
