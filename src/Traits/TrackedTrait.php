@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace Canopy3\Traits;
+namespace award\Traits;
 
 trait TrackedTrait
 {
@@ -30,12 +30,12 @@ trait TrackedTrait
 
     public function getCreated(string $format = null)
     {
-        return $this->created->format($format ?? 'c');
+        return $this->created->format($format ?? 'Y-m-d H:i:s');
     }
 
     public function getUpdated(string $format = null)
     {
-        return $this->updated->format($format ?? 'c');
+        return $this->updated->format($format ?? 'Y-m-d H:i:s');
     }
 
     public function setCreated(string $datetime)
@@ -56,6 +56,12 @@ trait TrackedTrait
     public function stampUpdated()
     {
         $this->updated = new \DateTime();
+    }
+
+    protected function constructDates()
+    {
+        $this->created = new \DateTime;
+        $this->updated = new \DateTime;
     }
 
 }
