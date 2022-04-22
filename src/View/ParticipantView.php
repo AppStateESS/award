@@ -16,6 +16,17 @@ namespace award\View;
 class ParticipantView extends AbstractView
 {
 
+    public static function authorizeComplete()
+    {
+        return self::getTemplate('User/AuthorizeComplete');
+    }
+
+    public static function authorizeFailed()
+    {
+
+        return self::getTemplate('User/AuthorizeFailed');
+    }
+
     /**
      * Displays the sign up form for new participant accounts.
      *
@@ -38,6 +49,11 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/EmailSent');
     }
 
+    public static function error()
+    {
+        return self::getTemplate('User/Error', ['contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail')]);
+    }
+
     /**
      * Show the sign in form for current participants.
      *
@@ -45,6 +61,7 @@ class ParticipantView extends AbstractView
      */
     public static function signIn()
     {
+        self::scriptView('SignInForm');
         return self::getTemplate('User/SignIn');
     }
 
