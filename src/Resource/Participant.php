@@ -13,11 +13,15 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\Traits\TrackedTrait;
+
 /**
  * @table particpant
  */
 class Participant extends \award\AbstractResource
 {
+
+    use TrackedTrait;
 
     /**
      * @var bool
@@ -52,6 +56,7 @@ class Participant extends \award\AbstractResource
     public function __construct()
     {
         parent::__construct('award_participant');
+        $this->constructDates();
     }
 
     /**
@@ -115,14 +120,33 @@ class Participant extends \award\AbstractResource
     }
 
     /**
+     * Encrypts the raw password for saving in the database.
+     * @param string $password
+     */
+    public function hashPassword(string $password): self
+    {
+        return $this->setPassword(password_hash($password, PASSWORD_BCRYPT));
+    }
+
+    /**
+     * Verifies the password param against the current object's password hash.
+     * @param string $password
+     * @return bool
+     */
+    public function isPassword(string $password)
+    {
+        return password_verify($password, $this->password);
+    }
+
+    /**
      * Set the value of active
      *
      * @param  bool  $active
      * @return  self
      */
-    public function setActive(bool $active)
+    public function setActive($active)
     {
-        $this->active = $active;
+        $this->active = (bool) $active;
         return $this;
     }
 
@@ -165,11 +189,13 @@ class Participant extends \award\AbstractResource
     }
 
     /**
-     * @param string $password
+     * Set the encrypted password hash.
+     * @param string $passwordHash
+     * @return self
      */
-    public function setPassword(string $password): self
+    public function setPassword(string $passwordHash)
     {
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        $this->password = $passwordHash;
         return $this;
     }
 
