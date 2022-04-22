@@ -93,4 +93,15 @@ class Participant extends AbstractController
         return ParticipantView::signin();
     }
 
+    /**
+     * Receives sign post of email and password.
+     * @param Request $request
+     */
+    protected function signInPost(Request $request)
+    {
+        $email = $request->pullPostString('email');
+        $password = $request->pullPostString('password');
+        return ParticipantFactory::authenticate($email, $password);
+    }
+
 }
