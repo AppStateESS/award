@@ -14,4 +14,16 @@ const saveNewParticipant = async (email, password) => {
   })
 }
 
-export {saveNewParticipant}
+const signInPost = async (email, password) => {
+  const data = {email, password}
+  const url = 'award/User/Participant/signIn'
+  return await axios({
+    method: 'post',
+    url,
+    data,
+    timeout: 3000,
+    headers,
+  })
+}
+
+export {saveNewParticipant, signInPost}
