@@ -43,11 +43,13 @@ abstract class AbstractResource extends AbstractConstruct
         return $this->tableName;
     }
 
-    public function getValues()
+    public function getValues(array $ignore = [])
     {
         $properties = $this->getProperties();
         foreach ($properties as $p) {
-            $list[$p] = self::getByMethod($p);
+            if (!in_array($p, $ignore)) {
+                $list[$p] = self::getByMethod($p);
+            }
         }
         return $list;
     }
