@@ -10,7 +10,7 @@ namespace award\Role;
 class Participant extends Base
 {
 
-    public $memberId = 0;
+    public $participantId = 0;
 
     public function isParticipant()
     {
