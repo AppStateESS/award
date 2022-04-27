@@ -20,29 +20,35 @@ class Award extends award\AbstractResource
 {
 
     /**
+     * If true, the nominator is listed in award details.
+     * @var bool
+     */
+    private bool $creditNominator;
+
+    /**
+     * A description of the award.
+     *
      * @var string
      */
     private string $description;
 
     /**
-     * @var string
-     */
-    private string $title;
-
-    /**
-     * @var int
-     */
-    private int $nominatedDocRequired;
-
-    /**
+     * If TRUE, nominator must submit a letter.
      * @var bool
      */
-    private bool $publicView;
+    private bool $nominatedDocRequired;
 
     /**
-     * @var int
+     * If TRUE, the award details are shown publicly.
+     * @var bool
      */
-    private int $referenceDocRequired;
+    private bool $publicView = true;
+
+    /**
+     * If TRUE, references must submit a letter.
+     * @var bool
+     */
+    private bool $referenceDocRequired;
 
     /**
      * @var int
@@ -55,12 +61,32 @@ class Award extends award\AbstractResource
     private bool $selfNominate;
 
     /**
+     * @var bool
+     */
+    private bool $tipNominated;
+
+    /**
+     * @var string
+     */
+    private string $title;
+
+    /**
      * @var int
      */
     private int $winnerAmount;
 
     /**
-     * @returns string
+     * Get the value of creditNominator
+     *
+     * @return  bool
+     */
+    public function getCreditNominator()
+    {
+        return $this->creditNominator;
+    }
+
+    /**
+     * @return string
      */
     public function getDescription(): string
     {
@@ -68,15 +94,7 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns int
-     */
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    /**
-     * @returns int
+     * @return int
      */
     public function getNominatedDocRequired(): int
     {
@@ -84,7 +102,7 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns bool
+     * @return bool
      */
     public function getPublicView(): bool
     {
@@ -92,7 +110,7 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getReferenceDocRequired(): int
     {
@@ -100,7 +118,7 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getReferencesAmount(): int
     {
@@ -108,7 +126,7 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns bool
+     * @return bool
      */
     public function getSelfNominate(): bool
     {
@@ -116,7 +134,17 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * Get the value of tipNominated
+     *
+     * @return  bool
+     */
+    public function getTipNominated()
+    {
+        return $this->tipNominated;
+    }
+
+    /**
+     * @return string
      */
     public function getTitle(): string
     {
@@ -124,11 +152,24 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getWinnerAmount(): int
     {
         return $this->winnerAmount;
+    }
+
+    /**
+     * Set the value of creditNominator
+     *
+     * @param  bool  $creditNominator
+     * @return  self
+     */
+    public function setCreditNominator(bool $creditNominator)
+    {
+        $this->creditNominator = $creditNominator;
+
+        return $this;
     }
 
     /**
@@ -137,15 +178,6 @@ class Award extends award\AbstractResource
     public function setDescription(string $description): self
     {
         $this->description = $description;
-        return $this;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id): self
-    {
-        $this->id = $id;
         return $this;
     }
 
@@ -195,11 +227,25 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @param string $name
+     * @param string $title
      */
-    public function setName(string $name): self
+    public function setTitle(string $title): self
     {
-        $this->title = $name;
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * Set the value of tipNominated
+     *
+     * @param  bool  $tipNominated
+     *
+     * @return  self
+     */
+    public function setTipNominated(bool $tipNominated)
+    {
+        $this->tipNominated = $tipNominated;
+
         return $this;
     }
 
