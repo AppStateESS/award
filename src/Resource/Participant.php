@@ -29,6 +29,19 @@ class Participant extends \award\AbstractResource
     private bool $active = false;
 
     /**
+     * Defines how the participant signs in.
+     * See conf/system.php for available authorization types.
+     * @var int
+     */
+    private int $authType = 0;
+
+    /**
+     * If true, the participant will not be to access any award options.
+     * @var bool
+     */
+    private bool $banned = false;
+
+    /**
      * @var string
      */
     private string $email;
@@ -51,7 +64,7 @@ class Participant extends \award\AbstractResource
     /**
      * @var string
      */
-    private string $password;
+    private string $password = null;
 
     public function __construct()
     {
@@ -73,9 +86,18 @@ class Participant extends \award\AbstractResource
      *
      * @return  bool
      */
-    public function getActive()
+    public function getActive(): bool
     {
-        return $this->active;
+        return (bool) $this->active;
+    }
+
+    /**
+     * Returns value of banned.
+     * @return bool
+     */
+    public function getBanned(): bool
+    {
+        return (bool) $this->banned;
     }
 
     /**
@@ -147,6 +169,12 @@ class Participant extends \award\AbstractResource
     public function setActive($active)
     {
         $this->active = (bool) $active;
+        return $this;
+    }
+
+    public function setBanned($banned)
+    {
+        $this->banned = (bool) $banned;
         return $this;
     }
 
