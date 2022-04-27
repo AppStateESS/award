@@ -19,6 +19,7 @@ use award\Controller\AbstractController;
 use award\View\ParticipantView;
 use award\Factory\ParticipantFactory;
 use award\Factory\EmailFactory;
+use award\Factory\Authenticate;
 
 class Participant extends AbstractController
 {
@@ -42,7 +43,20 @@ class Participant extends AbstractController
      */
     protected function createAccountHtml()
     {
-        return ParticipantView::createAccount();
+        if (Authenticate::isLoggedIn()) {
+            $email = Authenticate::getLoginEmail();
+            if (!$email) {
+                throw new \Exception('Logged user missing email address.');
+            } else {
+                if (ParticipantFactory::getByEmail($email)) {
+                    \Canopy\Server::forward(PHPWS_HOME_HTTP . '/award/Participant/Participant/dashboard');
+                } else {
+                    return ParticipantView::createSignedInAccount($email);
+                }
+            }
+        } else {
+            return ParticipantView::createAccount();
+        }
     }
 
     /**
@@ -60,7 +74,7 @@ class Participant extends AbstractController
         if ($participant) {
             EmailFactory::createWarningOnExisting($participant);
         } else {
-            $newParticipant = ParticipantFactory::create($email, $password);
+            $newParticipant = ParticipantFactory::createInternal($email, $password);
             EmailFactory::newParticipant($newParticipant);
         }
         return ['success' => true];
@@ -82,6 +96,21 @@ class Participant extends AbstractController
     protected function errorHtml()
     {
         return ParticipantView::error();
+    }
+
+    protected function saveNewAccountHtml(Request $request)
+    {
+        if (!Authenticate::isLoggedIn()) {
+            return ParticipantView::notLoggedInError();
+        }
+        $token = $request->pullGetString('token');
+        $matchToken = ParticipantFactory::getCreateToken();
+        if ($matchToken !== $token || !Authenticate::isLoggedIn()) {
+            return ParticipantView::signInCreateError();
+        } else {
+            $loggedEmail = Authenticate::getLoginEmail();
+            return "Create account for $loggedEmail";
+        }
     }
 
     /**
