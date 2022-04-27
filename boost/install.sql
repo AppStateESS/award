@@ -23,14 +23,25 @@ CREATE TABLE award_cycle (
     FOREIGN KEY(awardId) REFERENCES award_award(id)
 );
 
+CREATE TABLE award_badge (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    awardId int,
+    cycleId int,
+    filePath varchar(255),
+    shortDescription varchar(255) DEFAULT NULL,
+    FOREIGN KEY(awardId) REFERENCES award_award(id)
+);
+
 CREATE TABLE award_participant (
     id int PRIMARY KEY AUTO_INCREMENT,
-    active bool,
+    active bool default 0,
+    authType smallint default 0,
+    banned bool default 0,
     email varchar(255),
     firstName varchar(255),
     hash varchar(255),
     lastName varchar(255),
-    password varchar(255),
+    password varchar(255) default null,
     created DateTime,
     updated DateTime,
     UNIQUE KEY uemail (email)
@@ -40,7 +51,7 @@ CREATE TABLE award_nomination (
     id int PRIMARY KEY AUTO_INCREMENT,
     awardId int,
     bannerId int,
-    completed bool,
+    completed bool default 0,
     cycleId int,
     email varchar(255),
     firstName varchar(255),
