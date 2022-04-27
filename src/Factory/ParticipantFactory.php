@@ -19,6 +19,8 @@ use phpws2\Database;
 class ParticipantFactory extends \award\AbstractFactory
 {
 
+    static Participant $currentParticipant;
+
     /**
      * Attempts to authenticate participant using email and password params. Will
      * fail if account is not active.
@@ -38,7 +40,7 @@ class ParticipantFactory extends \award\AbstractFactory
                 self::signIn($participant);
                 return ['success' => true];
             } else {
-                return ['success' => false, 'Could not sign in this account with current email and password'];
+                return ['success' => false, 'message' => 'Could not sign in this account with current email and password'];
             }
         }
     }
@@ -63,14 +65,15 @@ class ParticipantFactory extends \award\AbstractFactory
     }
 
     /**
-     * Creates a new participant using email and password parameter.
+     * Creates a new internal participant using email and password parameter.
+     * This participant does not use use SSO to sign in.
      * Password is hashed by setPassword.
      *
      * @param string $email
      * @param string $password
      * @return Participant
      */
-    public static function create(string $email, string $password)
+    public static function createInternal(string $email, string $password)
     {
         $participant = new Participant;
         $participant->setActive(false)
@@ -80,6 +83,11 @@ class ParticipantFactory extends \award\AbstractFactory
 
         self::save($participant);
         return $participant;
+    }
+
+    public static function createSSO(string $email)
+    {
+        
     }
 
     /**
@@ -104,16 +112,76 @@ class ParticipantFactory extends \award\AbstractFactory
         }
     }
 
+    /**
+     * Returns an the token session made on a new account request.
+     * FALSE is returned if the session was not set.
+     * @return string | bool
+     */
+    public static function getCreateToken()
+    {
+        return $_SESSION['Award_Create_Token'] ?? false;
+    }
+
+    /**
+     * Returns Participant array if
+     * @return boolean | array
+     */
+    public static function getCurrentParticipant()
+    {
+        if (!self::isSignedIn()) {
+            return false;
+        } else {
+            if (!isset(self::$currentParticipant)) {
+                self::loadCurrentParticipant();
+            }
+            return self::$currentParticipant;
+        }
+    }
+
+    /**
+     * Returns status of signed in participant.
+     * @return bool
+     */
     public static function isSignedIn()
     {
         return isset($_SESSION['AWARD_PARTICIPANT']);
     }
 
+    /**
+     * Creates and returns a random sessioned token. This token
+     * is used to authenticate a new participant creation from an
+     * SSO user.
+     * @return string
+     */
+    public static function loadCreateToken()
+    {
+        $token = md5(time() . rand());
+        $_SESSION['Award_Create_Token'] = $token;
+        return $token;
+    }
+
+    /**
+     * Loads a participant object into the static based on the AWARD_PARTICIPANT
+     * session.
+     */
+    private static function loadCurrentParticipant()
+    {
+        self::$currentParticipant = new Participant;
+        self::$currentParticipant->setValues($_SESSION['AWARD_PARTICIPANT'], ['password']);
+    }
+
+    /**
+     * Puts participant values into session.
+     * @param Participant $participant
+     */
     public static function signIn(Participant $participant)
     {
         $_SESSION['AWARD_PARTICIPANT'] = $participant->getValues(['password']);
     }
 
+    /**
+     * Clears participant session.
+     */
     public static function signOff()
     {
         unset($_SESSION['AWARD_PARTICIPANT']);
