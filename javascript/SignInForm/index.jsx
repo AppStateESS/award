@@ -36,19 +36,37 @@ const SignInForm = () => {
     }
   }
 
+  const checkEnter = (key) => {
+    if (key.which === 13 && checkPassword() && checkEmail()) {
+      signIn()
+    }
+  }
+
+  const checkPassword = () => {
+    const check = password.length === 0
+    setPasswordError(check)
+    return !check
+  }
+
+  const checkEmail = () => {
+    const check = email.length === 0
+    setEmailError(check)
+    return !check
+  }
+
   return (
     <div>
       {signInResult.length > 0 ? (
         <div className="alert alert-danger">{signInResult}</div>
       ) : null}
       <div className="form-group row">
-        <div className="col-sm-4 col-form-label">Email address</div>
-        <div className="col-sm-8">
+        <div className="col-4 col-form-label">Email address</div>
+        <div className="col">
           <input
             type="text"
             name="email"
             value={email}
-            onBlur={() => setEmailError(email.length === 0)}
+            onBlur={checkEmail}
             className="form-control"
             onChange={(e) => {
               setEmail(e.target.value)
@@ -62,23 +80,27 @@ const SignInForm = () => {
         </div>
       </div>
       <div className="form-group row">
-        <div className="col-sm-4 col-form-label">Password</div>
-        <div className="col-sm-8">
+        <div className="col-4 col-form-label">Password</div>
+        <div className="col">
           <input
             type="password"
             name="password"
-            onBlur={() => setPasswordError(password.length === 0)}
+            onBlur={checkPassword}
             value={password}
             className="form-control"
             onChange={(e) => {
               setPassword(e.target.value)
             }}
+            onKeyDown={checkEnter}
           />
           {passwordError ? (
             <span className="badge badge-danger">
               Please enter your password
             </span>
           ) : null}
+          <a className="small" href="./award/User/Participant/forgotPassword">
+            I forgot my password
+          </a>
         </div>
       </div>
       <div className="text-center">
