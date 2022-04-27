@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award;
+namespace award\AbstractClass;
 
 use phpws2\Database;
 

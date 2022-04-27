@@ -7,7 +7,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award;
+namespace award\AbstractClass;
 
 abstract class AbstractResource extends AbstractConstruct
 {
