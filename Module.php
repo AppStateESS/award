@@ -80,6 +80,8 @@ class Module extends \Canopy\Module implements SettingDefaults
             } else {
                 throw $e;
             }
+        } catch (\award\Exception\ParticipantPrivilegeMissing $e) {
+            \phpws\PHPWS_Core::reroute('./award/User/Participant/signIn');
         } catch (\Exception $e) {
             if (AWARD_SYSTEM_SETTINGS['friendlyErrors']) {
                 \phpws2\Error::log($e);
@@ -95,7 +97,7 @@ class Module extends \Canopy\Module implements SettingDefaults
     {
         $settings = array(
             'siteContactName' => 'Award Site',
-            'siteContactEmail' => 'no-reply@appstate.edu',
+            'siteContactEmail' => 'no-reply@appstate.edu'
         );
         return $settings;
     }
