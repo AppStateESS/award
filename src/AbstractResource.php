@@ -65,12 +65,14 @@ abstract class AbstractResource extends AbstractConstruct
         return $this;
     }
 
-    public function setValues(array $values)
+    public function setValues(array $values, $ignore = [])
     {
         $properties = $this->getProperties();
 
         foreach ($properties as $p) {
-            $list[$p] = self::setByMethod($p, $values[$p]);
+            if (!in_array($p, $ignore)) {
+                $list[$p] = self::setByMethod($p, $values[$p]);
+            }
         }
         return $list;
     }
