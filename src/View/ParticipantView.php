@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace award\View;
 
+use award\Factory\ParticipantFactory;
+
 class ParticipantView extends AbstractView
 {
 
@@ -35,7 +37,23 @@ class ParticipantView extends AbstractView
     public static function createAccount()
     {
         self::scriptView('SignUpForm');
-        return self::getTemplate('User/CreateAccount');
+        return self::getTemplate('User/CreateAccount', [], true);
+    }
+
+    /**
+     * A view for users logged in to SSO.
+     * @param string $email Email address of SSO participant
+     * @return string
+     */
+    public static function createSignedInAccount(string $email)
+    {
+        $token = ParticipantFactory::loadCreateToken();
+        return self::getTemplate('User/CreateSignedInAccount',
+                [
+                    'email' => $email,
+                    'signUpLink' => "./award/User/Participant/saveNewAccount?token=$token"
+                ]
+        );
     }
 
     /**
@@ -54,6 +72,11 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/Error', ['contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail')]);
     }
 
+    public static function notLoggedInError()
+    {
+        return self::getTemplate('User/NotLoggedIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
+    }
+
     /**
      * Show the sign in form for current participants.
      *
@@ -62,7 +85,18 @@ class ParticipantView extends AbstractView
     public static function signIn()
     {
         self::scriptView('SignInForm');
-        return self::getTemplate('User/SignIn');
+        return self::getTemplate('User/SignIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
+    }
+
+    /**
+     * Shows an error if the attempt at creating a participant failed due
+     * to not being logged in or the token was wrong.
+     *
+     * @return string
+     */
+    public static function signInCreateError()
+    {
+
     }
 
 }
