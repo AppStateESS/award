@@ -45,6 +45,7 @@ class Cycle extends award\AbstractResource
     private int $startDate;
 
     /**
+     * If true, judges are allowed to vote on nominees.
      * @var bool
      */
     private bool $voteAllowed;
