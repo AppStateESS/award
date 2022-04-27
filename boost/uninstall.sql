@@ -1,4 +1,4 @@
-DROP TABLE 
+DROP TABLE IF EXISTS
 award_vote,
 award_reference, 
 award_judge, 
@@ -9,6 +9,7 @@ award_cyclewinner,
 award_cyclelog, 
 award_document, 
 award_nomination, 
-award_participant, 
+award_participant,
+award_badge,
 award_cycle, 
 award_award;
