@@ -30,21 +30,13 @@ class Controller extends \phpws2\Http\Controller
 
     private function loadRole()
     {
-        if (\Current_User::isLogged()) {
-            if (\Current_User::allow('award')) {
-                $this->role = new \award\Role\Admin(\Current_User::getId());
-            } elseif (MemberFactory::currentUserIsMember()) {
-                $this->role = new \award\Role\Member(\Current_User::getId());
-                $this->role->memberId = $_SESSION['TT_MEMBER_ID'];
-            }
+        if (\Current_User::isLogged() && \Current_User::allow('award')) {
+            $this->role = new \award\Role\Admin(\Current_User::getId());
+        } elseif (\award\Factory\ParticipantFactory::isSignedIn()) {
+            $this->role = new \award\Role\Participant(\award\Factory\ParticipantFactory::getCurrentParticipant()->getId());
         } else {
             $this->role = new \award\Role\User;
         }
-    }
-
-    public function isMember()
-    {
-        return $this->role->isMember();
     }
 
     /**
@@ -65,12 +57,8 @@ class Controller extends \phpws2\Http\Controller
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
             throw new \award\Exception\PrivilegeMissing;
-        } elseif ($roleController === 'Member' && !$this->role->isMember()) {
-            if ($this->role->isAdmin()) {
-                throw new \award\Exception\MemberPermission;
-            } else {
-                throw new \award\Exception\PrivilegeMissing;
-            }
+        } elseif ($roleController === 'Participant' && !$this->role->isParticipant()) {
+            throw new \award\Exception\ParticipantPrivilegeMissing;
         }
 
         if (empty($subController)) {
