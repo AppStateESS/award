@@ -11,7 +11,7 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award\View;
+namespace award\AbstractClass;
 
 use phpws2\Template;
 
@@ -81,6 +81,12 @@ class AbstractView
             throw new \Exception('Script file not found among assets.');
         }
         return $json[$scriptName]['js'];
+    }
+
+    protected static function menu($active)
+    {
+        $params = ['active' => $active];
+        return self::getTemplate('Admin/Menu', $params);
     }
 
     /**
