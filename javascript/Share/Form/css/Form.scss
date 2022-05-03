@@ -1,0 +1,25 @@
+label {
+  &.required:after {
+    color: rgb(243, 39, 20);
+    content: ' *';
+    display: inline;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+
+  &.true-check {
+    color: rgb(0, 173, 23);
+  }
+
+  &.false-check {
+    color: rgb(241, 102, 89);
+  }
+}
+
+.check-label {
+  margin-left: 6px;
+  font-size: 22px;
+}
