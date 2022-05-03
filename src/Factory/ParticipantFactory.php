@@ -14,9 +14,10 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\Resource\Participant;
+use award\AbstractClass\AbstractFactory;
 use phpws2\Database;
 
-class ParticipantFactory extends \award\AbstractFactory
+class ParticipantFactory extends AbstractFactory
 {
 
     static Participant $currentParticipant;
@@ -87,7 +88,7 @@ class ParticipantFactory extends \award\AbstractFactory
 
     public static function createSSO(string $email)
     {
-        
+
     }
 
     /**
