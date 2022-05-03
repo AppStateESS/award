@@ -11,9 +11,47 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award\Controller;
+namespace award\Controller\Admin;
 
-class Award
+use award\Controller\AbstractController;
+use award\View\DashboardView;
+use award\View\AwardView;
+use award\Factory\AwardFactory;
+use Canopy\Request;
+
+class Award extends AbstractController
 {
-//put your code here
+
+    protected function createHtml()
+    {
+        $award = AwardFactory::build();
+        return AwardView::editForm($award);
+    }
+
+    /**
+     * HTML listing of Awards seen by the admin.
+     * @return type
+     */
+    protected function listHtml()
+    {
+        return AwardView::adminList();
+    }
+
+    /**
+     * A listing of the current awards
+     * @return array
+     */
+    protected function listJson()
+    {
+        return [];
+    }
+
+    protected function post(Request $request)
+    {
+        $request->pullPostVars();
+        $award = AwardFactory::post($request);
+        $award = AwardFactory::save($award);
+        return ['success' => true, 'id' => $award->getId()];
+    }
+
 }
