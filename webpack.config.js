@@ -17,7 +17,7 @@ module.exports = (env, argv) => {
         cacheGroups: {
           defaultVendors: {
             test: /[\\/]node_modules[\\/]/,
-            minChunks: 1,
+            minChunks: 2,
             name: 'vendor',
             enforce: true,
             chunks: 'all',
@@ -32,7 +32,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.css$/,
+          test: /\.css$/i,
           use: ['style-loader', 'css-loader'],
         },
         {
