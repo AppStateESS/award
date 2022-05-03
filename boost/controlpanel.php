@@ -12,7 +12,7 @@
 $link[] = array(
     'label' => 'Award',
     'restricted' => TRUE,
-    'url' => 'award/Admin/Award',
+    'url' => 'award/Admin/Dashboard',
     'description' => 'Creates awards, allows nominations, reference submissions, voting, and winner tracking',
     'image' => 'trophy.jpg',
     'tab' => 'content');
