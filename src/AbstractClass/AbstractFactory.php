@@ -30,6 +30,20 @@ class AbstractFactory
         return $db;
     }
 
+    protected static function load(AbstractResource $resource, int $id)
+    {
+        $db = self::getDB();
+        $tbl = $db->addTable($resource->getTableName());
+        $tbl->addFieldConditional('id', $id);
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return false;
+        } else {
+            $resource->setValues($result);
+            return $resource;
+        }
+    }
+
     public static function save(AbstractResource $resource)
     {
         $id = $resource->getId();
@@ -49,10 +63,11 @@ class AbstractFactory
         $table = $db->addTable($resource->getTable());
         $table->addValueArray($values);
         if ($id) {
-            return $db->update();
+            $db->update();
         } else {
-            return $db->insert();
+            $db->insert();
         }
+        return $resource;
     }
 
 }
