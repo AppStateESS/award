@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\View;
 
 use award\Resource\Participant;
+use award\AbstractClass\AbstractView;
 
 class EmailView extends AbstractView
 {
