@@ -13,17 +13,25 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\AbstractClass\AbstractResource;
+
 /**
  * @table award
  */
-class Award extends award\AbstractResource
+class Award extends AbstractResource
 {
+
+    /**
+     * Determines if award is accessible by participants.
+     * @var bool
+     */
+    private bool $active = false;
 
     /**
      * If true, the nominator is listed in award details.
      * @var bool
      */
-    private bool $creditNominator;
+    private bool $creditNominator = false;
 
     /**
      * A description of the award.
@@ -33,10 +41,24 @@ class Award extends award\AbstractResource
     private string $description;
 
     /**
+     * Method by which a winner is determined.
+     * 0 - popular vote
+     * 1 - judged
+     * @var int
+     */
+    private int $judgeMethod = 1;
+
+    /**
      * If TRUE, nominator must submit a letter.
      * @var bool
      */
-    private bool $nominatedDocRequired;
+    private bool $nominationReasonRequired = false;
+
+    /**
+     * Id of participant that submitted the award.
+     * @var int
+     */
+    private int $participantId = 0;
 
     /**
      * If TRUE, the award details are shown publicly.
@@ -48,22 +70,22 @@ class Award extends award\AbstractResource
      * If TRUE, references must submit a letter.
      * @var bool
      */
-    private bool $referenceDocRequired;
+    private bool $referenceReasonRequired = false;
 
     /**
      * @var int
      */
-    private int $referencesAmount;
+    private int $referencesRequired = 0;
 
     /**
      * @var bool
      */
-    private bool $selfNominate;
+    private bool $selfNominate = false;
 
     /**
      * @var bool
      */
-    private bool $tipNominated;
+    private bool $tipNominated = false;
 
     /**
      * @var string
@@ -71,9 +93,20 @@ class Award extends award\AbstractResource
     private string $title;
 
     /**
+     * The winner total for this award.
      * @var int
      */
-    private int $winnerAmount;
+    private int $winnerAmount = 1;
+
+    public function __construct()
+    {
+        parent::__construct('award_award');
+    }
+
+    public function getActive(): bool
+    {
+        return $this->active;
+    }
 
     /**
      * Get the value of creditNominator
@@ -90,15 +123,31 @@ class Award extends award\AbstractResource
      */
     public function getDescription(): string
     {
-        return $this->description;
+        return $this->description ?? '';
     }
 
     /**
      * @return int
      */
-    public function getNominatedDocRequired(): int
+    public function getJudgeMethod(): int
     {
-        return $this->nominatedDocRequired;
+        return $this->judgeMethod;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getNominationReasonRequired(): bool
+    {
+        return $this->nominationReasonRequired;
+    }
+
+    /**
+     * @return int
+     */
+    public function getParticipantId(): int
+    {
+        return $this->participantId;
     }
 
     /**
@@ -112,17 +161,17 @@ class Award extends award\AbstractResource
     /**
      * @return int
      */
-    public function getReferenceDocRequired(): int
+    public function getReferenceReasonRequired(): bool
     {
-        return $this->referenceDocRequired;
+        return $this->referenceReasonRequired;
     }
 
     /**
      * @return int
      */
-    public function getReferencesAmount(): int
+    public function getReferencesRequired(): int
     {
-        return $this->referencesAmount;
+        return $this->referencesRequired;
     }
 
     /**
@@ -148,7 +197,7 @@ class Award extends award\AbstractResource
      */
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->title ?? '';
     }
 
     /**
@@ -157,6 +206,17 @@ class Award extends award\AbstractResource
     public function getWinnerAmount(): int
     {
         return $this->winnerAmount;
+    }
+
+    /**
+     *
+     * @param bool $active
+     * @return self
+     */
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
+        return $this;
     }
 
     /**
@@ -182,11 +242,27 @@ class Award extends award\AbstractResource
     }
 
     /**
+     * @param int $judgeMethod
+     * @return self
+     */
+    public function setJudgeMethod(int $judgeMethod): self
+    {
+        $this->judgeMethod = $judgeMethod;
+        return $this;
+    }
+
+    /**
      * @param int $nominatedDocRequired
      */
-    public function setNominatedDocRequired(int $nominatedDocRequired): self
+    public function setNominationReasonRequired(bool $nominationReasonRequired): self
     {
-        $this->nominatedDocRequired = $nominatedDocRequired;
+        $this->nominationReasonRequired = $nominationReasonRequired;
+        return $this;
+    }
+
+    public function setParticipantId(int $participantId): self
+    {
+        $this->participantId = $participantId;
         return $this;
     }
 
@@ -200,20 +276,20 @@ class Award extends award\AbstractResource
     }
 
     /**
-     * @param int $referenceDocRequired
+     * @param bool $referenceReasonRequired
      */
-    public function setReferenceDocRequired(int $referenceDocRequired): self
+    public function setReferenceReasonRequired(bool $referenceReasonRequired): self
     {
-        $this->referenceDocRequired = $referenceDocRequired;
+        $this->referenceReasonRequired = $referenceReasonRequired;
         return $this;
     }
 
     /**
-     * @param int $referencesAmount
+     * @param int $referencesRequired
      */
-    public function setReferencesAmount(int $referencesAmount): self
+    public function setReferencesRequired(int $referencesRequired): self
     {
-        $this->referencesAmount = $referencesAmount;
+        $this->referencesRequired = $referencesRequired;
         return $this;
     }
 
