@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\View;
 
 use award\Factory\ParticipantFactory;
+use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
 {
