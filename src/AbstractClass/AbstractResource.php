@@ -19,6 +19,11 @@ abstract class AbstractResource extends AbstractConstruct
     protected int $id;
     private string $tableName;
 
+    public function __construct(string $tableName)
+    {
+        $this->tableName = $tableName;
+    }
+
     public function getId()
     {
         return $this->id ?? 0;
@@ -38,7 +43,7 @@ abstract class AbstractResource extends AbstractConstruct
         return $list;
     }
 
-    public function getTable(): string
+    public function getTableName(): string
     {
         return $this->tableName;
     }
@@ -75,11 +80,6 @@ abstract class AbstractResource extends AbstractConstruct
             }
         }
         return $list;
-    }
-
-    protected function __construct(string $tableName)
-    {
-        $this->tableName = $tableName;
     }
 
 }
