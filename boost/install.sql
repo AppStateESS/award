@@ -1,12 +1,17 @@
 CREATE TABLE award_award (
     id int PRIMARY KEY AUTO_INCREMENT,
+    active bool DEFAULT 0,
+    creditNominator bool DEFAULT 0,
     description text DEFAULT NULL,
-    title varchar(255) NOT NULL,
-    nominatedDocRequired bool DEFAULT 0,
+    judgeMethod int DEFAULT 1,
+    nominationReasonRequired bool DEFAULT 0,
+    participantId int,
     publicView bool DEFAULT 0,
-    referenceDocRequired bool DEFAULT 0,
-    referencesAmount smallint DEFAULT 1,
+    referenceReasonRequired bool DEFAULT 0,
+    referencesRequired smallint DEFAULT 1,
     selfNominate bool DEFAULT 0,
+    tipNominated bool DEFAULT 0,
+    title varchar(255) NOT NULL,
     winnerAmount smallint DEFAULT 1
 );
 
