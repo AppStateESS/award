@@ -1,7 +1,9 @@
 CREATE TABLE award_award (
     id int PRIMARY KEY AUTO_INCREMENT,
     active bool DEFAULT 0,
+    approvalRequired bool default 0,
     creditNominator bool DEFAULT 0,
+    cycleTerm varchar(20) default 'yearly',
     description text DEFAULT NULL,
     judgeMethod int DEFAULT 1,
     nominationReasonRequired bool DEFAULT 0,
@@ -20,8 +22,10 @@ CREATE TABLE award_cycle (
     awardId int,
     awardMonth smallint DEFAULT 0,
     awardYear smallint DEFAULT 0,
+    currentlyActive bool DEFAULT 0,
     endDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     startDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    term varchar(20) default 'yearly',
     voteAllowed bool DEFAULT 0,
     voteType smallint DEFAULT 0,
     INDEX awdIdx(awardId),
@@ -54,6 +58,8 @@ CREATE TABLE award_participant (
 
 CREATE TABLE award_nomination (
     id int PRIMARY KEY AUTO_INCREMENT,
+    allowVote bool default 1,
+    approved bool default 0,
     awardId int,
     bannerId int,
     completed bool default 0,
