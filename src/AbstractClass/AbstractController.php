@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award\Controller;
+namespace award\AbstractClass;
 
 use award\Exception\BadCommand;
 use award\Exception\PrivilegeMissing;
@@ -22,7 +22,7 @@ abstract class AbstractController
 {
 
     protected $role;
-    protected $id;
+    protected int $id;
 
     public function __construct(\award\Role\Base $role)
     {
@@ -40,7 +40,7 @@ abstract class AbstractController
     {
         $command = $request->shiftCommand();
         if (is_numeric($command)) {
-            $this->id = $command;
+            $this->id = (int) $command;
 
             $subcommand = $request->shiftCommand();
             if (empty($subcommand)) {
@@ -64,7 +64,7 @@ abstract class AbstractController
         if (!is_numeric($id)) {
             throw new \award\Exception\ResourceNotFound($id);
         }
-        $this->id = $id;
+        $this->id = (int) $id;
     }
 
     public function getHtml(Request $request)
