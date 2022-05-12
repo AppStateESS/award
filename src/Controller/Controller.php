@@ -78,6 +78,9 @@ class Controller extends \phpws2\Http\Controller
             return parent::execute($request);
         } catch (\award\Exception\PrivilegeMissing $e) {
             \Current_User::requireLogin();
+        } catch (\award\Exception\ResourceNotFound $error) {
+            \phpws2\Error::errorPage(404);
+            exit();
         } catch (\Exception $e) {
             if (AWARD_SYSTEM_SETTINGS['friendlyErrors']) {
                 \phpws2\Error::log($e);
