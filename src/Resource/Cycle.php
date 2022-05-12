@@ -11,12 +11,14 @@ declare(strict_types=1);
  * @license https://opensource.org/licenses/MIT
  */
 
-namespace award\Cycle;
+namespace award\Resource;
+
+use award\AbstractClass\AbstractResource;
 
 /**
  * @table reference
  */
-class Cycle extends award\AbstractResource
+class Cycle extends AbstractResource
 {
 
     /**
@@ -35,28 +37,52 @@ class Cycle extends award\AbstractResource
     private int $awardYear;
 
     /**
-     * @var int
+     * The cycle currently in use for the award. There
+     * should be only one in the table.
+     * @var bool
      */
-    private int $endDate;
+    private bool $currentlyActive = false;
 
     /**
+     * Deadline for nominations
      * @var int
      */
-    private int $startDate;
+    private int $endDate = 0;
+
+    /**
+     * Start time for allowing nominations.
+     * @var int
+     */
+    private int $startDate = 0;
+
+    /**
+     *
+     * @var string
+     */
+    private string $term = 'yearly';
 
     /**
      * If true, judges are allowed to vote on nominees.
      * @var bool
      */
-    private bool $voteAllowed;
+    private bool $voteAllowed = false;
 
     /**
+     * Indicate method of voting. The default type
+     * is 'choose', wherein each judge picks one winner.
      * @var string
      */
-    private string $voteType;
+    private string $voteType = 'choose';
+
+    public function __construct()
+    {
+        parent::__construct('award_cycle');
+        $this->setAwardMonth((int) strftime('l'));
+        $this->setAwardYear((int) strftime('l'));
+    }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardId(): int
     {
@@ -64,7 +90,7 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardMonth(): int
     {
@@ -72,7 +98,7 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardYear(): int
     {
@@ -80,7 +106,15 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return bool
+     */
+    public function getCurrentlyActive(): bool
+    {
+        return $this->currentlyActive;
+    }
+
+    /**
+     * @return int
      */
     public function getEndDate(): int
     {
@@ -88,15 +122,20 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getStartDate(): int
     {
         return $this->startDate;
     }
 
+    public function getTerm(): string
+    {
+        return $this->term;
+    }
+
     /**
-     * @returns bool
+     * @return bool
      */
     public function getVoteAllowed(): bool
     {
@@ -104,9 +143,9 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return string
      */
-    public function getVoteType(): int
+    public function getVoteType(): string
     {
         return $this->voteType;
     }
@@ -138,6 +177,12 @@ class Cycle extends award\AbstractResource
         return $this;
     }
 
+    public function setCurrentlyActive(bool $currentlyActive): self
+    {
+        $this->currentlyActive = $currentlyActive;
+        return $this;
+    }
+
     /**
      * @param int $endDate
      */
@@ -156,6 +201,12 @@ class Cycle extends award\AbstractResource
         return $this;
     }
 
+    public function setTerm(string $term)
+    {
+        $this->term = $term;
+        return $this;
+    }
+
     /**
      * @param bool $voteAllowed
      */
@@ -166,9 +217,9 @@ class Cycle extends award\AbstractResource
     }
 
     /**
-     * @param int $voteType
+     * @param string $voteType
      */
-    public function setVoteType(int $voteType): self
+    public function setVoteType(string $voteType): self
     {
         $this->voteType = $voteType;
         return $this;
