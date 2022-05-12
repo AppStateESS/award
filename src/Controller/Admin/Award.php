@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace award\Controller\Admin;
 
-use award\Controller\AbstractController;
+use award\AbstractClass\AbstractController;
 use award\View\DashboardView;
 use award\View\AwardView;
 use award\Factory\AwardFactory;
@@ -22,9 +22,19 @@ use Canopy\Request;
 class Award extends AbstractController
 {
 
+    /**
+     * Returns form for award creation.
+     * @return string
+     */
     protected function createHtml()
     {
         $award = AwardFactory::build();
+        return AwardView::editForm($award);
+    }
+
+    protected function editHtml()
+    {
+        $award = AwardFactory::build($this->id);
         return AwardView::editForm($award);
     }
 
@@ -43,14 +53,27 @@ class Award extends AbstractController
      */
     protected function listJson()
     {
-        return [];
+        return AwardFactory::getList(['currentCycle' => true]);
+    }
+
+    protected function newAwardHtml()
+    {
+        return AwardView::newAward(AwardFactory::build($this->id));
     }
 
     protected function post(Request $request)
     {
-        $request->pullPostVars();
         $award = AwardFactory::post($request);
         $award = AwardFactory::save($award);
+
+        return ['success' => true, 'id' => $award->getId()];
+    }
+
+    protected function put(Request $request)
+    {
+        $award = AwardFactory::put($request, $this->id);
+        $award = AwardFactory::save($award);
+
         return ['success' => true, 'id' => $award->getId()];
     }
 
