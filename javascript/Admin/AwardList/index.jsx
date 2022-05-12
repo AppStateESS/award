@@ -2,9 +2,45 @@
 import React, {Fragment, useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {createRoot} from 'react-dom/client'
+import {getList} from '../../Share/XHR'
+import Loading from '../../Share/Loading'
+import Listing from './Listing'
 
 const AwardList = () => {
-  return <div>AwardList</div>
+  const [loading, setLoading] = useState(true)
+  const [awardList, setAwardList] = useState([])
+
+  useEffect(() => {
+    setLoading(true)
+    const controller = new AbortController()
+    const params = {
+      url: 'award/Admin/Award',
+      handleSuccess: (data) => {
+        setLoading(false)
+        setAwardList(data)
+      },
+      handleError: (error) => console.error(error),
+      signal: controller.signal,
+    }
+    getList(params)
+    return () => controller.abort()
+  }, [])
+
+  let content
+  if (loading) {
+    content = <Loading things="awards" />
+  } else if (awardList.length === 0) {
+    content = (
+      <div>
+        No awards found. You need to{' '}
+        <a href="./award/Admin/Award/create">create a new award</a>.
+      </div>
+    )
+  } else {
+    content = <Listing {...{awardList}} />
+  }
+
+  return <div>{content}</div>
 }
 
 AwardList.propTypes = {}
