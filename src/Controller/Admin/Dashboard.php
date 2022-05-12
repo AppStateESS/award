@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace award\Controller\Admin;
 
-use award\Controller\AbstractController;
+use award\AbstractClass\AbstractController;
 use award\View\DashboardView;
 
 class Dashboard extends AbstractController
