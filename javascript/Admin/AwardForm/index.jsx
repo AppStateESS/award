@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {saveAward} from '../../Share/AwardXHR'
 import {
@@ -12,6 +12,11 @@ import {
 import {createRoot} from 'react-dom/client'
 
 const referencesRequiredOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const cycleTermOptions = [
+  {value: 'yearly', label: 'Every year'},
+  {value: 'monthly', label: 'Every Month'},
+  {value: 'randomly', label: 'No set period'},
+]
 
 const judgeMethod = [
   {value: 1, label: 'Judges'},
@@ -19,7 +24,7 @@ const judgeMethod = [
 ]
 
 /* global defaultAward */
-const AwardForm = () => {
+const AwardForm = ({defaultAward}) => {
   const defaultMessage = {text: '', type: 'danger'}
   const [award, setAward] = useState(defaultAward)
   const [message, setMessage] = useState(defaultMessage)
@@ -29,12 +34,22 @@ const AwardForm = () => {
   }
 
   const save = () => {
+    const newAward = award.id === 0
+    let forwardUrl
     if (award.title.length === 0) {
       setMessage({text: 'Title is empty', type: 'danger'})
     } else {
       setMessage(defaultMessage)
       saveAward(award, 'Admin').then((response) => {
-        console.log(response.data)
+        if (response.data.success) {
+          const awardId = response.data.id
+          if (newAward) {
+            forwardUrl = `./award/Admin/Award/${awardId}/newAward`
+          } else {
+            forwardUrl = `./award/Admin/Award/`
+          }
+          location.href = forwardUrl
+        }
       })
     }
   }
@@ -50,16 +65,18 @@ const AwardForm = () => {
         value={award.title}
         update={(value) => update('title', value)}
         name="title"
+        columns={[4, 8]}
         allowEmpty={false}
       />
       <Textarea
         value={award.description}
         update={(value) => update('description', value)}
+        columns={[4, 8]}
         name="description"
       />
       <div className="row mb-3">
-        <div className="col-sm-6">Who determines the winner?</div>
-        <div className="col-sm-6">
+        <div className="col-sm-4">Who determines the winner?</div>
+        <div className="col-sm-8">
           <ButtonGroup
             buttonClass="outline-primary"
             options={judgeMethod}
@@ -70,10 +87,19 @@ const AwardForm = () => {
       </div>
 
       <Select
+        name="cycleTermOptions"
+        label="How often is this award offered?"
+        options={cycleTermOptions}
+        columns={[4, 4]}
+        value={award.cycleTerm}
+        update={(value) => update('cycleTerm', value)}
+      />
+
+      <Select
         name="referencesRequiredOptions"
         label="Number of references required"
         options={referencesRequiredOptions}
-        columns={[6, 3]}
+        columns={[4, 4]}
         value={award.referencesRequired}
         update={(value) => update('referencesRequired', value)}
       />
@@ -96,6 +122,12 @@ const AwardForm = () => {
             value={award.referenceReasonRequired}
             label="References must include reasons for supporting the nomination"
             update={(value) => update('referenceReasonRequired', value)}
+            columns={[8, 2]}
+          />
+          <Checkbox
+            value={award.approvalRequired}
+            label="Nominations must be approved before moving forward"
+            update={(value) => update('approvalRequired', value)}
             columns={[8, 2]}
           />
         </div>
