@@ -57,6 +57,7 @@ trait MagicGetSetTrait
     {
         $setMethod = 'set' . ucwords($valueName);
         if (method_exists($this, $setMethod)) {
+            $value = is_bool($this->$valueName) ? (bool) $value : $value;
             $this->$setMethod($value);
         } else {
             $constructClass = get_called_class();
