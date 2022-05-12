@@ -40,7 +40,7 @@ class Reference extends award\AbstractResource
     private int $participantId;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getCycleId(): int
     {
@@ -48,7 +48,7 @@ class Reference extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getDocumentId(): int
     {
@@ -56,7 +56,7 @@ class Reference extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getNominationId(): int
     {
@@ -64,7 +64,7 @@ class Reference extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getParticipantId(): int
     {

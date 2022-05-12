@@ -42,7 +42,7 @@ class Vote extends award\AbstractResource
     private int $score;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardId() : int
     {
@@ -50,7 +50,7 @@ class Vote extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getCycleId() : int
     {
@@ -58,7 +58,7 @@ class Vote extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getJudgeId() : int
     {
@@ -66,7 +66,7 @@ class Vote extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getNominationId() : int
     {
@@ -74,7 +74,7 @@ class Vote extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getScore() : int
     {

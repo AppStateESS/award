@@ -32,7 +32,7 @@ class Email extends award\AbstractResource
     private string $subject;
 
     /**
-     * @returns string
+     * @return string
      */
     public function getMessage() : string
     {
@@ -40,7 +40,7 @@ class Email extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getReplyto() : string
     {
@@ -48,7 +48,7 @@ class Email extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getSubject() : string
     {

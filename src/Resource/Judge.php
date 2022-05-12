@@ -30,7 +30,7 @@ class Judge extends award\AbstractResource
     private int $participantId;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getCycleId(): int
     {
@@ -38,7 +38,7 @@ class Judge extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getParticipantId(): int
     {

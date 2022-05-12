@@ -32,7 +32,7 @@ class Document extends award\AbstractResource
     private string $title;
 
     /**
-     * @returns string
+     * @return string
      */
     public function getFilename() : string
     {
@@ -40,7 +40,7 @@ class Document extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getNominationId() : int
     {
@@ -48,7 +48,7 @@ class Document extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getTitle() : string
     {

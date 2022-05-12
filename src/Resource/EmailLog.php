@@ -32,7 +32,7 @@ class EmailLog extends award\AbstractResource
     private int $participantId;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getDateSent() : int
     {
@@ -40,7 +40,7 @@ class EmailLog extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getEmailId() : int
     {
@@ -48,7 +48,7 @@ class EmailLog extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getParticipantId() : int
     {

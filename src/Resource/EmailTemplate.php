@@ -40,7 +40,7 @@ class EmailTemplate extends award\AbstractResource
     private string $title;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardId(): int
     {
@@ -48,7 +48,7 @@ class EmailTemplate extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getMessage(): string
     {
@@ -56,7 +56,7 @@ class EmailTemplate extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getReplyto(): string
     {
@@ -64,7 +64,7 @@ class EmailTemplate extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getSubject(): string
     {
@@ -72,7 +72,7 @@ class EmailTemplate extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getTitle(): string
     {

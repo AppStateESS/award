@@ -42,7 +42,7 @@ class CycleWinner extends \award\AbstractResource
     private int $nominationId;
 
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardId() : int
     {
@@ -50,7 +50,7 @@ class CycleWinner extends \award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getCycleId() : int
     {
@@ -58,7 +58,7 @@ class CycleWinner extends \award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getDescription() : string
     {
@@ -66,7 +66,7 @@ class CycleWinner extends \award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getImage() : string
     {
@@ -74,7 +74,7 @@ class CycleWinner extends \award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getNominationId() : int
     {
