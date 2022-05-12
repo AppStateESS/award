@@ -32,7 +32,7 @@ class CycleLog extends award\AbstractResource
     private int $participantId;
 
     /**
-     * @returns string
+     * @return string
      */
     public function getAction() : string
     {
@@ -40,7 +40,7 @@ class CycleLog extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getDocumentId() : int
     {
@@ -48,7 +48,7 @@ class CycleLog extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getParticipantId() : int
     {
