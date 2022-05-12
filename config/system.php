@@ -16,3 +16,4 @@
  * the system.
  */
 define('AWARD_AUTH_TYPES', [0 => 'local', 1 => 'AppstateShibboleth']);
+define('AWARD_DEFAULT_VOTE_TYPE', 'choice');
