@@ -12,6 +12,8 @@
 
 namespace award\Controller;
 
+use award\View\AwardView;
+
 define('AWARD_FRIENDLY_MESSAGE', 'Server error. Could not complete action');
 
 class FriendlyErrorController extends \phpws2\Http\Controller
@@ -27,11 +29,7 @@ class FriendlyErrorController extends \phpws2\Http\Controller
 
     public function get(\Canopy\Request $request)
     {
-        $vars = \award\Factory\SettingsFactory::getContact();
-        $template = new \phpws2\Template($vars);
-        $template->setModuleTemplate('award', 'error.html');
-        $template->add('message', AWARD_FRIENDLY_MESSAGE);
-        $view = new \phpws2\View\HtmlView($template->get());
+        $view = new \phpws2\View\HtmlView(AwardView::errorPage());
         $response = new \Canopy\Response($view);
         return $response;
     }
