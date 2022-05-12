@@ -28,10 +28,32 @@ class Award extends AbstractResource
     private bool $active = false;
 
     /**
+     * If true, all nominations require approval before moving forward.
+     * @var bool
+     */
+    private bool $approvalRequired = false;
+
+    /**
      * If true, the nominator is listed in award details.
      * @var bool
      */
     private bool $creditNominator = false;
+
+    /**
+     * Indicates how often the award is offered:
+     * - monthly
+     * - yearly
+     * - randomly
+     *
+     * @var string
+     */
+    private string $cycleTerm = 'yearly';
+
+    /**
+     * The default vote type passed to cycles.
+     * @var string
+     */
+    private string $defaultVoteType = AWARD_DEFAULT_VOTE_TYPE;
 
     /**
      * A description of the award.
@@ -108,14 +130,33 @@ class Award extends AbstractResource
         return $this->active;
     }
 
+    public function getApprovalRequired(): bool
+    {
+        return $this->approvalRequired;
+    }
+
     /**
      * Get the value of creditNominator
      *
      * @return  bool
      */
-    public function getCreditNominator()
+    public function getCreditNominator(): bool
     {
         return $this->creditNominator;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getCycleTerm(): string
+    {
+        return $this->cycleTerm;
+    }
+
+    public function getDefaultVoteType(): string
+    {
+        return $this->defaultVoteType;
     }
 
     /**
@@ -219,16 +260,44 @@ class Award extends AbstractResource
         return $this;
     }
 
+    public function setApprovalRequired(bool $approvalRequired)
+    {
+        $this->approvalRequired = $approvalRequired;
+        return $this;
+    }
+
     /**
      * Set the value of creditNominator
      *
-     * @param  bool  $creditNominator
-     * @return  self
+     * @param bool $creditNominator
+     * @return self
      */
-    public function setCreditNominator(bool $creditNominator)
+    public function setCreditNominator(bool $creditNominator): self
     {
         $this->creditNominator = $creditNominator;
 
+        return $this;
+    }
+
+    /**
+     *
+     * @param string $cycleTerm
+     * @return self
+     */
+    public function setCycleTerm(string $cycleTerm): self
+    {
+        $this->cycleTerm = $cycleTerm;
+        return $this;
+    }
+
+    /**
+     *
+     * @param string $defaultVoteType
+     * @return self
+     */
+    public function setDefaultVoteType(string $defaultVoteType): self
+    {
+        $this->defaultVoteType = $defaultVoteType;
         return $this;
     }
 
@@ -318,7 +387,7 @@ class Award extends AbstractResource
      *
      * @return  self
      */
-    public function setTipNominated(bool $tipNominated)
+    public function setTipNominated(bool $tipNominated): self
     {
         $this->tipNominated = $tipNominated;
 
