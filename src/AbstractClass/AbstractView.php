@@ -58,6 +58,12 @@ class AbstractView
         return '<script type="text/javascript">' . implode('', $varList) . '</script>';
     }
 
+    public static function errorPage()
+    {
+        $siteContactEmail = \phpws2\Settings::get('award', 'siteContactEmail');
+        return self::getTemplate('User/Error', ['contactEmail' => $siteContactEmail]);
+    }
+
     protected static function getScript($scriptName)
     {
         $jsDirectory = self::getHttp() . 'javascript/';
