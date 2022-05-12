@@ -15,6 +15,8 @@ namespace award\AbstractClass;
 
 use phpws2\Database;
 
+require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
+
 class AbstractFactory
 {
 
@@ -23,7 +25,7 @@ class AbstractFactory
      * properly typed values.
      * @return phpws2\Database\DB
      */
-    public static function getDB()
+    public static function getDB(): \phpws2\Database\DB
     {
         $db = Database::getDB();
         $db::$PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
@@ -60,12 +62,17 @@ class AbstractFactory
         $values = $resource->getValues();
         unset($values['id']);
         $db = Database::getDB();
-        $table = $db->addTable($resource->getTable());
+        $db->begin();
+        $table = $db->addTable($resource->getTableName());
         $table->addValueArray($values);
         if ($id) {
             $db->update();
+            $db->commit();
         } else {
             $db->insert();
+            $last_id = (int) $table->getLastId();
+            $resource->setId($last_id);
+            $db->commit();
         }
         return $resource;
     }
