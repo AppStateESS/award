@@ -16,7 +16,7 @@ abstract class AbstractResource extends AbstractConstruct
      * Primary key for Resources
      * @var int
      */
-    protected int $id;
+    protected int $id = 0;
     private string $tableName;
 
     public function __construct(string $tableName)
