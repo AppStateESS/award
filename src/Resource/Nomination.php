@@ -20,6 +20,20 @@ class Nomination extends award\AbstractResource
 {
 
     /**
+     * Determines if judges are allowed to vote for this nomination.
+     * Could be set to false for a "sudden death" vote in a tie.
+     * @var bool
+     */
+    private bool $allowVote = true;
+
+    /**
+     * Determines if this nomination is allowed to pushed forward in
+     * the process.
+     * @var bool
+     */
+    private bool $approved = false;
+
+    /**
      * @var int
      */
     private int $awardId;
@@ -65,8 +79,18 @@ class Nomination extends award\AbstractResource
      */
     private int $nominatorId;
 
+    public function getAllowVote(): bool
+    {
+        return $this->allowVote;
+    }
+
+    public function getApproved(): bool
+    {
+        return $this->approved;
+    }
+
     /**
-     * @returns int
+     * @return int
      */
     public function getAwardId(): int
     {
@@ -74,7 +98,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getBannerId(): int
     {
@@ -82,7 +106,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns bool
+     * @return bool
      */
     public function getCompleted(): bool
     {
@@ -90,7 +114,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getCycleId(): int
     {
@@ -98,7 +122,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getEmail(): string
     {
@@ -106,7 +130,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getFirstName(): string
     {
@@ -114,7 +138,7 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns string
+     * @return string
      */
     public function getLastName(): string
     {
@@ -122,11 +146,33 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @returns int
+     * @return int
      */
     public function getNominatorId(): int
     {
         return $this->nominatorId;
+    }
+
+    /**
+     *
+     * @param bool $allowVote
+     * @return self
+     */
+    public function setAllowVote(bool $allowVote): self
+    {
+        $this->allowVote = $allowVote;
+        return $this;
+    }
+
+    /**
+     *
+     * @param bool $approved
+     * @return self
+     */
+    public function setApproved(bool $approved): self
+    {
+        $this->approved = $approved;
+        return $this;
     }
 
     /**
