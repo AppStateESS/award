@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 const randomKey = () => (Math.random() + 1).toString(36).substring(7)
 
-const Select = ({name, label, update, options, value, columns}) => {
+const Select = ({name, update, options, value}) => {
   const keyRoot = randomKey()
   const mappedOptions = options.map((optionValue, count) => {
     if (typeof optionValue === 'object') {
@@ -19,31 +19,23 @@ const Select = ({name, label, update, options, value, columns}) => {
   })
 
   return (
-    <div className="form-group row">
-      <label htmlFor={name} className={`col-sm-${columns[0]} col-form-label`}>
-        {label}
-      </label>
-      <div className={`col-sm-${columns[1]}`}>
-        <select
-          name={name}
-          value={value}
-          className="form-control"
-          defaultChecked={value}
-          onChange={(e) => update(e.target.value)}>
-          {mappedOptions}
-        </select>
-      </div>
-    </div>
+    <select
+      name={name}
+      value={value}
+      className="form-control mb-1"
+      defaultChecked={value}
+      onChange={(e) => update(e.target.value)}>
+      {mappedOptions}
+    </select>
   )
 }
 
 Select.propTypes = {
   name: PropTypes.string,
-  label: PropTypes.string,
   update: PropTypes.func.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  columns: PropTypes.array,
   options: PropTypes.array.isRequired,
+  under: PropTypes.string,
 }
 
 Select.defaultProps = {
