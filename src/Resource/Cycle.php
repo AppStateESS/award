@@ -24,7 +24,7 @@ class Cycle extends AbstractResource
     /**
      * @var int
      */
-    private int $awardId;
+    private int $awardId = 0;
 
     /**
      * @var int
@@ -35,13 +35,6 @@ class Cycle extends AbstractResource
      * @var int
      */
     private int $awardYear;
-
-    /**
-     * The cycle currently in use for the award. There
-     * should be only one in the table.
-     * @var bool
-     */
-    private bool $currentlyActive = false;
 
     /**
      * Deadline for nominations
@@ -56,13 +49,17 @@ class Cycle extends AbstractResource
     private int $startDate = 0;
 
     /**
-     *
+     * Determines the time frame of the cycle.
+     * -monthly
+     * -yearly
+     * -randomly
      * @var string
      */
     private string $term = 'yearly';
 
     /**
-     * If true, judges are allowed to vote on nominees.
+     * If true, judges or participants are allowed to vote on nominees
+     * for this cycle. This should be an administrative toggle.
      * @var bool
      */
     private bool $voteAllowed = false;
@@ -72,13 +69,13 @@ class Cycle extends AbstractResource
      * is 'choose', wherein each judge picks one winner.
      * @var string
      */
-    private string $voteType = 'choose';
+    private string $voteType = 'SingleVote';
 
     public function __construct()
     {
         parent::__construct('award_cycle');
-        $this->setAwardMonth((int) strftime('l'));
-        $this->setAwardYear((int) strftime('l'));
+        $this->setAwardMonth((int) strftime('%l') + 1);
+        $this->setAwardYear((int) strftime('%l') + 1);
     }
 
     /**
@@ -103,14 +100,6 @@ class Cycle extends AbstractResource
     public function getAwardYear(): int
     {
         return $this->awardYear;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getCurrentlyActive(): bool
-    {
-        return $this->currentlyActive;
     }
 
     /**
@@ -174,12 +163,6 @@ class Cycle extends AbstractResource
     public function setAwardYear(int $awardYear): self
     {
         $this->awardYear = $awardYear;
-        return $this;
-    }
-
-    public function setCurrentlyActive(bool $currentlyActive): self
-    {
-        $this->currentlyActive = $currentlyActive;
         return $this;
     }
 
