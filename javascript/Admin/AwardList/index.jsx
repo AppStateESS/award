@@ -1,6 +1,5 @@
 'use strict'
-import React, {Fragment, useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
+import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
 import {getList} from '../../Share/XHR'
 import Loading from '../../Share/Loading'
