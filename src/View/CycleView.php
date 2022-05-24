@@ -26,10 +26,10 @@ class CycleView extends AbstractView
      */
     public static function adminList(int $awardId = 0)
     {
-        self::scriptView('CycleList', ['defaultAwardId' => $awardId]);
 
         $tplValues['menu'] = self::menu('cycle');
-        return self::getTemplate('Admin/CycleList', $tplValues);
+        $tplValues['script'] = self::scriptView('CycleList', ['defaultAwardId' => $awardId]);
+        return self::getTemplate('Admin/AdminForm', $tplValues);
     }
 
     public static function editForm(Cycle $cycle): string
