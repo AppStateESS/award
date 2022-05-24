@@ -1,9 +1,10 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
+import './style.css'
 
-const currentCycle = ({id, cycleId, awardYear, awardMonth}) => {
-  if (cycleId === null) {
+const currentCycle = (id, currentCycleId) => {
+  if (currentCycleId === 0) {
     return (
       <a
         href={`./award/Admin/Cycle/create?awardId=${id}`}
@@ -14,7 +15,7 @@ const currentCycle = ({id, cycleId, awardYear, awardMonth}) => {
   } else {
     return (
       <div>
-        {awardMonth}, {awardYear}
+        <a href={`./award/Admin/Cycle/${currentCycleId}`}>Current</a>
       </div>
     )
   }
@@ -23,40 +24,50 @@ const currentCycle = ({id, cycleId, awardYear, awardMonth}) => {
 const Listing = ({awardList}) => {
   const select = (id) => {
     return (
-      <div className="form-group">
+      <Fragment>
         <select
+          defaultValue="option"
           onChange={(e) => {
             switch (e.target.value) {
-              case 'View':
-              case 'Edit':
+              case '1':
+                location.href = `./award/Admin/Award/${id}`
+                break
+              case '2':
+                location.href = `./award/Admin/Cycle/?awardId=${id}`
+                break
+              case '3':
                 location.href = `./award/Admin/Award/${id}/edit`
                 break
-              case 'Delete':
+              case '4':
             }
           }}>
-          <option></option>
-          <option>View</option>
-          <option>Edit</option>
-          <option>Delete</option>
+          <option disabled value="option">
+            -- Options --
+          </option>
+          <option value="1">View award</option>
+          <option value="2">Cycle list</option>
+          <option value="3">Edit</option>
+          <option value="4">Delete</option>
         </select>
-      </div>
+      </Fragment>
     )
   }
 
   return (
-    <table className="table table-striped">
+    <table className="table table-striped award-list table-sm">
       <tbody>
         <tr>
-          <th style={{width: '10%'}}></th>
+          <th style={{width: '15%'}}></th>
           <th>Title</th>
           <th>Current cycle</th>
         </tr>
         {awardList.map((value) => {
+          console.log(value)
           return (
             <tr key={`award-${value.id}`}>
               <td>{select(value.id)}</td>
               <td>{value.title}</td>
-              <td>{currentCycle(value)}</td>
+              <td>{currentCycle(value.id, value.currentCycleId)}</td>
             </tr>
           )
         })}
