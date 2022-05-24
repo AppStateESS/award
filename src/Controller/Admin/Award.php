@@ -53,7 +53,7 @@ class Award extends AbstractController
      */
     protected function listJson()
     {
-        return AwardFactory::getList(['currentCycle' => true]);
+        return AwardFactory::getList();
     }
 
     protected function newAwardHtml()
@@ -75,6 +75,16 @@ class Award extends AbstractController
         $award = AwardFactory::save($award);
 
         return ['success' => true, 'id' => $award->getId()];
+    }
+
+    /**
+     * Retrieves a listing of award id and titles only.
+     *
+     * @param Request $request
+     */
+    protected function titlesJson(Request $request)
+    {
+        return AwardFactory::getList(['titleOnly' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
     }
 
 }
