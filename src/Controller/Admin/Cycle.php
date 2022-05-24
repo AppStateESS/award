@@ -41,9 +41,6 @@ class Cycle extends AbstractController
     protected function editHtml()
     {
         $cycle = CycleFactory::build($this->id);
-        var_dump($cycle);
-        exit;
-
         return CycleView::editForm($cycle);
     }
 
