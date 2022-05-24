@@ -28,8 +28,10 @@ class AwardView extends AbstractView
 
     public static function editForm(Award $award)
     {
-        $params['defaultAward'] = $award->getValues();
-        return self::scriptView('AwardForm', $params);
+        $jsparams['defaultAward'] = $award->getValues();
+        $tplvars['menu'] = self::menu('award');
+        $tplvars['script'] = self::scriptView('AwardForm', $jsparams);
+        return self::getTemplate('Admin/AdminForm', $tplvars);
     }
 
     /**
@@ -40,6 +42,17 @@ class AwardView extends AbstractView
     {
         $values = ['signedIn' => \award\Factory\ParticipantFactory::isSignedIn()];
         return self::getTemplate('User/FrontPage', $values, true);
+    }
+
+    /**
+     * Displays the next step after creation of a new award.
+     * @param Award $award
+     * @return type
+     */
+    public static function newAward(Award $award)
+    {
+        $values = $award->getValues();
+        return self::getTemplate('Admin/NewAward', $values);
     }
 
 }
