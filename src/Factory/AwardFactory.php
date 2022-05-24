@@ -15,6 +15,7 @@ namespace award\Factory;
 
 use award\AbstractClass\AbstractFactory;
 use award\Resource\Award;
+use award\Resource\Cycle;
 use phpws2\Database;
 use Canopy\Request;
 use award\Exception\ResourceNotFound;
@@ -45,15 +46,13 @@ class AwardFactory extends AbstractFactory
         $db = self::getDB();
         $awardTbl = $db->addTable('award_award');
 
-        if (!empty($options['currentCycle'])) {
-            $cycleTbl = $db->addTable('award_cycle');
-            $cycleTbl->addField('awardMonth');
-            $cycleTbl->addField('awardYear');
-            $cycleTbl->addField('id', 'cycleId');
-            $cond1 = $db->createConditional($awardTbl->getField('id'), $cycleTbl->getField('awardId'), '=');
-            $cond2 = $db->createConditional($cycleTbl->getField('currentlyActive'), 1, '=');
-            $finalCond = $db->createConditional($cond1, $cond2, 'and');
-            $db->joinResources($awardTbl, $cycleTbl, $finalCond, 'left');
+        if (!empty($options['titleOnly'])) {
+            $awardTbl->addField('id');
+            $awardTbl->addField('title');
+        }
+
+        if (!empty($options['orderBy']) && !empty($options['orderDir'])) {
+            $awardTbl->addOrderBy($options['orderBy'], $options['orderDir']);
         }
         return $db->select();
     }
@@ -111,6 +110,17 @@ class AwardFactory extends AbstractFactory
         $award->setTipNominated($request->pullPutBoolean('tipNominated'));
         $award->setWinnerAmount($request->pullPutInteger('winnerAmount'));
         return $award;
+    }
+
+    /**
+     * Sets the currentCycleId of an Award to the passed in Cycle resource.
+     * @param \award\Resource\Cycle $cycle
+     */
+    public static function setCurrentCycle(Cycle $cycle)
+    {
+        $award = self::build($cycle->awardId);
+        $award->setCurrentCycleId($cycle->id);
+        self::save($award);
     }
 
 }
