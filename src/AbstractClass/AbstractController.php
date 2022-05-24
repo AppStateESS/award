@@ -22,7 +22,7 @@ abstract class AbstractController
 {
 
     protected $role;
-    protected int $id;
+    protected int $id = 0;
 
     public function __construct(\award\Role\Base $role)
     {
