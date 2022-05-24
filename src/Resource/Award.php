@@ -40,6 +40,12 @@ class Award extends AbstractResource
     private bool $creditNominator = false;
 
     /**
+     * Id of the current cycle used by the award.
+     * @var int
+     */
+    private int $currentCycleId = 0;
+
+    /**
      * Indicates how often the award is offered:
      * - monthly
      * - yearly
@@ -143,6 +149,11 @@ class Award extends AbstractResource
     public function getCreditNominator(): bool
     {
         return $this->creditNominator;
+    }
+
+    public function getCurrentCycleId(): int
+    {
+        return $this->currentCycleId;
     }
 
     /**
@@ -276,6 +287,12 @@ class Award extends AbstractResource
     {
         $this->creditNominator = $creditNominator;
 
+        return $this;
+    }
+
+    public function setCurrentCycleId(int $currentCycleId): self
+    {
+        $this->currentCycleId = $currentCycleId;
         return $this;
     }
 
