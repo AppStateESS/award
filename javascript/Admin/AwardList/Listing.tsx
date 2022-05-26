@@ -3,7 +3,13 @@ import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
 import './style.css'
 
-const currentCycle = (id, currentCycleId) => {
+interface Award {
+  id: number
+  title: string
+  currentCycleId: number
+}
+
+const currentCycle = (id: number, currentCycleId: number) => {
   if (currentCycleId === 0) {
     return (
       <a
@@ -21,8 +27,13 @@ const currentCycle = (id, currentCycleId) => {
   }
 }
 
-const Listing = ({awardList}) => {
-  const select = (id) => {
+interface ListingProps {
+  awardList: Array<Award>
+}
+
+const Listing = ({awardList}: ListingProps) => {
+  console.log(awardList)
+  const select = (id: number) => {
     return (
       <Fragment>
         <select

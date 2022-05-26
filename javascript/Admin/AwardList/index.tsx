@@ -14,11 +14,11 @@ const AwardList = () => {
     const controller = new AbortController()
     const params = {
       url: 'award/Admin/Award',
-      handleSuccess: (data) => {
+      handleSuccess: (data: any) => {
         setLoading(false)
         setAwardList(data)
       },
-      handleError: (error) => console.error(error),
+      handleError: (error: object) => console.error(error),
       signal: controller.signal,
     }
     getList(params)
@@ -44,6 +44,6 @@ const AwardList = () => {
 
 AwardList.propTypes = {}
 
-const container = document.getElementById('AwardList')
+const container = document.getElementById('AwardList') as HTMLElement
 const root = createRoot(container)
 root.render(<AwardList />)
