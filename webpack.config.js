@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
       },
     },
     resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.tsx', '.ts'],
     },
     plugins: [],
     module: {
@@ -36,12 +36,21 @@ module.exports = (env, argv) => {
           use: ['style-loader', 'css-loader'],
         },
         {
+          test: /\.(ts|tsx)$/,
+          exclude: /node_modules/,
+          use: ['ts-loader'],
+        },
+        {
           test: /\.jsx?/,
           include: setup.APP_DIR,
           use: {
             loader: 'babel-loader',
             options: {
-              presets: ['@babel/preset-env', '@babel/preset-react'],
+              presets: [
+                '@babel/preset-typescript',
+                '@babel/preset-env',
+                '@babel/preset-react',
+              ],
             },
           },
         },
