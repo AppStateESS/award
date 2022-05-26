@@ -21,6 +21,38 @@ class AbstractFactory
 {
 
     /**
+     * Receives a stack of rows and compares value types against the resourceClass.
+     * @param array $rows
+     * @param string $resourceClass
+     */
+    public static function enforceBooleanValues(array $rows, string $resourceClass)
+    {
+        if (empty($rows)) {
+            return [];
+        }
+        $reflection = new \ReflectionClass($resourceClass);
+        $properties = $reflection->getProperties();
+        $booleanList = [];
+        foreach ($properties as $property) {
+            $propType = $property->getType()->getName();
+            if ($propType === 'bool') {
+                $booleanList[] = $property->name;
+            }
+        }
+        $boolIt = function (&$param, $key, $booleanList) {
+            if (in_array($key, $booleanList)) {
+                $param = (bool) $param;
+            }
+        };
+        foreach ($rows as $key => $row) {
+            array_walk($row, $boolIt, $booleanList);
+            $rows[$key] = $row;
+        }
+
+        return $rows;
+    }
+
+    /**
      * Returns a DB object with emulation turned off so we get
      * properly typed values.
      * @return phpws2\Database\DB
