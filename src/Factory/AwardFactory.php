@@ -54,7 +54,8 @@ class AwardFactory extends AbstractFactory
         if (!empty($options['orderBy']) && !empty($options['orderDir'])) {
             $awardTbl->addOrderBy($options['orderBy'], $options['orderDir']);
         }
-        return $db->select();
+        $result = $db->select();
+        return self::enforceBooleanValues($result, 'award\Resource\Award');
     }
 
     /**
