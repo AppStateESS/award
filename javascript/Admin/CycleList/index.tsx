@@ -1,20 +1,29 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
+import PropTypes from 'prop-types'
 import {getList} from '../../Share/XHR'
 import {createRoot} from 'react-dom/client'
 import {useTransition} from 'transition-hook'
 import Loading from '../../Share/Loading'
 import AwardSelect from './AwardSelect'
 import Listing from './Listing'
+import {CycleResource} from '../../ResourceTypes'
 
 /* global defaultAwardId */
+interface AwardTitle {
+  id: number
+  title: string
+}
 
-const getAwardTitle = (awardId, awardList) => {
+const getAwardTitle = (
+  awardId: number,
+  awardList: Array<AwardTitle>
+): string => {
   if (awardId === 0) {
     return ''
   }
 
-  let awardTitle
+  let awardTitle = ''
   awardList.forEach((element) => {
     if (awardId === element.id) {
       awardTitle = element.title
@@ -23,11 +32,11 @@ const getAwardTitle = (awardId, awardList) => {
   return awardTitle
 }
 
-const CycleList = ({defaultAwardId}) => {
+const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
   const [awardId, setAwardId] = useState(defaultAwardId)
-  const [awardList, setAwardList] = useState(null)
+  const [awardList, setAwardList] = useState<AwardTitle[] | null>(null)
   const [errorMessage, setErrorMessage] = useState('')
-  const [cycleListing, setCycleListing] = useState([])
+  const [cycleListing, setCycleListing] = useState<CycleResource[]>([])
   const [loading, setLoading] = useState(false)
   const [awardTitle, setAwardTitle] = useState('')
   const {stage, shouldMount} = useTransition(errorMessage.length > 0, 500)
@@ -36,7 +45,7 @@ const CycleList = ({defaultAwardId}) => {
     const controller = new AbortController()
     const {signal} = controller
     const url = './award/Admin/Award/titles'
-    const handleSuccess = (data) => {
+    const handleSuccess = (data: AwardTitle[]) => {
       setAwardList(data)
       if (defaultAwardId === 0) {
         setAwardId(data[0].id)
@@ -54,7 +63,7 @@ const CycleList = ({defaultAwardId}) => {
       const controller = new AbortController()
       const {signal} = controller
       const url = `award/Admin/Cycle/?awardId=${awardId}`
-      const handleSuccess = (data) => {
+      const handleSuccess = (data: CycleResource[]) => {
         setCycleListing(data)
         setLoading(false)
       }
@@ -110,8 +119,9 @@ const CycleList = ({defaultAwardId}) => {
   )
 }
 
-CycleList.propTypes = {}
+CycleList.propTypes = {defaultAwardId: PropTypes.number}
 
-const container = document.getElementById('CycleList')
+const container = document.getElementById('CycleList') as HTMLElement
 const root = createRoot(container)
+
 root.render(<CycleList defaultAwardId={defaultAwardId} />)

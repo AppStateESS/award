@@ -1,6 +1,7 @@
 'use strict'
 import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
+import {deleteItem} from '../../Share/XHR'
 
 const Listing = ({cycleListing}) => {
   const select = (id) => {
