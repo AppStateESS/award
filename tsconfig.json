@@ -23,6 +23,5 @@
     "javascript/**/*.jsx",
     "javascript/dev/**/*",
     "javascript/build/**/*"
-  ],
-  "typeRoots": ["./typings"]
+  ]
 }
