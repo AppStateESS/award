@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
-import DateTimePicker from 'react-datetime-picker/dist/DateTimePicker'
+import DateTimePicker from 'react-datetime-picker'
 import {getList, saveResource} from '../../Share/XHR'
 import 'react-calendar/dist/Calendar.css'
 import 'react-datetime-picker/dist/DateTimePicker.css'
@@ -9,8 +9,10 @@ import 'react-clock/dist/Clock.css'
 import './style.css'
 import {Select} from '../../Share/Form/Form'
 import {createRoot} from 'react-dom/client'
+import {CycleResource, VoteTypes} from '../../ResourceTypes'
 
-/* global defaultCycle, awardTitle */
+declare const defaultCycle: CycleResource
+declare const awardTitle: string
 
 const months = [
   {label: 'January', value: 1},
@@ -34,20 +36,28 @@ const years = [
   {label: 'Next year', value: nextYear},
 ]
 
-const CycleForm = ({defaultCycle, awardTitle}) => {
+const CycleForm = ({
+  defaultCycle,
+  awardTitle,
+}: {
+  defaultCycle: CycleResource
+  awardTitle: string
+}) => {
   const defaultMessage = {text: '', type: 'danger'}
-  const [cycle, setCycle] = useState(defaultCycle)
+  const [cycle, setCycle] = useState<CycleResource>(defaultCycle)
   const [message, setMessage] = useState(defaultMessage)
   const [dateError, setDateError] = useState(false)
-  const [voteTypes, setVoteTypes] = useState([])
-  const [voteTypeOptions, setVoteTypeOptions] = useState([])
+  const [voteTypes, setVoteTypes] = useState<VoteTypes[]>([])
+  const [voteTypeOptions, setVoteTypeOptions] = useState<voteOptions[]>([])
   const [currentVoteType, setCurrentVoteType] = useState(0)
+
+  type voteOptions = {label: string; value: string | number}
 
   useEffect(() => {
     const params = {
       url: 'award/Admin/Vote/types',
-      handleSuccess: (e) => {
-        const vto = []
+      handleSuccess: (e: Array<any>) => {
+        const vto: voteOptions[] = []
         e.forEach((value, key) => {
           vto.push({label: value.title, value: key})
         })
@@ -90,20 +100,23 @@ const CycleForm = ({defaultCycle, awardTitle}) => {
     saveResource(params)
   }
 
-  const updateVoteType = (key) => {
+  const updateVoteType = (key: number) => {
     update('voteType', voteTypes[key].className)
     setCurrentVoteType(key)
   }
 
-  const update = (param, value) => {
+  const update = <T extends keyof CycleResource>(
+    param: T,
+    value: CycleResource[T]
+  ) => {
     cycle[param] = value
     setCycle({...cycle})
   }
 
-  const updateStartDate = (e) => {
+  const updateStartDate = (e: Date) => {
     update('startDate', Math.floor(e.getTime() / 1000))
   }
-  const updateEndDate = (e) => {
+  const updateEndDate = (e: Date) => {
     update('endDate', Math.floor(e.getTime() / 1000))
   }
   const startDate = new Date(cycle.startDate * 1000)
@@ -124,25 +137,37 @@ const CycleForm = ({defaultCycle, awardTitle}) => {
     }
     if (cycle.term === 'monthly') {
       return (
-        <Select
-          name="awardMonth"
-          label="Which month is this award for?"
-          update={(e) => update('awardMonth', e)}
-          value={cycle.awardMonth}
-          options={months}
-          columns={[4, 4]}
-        />
+        <div className="row">
+          <div className="col-sm-6">
+            <label>Which month is this award for?</label>
+          </div>
+          <div className="col-sm-6">
+            <Select
+              name="awardMonth"
+              update={(e) => update('awardMonth', e)}
+              value={cycle.awardMonth}
+              options={months}
+              columns={[4, 4]}
+            />
+          </div>
+        </div>
       )
     } else if (cycle.term === 'yearly') {
       return (
-        <Select
-          name="awardYear"
-          label="Which year is this award for?"
-          update={(e) => update('awardYear', e)}
-          value={cycle.awardYear}
-          options={years}
-          columns={[4, 4]}
-        />
+        <div className="row">
+          <div className="col-sm-6">
+            <label>Which year is this award for?</label>
+          </div>
+          <div className="col-sm-6">
+            <Select
+              name="awardYear"
+              update={(e) => update('awardYear', e)}
+              value={cycle.awardYear}
+              options={years}
+              columns={[4, 4]}
+            />
+          </div>
+        </div>
       )
     } else {
       return
@@ -196,15 +221,21 @@ const CycleForm = ({defaultCycle, awardTitle}) => {
           )}
         </div>
       </div>
-      <Select
-        name="voteType"
-        label="What voting method would you like to use?"
-        update={updateVoteType}
-        value={currentVoteType}
-        options={voteTypeOptions}
-        columns={[4, 4]}
-        under={voteInfo}
-      />
+      <div className="row">
+        <div className="col-sm-6">
+          <label>What voting method would you like to use?</label>
+        </div>
+        <div className="col-sm-6">
+          <Select
+            name="voteType"
+            update={updateVoteType}
+            value={currentVoteType}
+            options={voteTypeOptions}
+            columns={[4, 4]}
+          />
+        </div>
+      </div>
+      {voteInfo}
 
       <button className="btn btn-primary btn-block" onClick={save}>
         Save cycle
@@ -218,6 +249,6 @@ CycleForm.propTypes = {
   awardTitle: PropTypes.string,
 }
 
-const container = document.getElementById('CycleForm')
+const container = document.getElementById('CycleForm') as HTMLElement
 const root = createRoot(container)
 root.render(<CycleForm {...{defaultCycle, awardTitle}} />)

@@ -24,7 +24,7 @@ interface getListParams {
   url: string
   handleSuccess: (data: Array<any>) => void
   handleError?: (error: AxiosError) => void
-  signal: AbortSignal
+  signal?: AbortSignal
 }
 
 const getList = async ({
@@ -54,7 +54,7 @@ const saveResource = async ({
   success,
   failure,
 }: {
-  resource: Record<string, string | number | boolean>
+  resource: Record<string, any>
   role: string
   resourceName: string
   success: (data: any) => void

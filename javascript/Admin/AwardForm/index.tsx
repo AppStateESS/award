@@ -9,6 +9,7 @@ import {
   Select,
   ButtonGroup,
 } from '../../Share/Form/Form'
+import {AwardResource} from '../../ResourceTypes'
 import './form.css'
 import {createRoot} from 'react-dom/client'
 
@@ -24,12 +25,17 @@ const judgeMethod = [
   {value: 0, label: 'All participants'},
 ]
 
-/* global defaultAward */
-const AwardForm = ({defaultAward}) => {
+declare const defaultAward: AwardResource
+
+const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
   const defaultMessage = {text: '', type: 'danger'}
-  const [award, setAward] = useState(defaultAward)
+  const [award, setAward] = useState<AwardResource>(defaultAward)
   const [message, setMessage] = useState(defaultMessage)
-  const update = (param, value) => {
+
+  const update = <T extends keyof AwardResource>(
+    param: T,
+    value: AwardResource[T]
+  ) => {
     award[param] = value
     setAward({...award})
   }
@@ -64,14 +70,14 @@ const AwardForm = ({defaultAward}) => {
       ) : null}
       <Input
         value={award.title}
-        update={(value) => update('title', value)}
+        update={(value: string) => update('title', value)}
         name="title"
         columns={[4, 8]}
         allowEmpty={false}
       />
       <Textarea
         value={award.description}
-        update={(value) => update('description', value)}
+        update={(value: keyof AwardResource) => update('description', value)}
         columns={[4, 8]}
         name="description"
       />
@@ -182,6 +188,6 @@ const AwardForm = ({defaultAward}) => {
 
 AwardForm.propTypes = {defaultAward: PropTypes.object}
 
-const container = document.getElementById('AwardForm')
+const container = document.getElementById('AwardForm') as HTMLElement
 const root = createRoot(container)
 root.render(<AwardForm {...{defaultAward}} />)

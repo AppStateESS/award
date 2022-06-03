@@ -9,7 +9,8 @@ import AwardSelect from './AwardSelect'
 import Listing from './Listing'
 import {CycleResource} from '../../ResourceTypes'
 
-/* global defaultAwardId */
+declare const defaultAwardId : number
+
 interface AwardTitle {
   id: number
   title: string

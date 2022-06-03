@@ -4,17 +4,18 @@ import {createRoot} from 'react-dom/client'
 import {getList} from '../../Share/XHR'
 import Loading from '../../Share/Loading'
 import Listing from './Listing'
+import {AwardResource} from '../../ResourceTypes'
 
 const AwardList = () => {
   const [loading, setLoading] = useState(true)
-  const [awardList, setAwardList] = useState([])
+  const [awardList, setAwardList] = useState<AwardResource[]>([])
 
   useEffect(() => {
     setLoading(true)
     const controller = new AbortController()
     const params = {
       url: 'award/Admin/Award',
-      handleSuccess: (data: any) => {
+      handleSuccess: (data: AwardResource[]) => {
         setLoading(false)
         setAwardList(data)
       },

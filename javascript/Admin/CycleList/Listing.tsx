@@ -1,10 +1,11 @@
 'use strict'
 import React, {Fragment} from 'react'
 import PropTypes from 'prop-types'
-import {deleteItem} from '../../Share/XHR'
+//import {deleteItem} from '../../Share/XHR'
+import {CycleResource} from '../../ResourceTypes'
 
-const Listing = ({cycleListing}) => {
-  const select = (id) => {
+const Listing = ({cycleListing}: {cycleListing: CycleResource[]}) => {
+  const select = (id: number) => {
     return (
       <Fragment>
         <select
