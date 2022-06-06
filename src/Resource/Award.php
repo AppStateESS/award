@@ -62,6 +62,12 @@ class Award extends AbstractResource
     private string $defaultVoteType = AWARD_DEFAULT_VOTE_TYPE;
 
     /**
+     *
+     * @var bool
+     */
+    private bool $deleted = false;
+
+    /**
      * A description of the award.
      *
      * @var string
@@ -168,6 +174,11 @@ class Award extends AbstractResource
     public function getDefaultVoteType(): string
     {
         return $this->defaultVoteType;
+    }
+
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
     }
 
     /**
@@ -315,6 +326,12 @@ class Award extends AbstractResource
     public function setDefaultVoteType(string $defaultVoteType): self
     {
         $this->defaultVoteType = $defaultVoteType;
+        return $this;
+    }
+
+    public function setDeleted($deleted): self
+    {
+        $this->deleted = $deleted;
         return $this;
     }
 
