@@ -1,13 +1,11 @@
 'use strict'
-import React, {Fragment} from 'react'
+import React, {useState, Fragment} from 'react'
 import PropTypes from 'prop-types'
+import {AwardResource} from '../../ResourceTypes'
+import {deleteItem} from '../../Share/XHR'
+import Modal from '../../Share/Modal'
+import DeletePrompt from './DeletePrompt'
 import './style.css'
-
-interface Award {
-  id: number
-  title: string
-  currentCycleId: number
-}
 
 const currentCycle = (id: number, currentCycleId: number) => {
   if (currentCycleId === 0) {
@@ -28,28 +26,37 @@ const currentCycle = (id: number, currentCycleId: number) => {
 }
 
 interface ListingProps {
-  awardList: Array<Award>
+  awardList: Array<AwardResource>
+  reload: () => void
 }
 
-const Listing = ({awardList}: ListingProps) => {
-  console.log(awardList)
-  const select = (id: number) => {
+const Listing = ({awardList, reload}: ListingProps) => {
+  const [deleteModal, setDeleteModal] = useState(false)
+  const [currentAward, setCurrentAward] = useState<AwardResource>()
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+
+  const select = (award: AwardResource) => {
+    const [current, setCurrent] = useState('option')
     return (
       <Fragment>
         <select
-          defaultValue="option"
+          value={current}
           onChange={(e) => {
             switch (e.target.value) {
               case '1':
-                location.href = `./award/Admin/Award/${id}`
+                location.href = `./award/Admin/Award/${award.id}`
                 break
               case '2':
-                location.href = `./award/Admin/Cycle/?awardId=${id}`
+                location.href = `./award/Admin/Cycle/?awardId=${award.id}`
                 break
               case '3':
-                location.href = `./award/Admin/Award/${id}/edit`
+                location.href = `./award/Admin/Award/${award.id}/edit`
                 break
               case '4':
+                setCurrent('option')
+                setCurrentAward(award)
+                setDeleteModal(true)
+                break
             }
           }}>
           <option disabled value="option">
@@ -64,26 +71,67 @@ const Listing = ({awardList}: ListingProps) => {
     )
   }
 
+  const deleteAward = () => {
+    setDeleteConfirm(false)
+    setDeleteModal(false)
+    if (currentAward) {
+      deleteItem('Admin', 'Award', currentAward.id).then(() => {
+        reload()
+      })
+    }
+  }
+
+  let deleteButton
+  if (deleteConfirm) {
+    deleteButton = (
+      <button className="btn btn-danger" onClick={deleteAward}>
+        Are you sure?
+      </button>
+    )
+  } else {
+    deleteButton = (
+      <button
+        className="btn btn-danger"
+        onClick={() => {
+          setDeleteConfirm(true)
+        }}>
+        Delete
+      </button>
+    )
+  }
+
   return (
-    <table className="table table-striped award-list table-sm">
-      <tbody>
-        <tr>
-          <th style={{width: '15%'}}></th>
-          <th>Title</th>
-          <th>Current cycle</th>
-        </tr>
-        {awardList.map((value) => {
-          console.log(value)
-          return (
-            <tr key={`award-${value.id}`}>
-              <td>{select(value.id)}</td>
-              <td>{value.title}</td>
-              <td>{currentCycle(value.id, value.currentCycleId)}</td>
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
+    <div>
+      <Modal
+        title={`Delete award: ${currentAward && currentAward.title}`}
+        show={deleteModal}
+        button={deleteButton}
+        close={() => {
+          setDeleteModal(false)
+          setDeleteConfirm(false)
+        }}>
+        <DeletePrompt award={currentAward} />
+      </Modal>
+
+      <table className="table table-striped award-list table-sm">
+        <tbody>
+          <tr>
+            <th style={{width: '15%'}}></th>
+            <th>Title</th>
+            <th>Current cycle</th>
+          </tr>
+          {awardList.map((value: AwardResource) => {
+            return (
+              <tr key={`award-${value.id}`}>
+                <td>{select(value)}</td>
+                <td>{value.title}</td>
+                <td>{currentCycle(value.id, value.currentCycleId)}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
