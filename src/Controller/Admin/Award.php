@@ -32,6 +32,18 @@ class Award extends AbstractController
         return AwardView::editForm($award);
     }
 
+    protected function deleteHtml()
+    {
+        $award = AwardFactory::build($this->id);
+        return AwardView::deleteForm($award);
+    }
+
+    protected function delete(Request $request)
+    {
+        AwardFactory::delete($this->id);
+        return ['success' => true];
+    }
+
     protected function editHtml()
     {
         $award = AwardFactory::build($this->id);
