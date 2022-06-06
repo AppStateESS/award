@@ -11,6 +11,10 @@ const AwardList = () => {
   const [awardList, setAwardList] = useState<AwardResource[]>([])
 
   useEffect(() => {
+    load()
+  }, [])
+
+  const load = () => {
     setLoading(true)
     const controller = new AbortController()
     const params = {
@@ -23,8 +27,7 @@ const AwardList = () => {
       signal: controller.signal,
     }
     getList(params)
-    return () => controller.abort()
-  }, [])
+  }
 
   let content
   if (loading) {
@@ -37,7 +40,7 @@ const AwardList = () => {
       </div>
     )
   } else {
-    content = <Listing {...{awardList}} />
+    content = <Listing reload={load} {...{awardList}} />
   }
 
   return <div>{content}</div>
