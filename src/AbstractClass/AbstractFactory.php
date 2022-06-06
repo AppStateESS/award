@@ -98,6 +98,7 @@ class AbstractFactory
         $table = $db->addTable($resource->getTableName());
         $table->addValueArray($values);
         if ($id) {
+            $table->addFieldConditional('id', $id);
             $db->update();
             $db->commit();
         } else {
