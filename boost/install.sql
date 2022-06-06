@@ -5,6 +5,7 @@ CREATE TABLE award_award (
     creditNominator bool DEFAULT 0,
     currentCycleId int DEFAULT 0,
     cycleTerm varchar(20) default 'yearly',
+    deleted bool DEFAULT 0,
     description text DEFAULT NULL,
     judgeMethod int DEFAULT 1,
     nominationReasonRequired bool DEFAULT 0,
