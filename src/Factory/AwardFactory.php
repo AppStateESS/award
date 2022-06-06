@@ -41,6 +41,17 @@ class AwardFactory extends AbstractFactory
         return $award;
     }
 
+    /**
+     * Flips the deleted flag on the Award resource and saves it.
+     * @param int $awardId
+     */
+    public static function delete(int $awardId)
+    {
+        $award = self::build($awardId);
+        $award->setDeleted(true);
+        self::save($award);
+    }
+
     public static function getList(array $options = [])
     {
         $db = self::getDB();
@@ -54,6 +65,13 @@ class AwardFactory extends AbstractFactory
         if (!empty($options['orderBy']) && !empty($options['orderDir'])) {
             $awardTbl->addOrderBy($options['orderBy'], $options['orderDir']);
         }
+
+        if (!empty($options['deletedOnly'])) {
+            $awardTbl->addFieldConditional('deleted', 1);
+        } else {
+            $awardTbl->addFieldConditional('deleted', 0);
+        }
+
         $result = $db->select();
         return self::enforceBooleanValues($result, 'award\Resource\Award');
     }
