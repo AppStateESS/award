@@ -32,8 +32,8 @@ const months = [
 const currentYear = new Date().getFullYear()
 const nextYear = currentYear + 1
 const years = [
-  {label: 'This year', value: currentYear},
-  {label: 'Next year', value: nextYear},
+  {label: new Date().getFullYear(), value: currentYear},
+  {label: new Date().getFullYear() + 1, value: nextYear},
 ]
 
 const CycleForm = ({
@@ -125,7 +125,7 @@ const CycleForm = ({
   let voteInfo
   if (voteTypes.some((e) => e.description)) {
     voteInfo = (
-      <p className="small">
+      <p className="small bg-secondary p-1">
         <strong>Description:</strong> {voteTypes[currentVoteType].description}
       </p>
     )
@@ -138,10 +138,10 @@ const CycleForm = ({
     if (cycle.term === 'monthly') {
       return (
         <div className="row">
-          <div className="col-sm-6">
-            <label>Which month is this award for?</label>
+          <div className="col-sm-4">
+            <label>Which month and year is this award for?</label>
           </div>
-          <div className="col-sm-6">
+          <div className="col-sm-4">
             <Select
               name="awardMonth"
               update={(e) => update('awardMonth', e)}
@@ -150,21 +150,28 @@ const CycleForm = ({
               columns={[4, 4]}
             />
           </div>
-        </div>
-      )
-    } else if (cycle.term === 'yearly') {
-      return (
-        <div className="row">
-          <div className="col-sm-6">
-            <label>Which year is this award for?</label>
-          </div>
-          <div className="col-sm-6">
+          <div className="col-sm-2">
             <Select
               name="awardYear"
               update={(e) => update('awardYear', e)}
               value={cycle.awardYear}
               options={years}
-              columns={[4, 4]}
+            />
+          </div>
+        </div>
+      )
+    } else if (cycle.term === 'yearly') {
+      return (
+        <div className="row">
+          <div className="col-sm-4">
+            <label>Which year is this award for?</label>
+          </div>
+          <div className="col-sm-4">
+            <Select
+              name="awardYear"
+              update={(e) => update('awardYear', e)}
+              value={cycle.awardYear}
+              options={years}
             />
           </div>
         </div>
@@ -222,7 +229,7 @@ const CycleForm = ({
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-6">
+        <div className="col-sm-4">
           <label>What voting method would you like to use?</label>
         </div>
         <div className="col-sm-6">
@@ -233,9 +240,10 @@ const CycleForm = ({
             options={voteTypeOptions}
             columns={[4, 4]}
           />
+          {voteInfo}
         </div>
       </div>
-      {voteInfo}
+      {DateSelect()}
 
       <button className="btn btn-primary btn-block" onClick={save}>
         Save cycle
