@@ -24,6 +24,7 @@ CREATE TABLE award_cycle (
     awardId int,
     awardMonth smallint DEFAULT 0,
     awardYear smallint DEFAULT 0,
+    deleted smallint DEFAULT 0,
     endDate int default 0,
     startDate int default 0,
     term varchar(20) default 'yearly',
@@ -40,6 +41,17 @@ CREATE TABLE award_badge (
     filePath varchar(255),
     shortDescription varchar(255) DEFAULT NULL,
     FOREIGN KEY(awardId) REFERENCES award_award(id)
+);
+
+CREATE TABLE award_invitation (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    confirm smallint DEFAULT 0,
+    cycleId int DEFAULT 0,
+    email varchar(255) not null,
+    judge smallint DEFAULT 0,
+    nominated smallint DEFAULT 0,
+    participantId int DEFAULT 0,
+    reference int DEFAULT 0
 );
 
 CREATE TABLE award_participant (
