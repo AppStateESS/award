@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, Fragment} from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {AwardResource} from '../../ResourceTypes'
 import {deleteItem} from '../../Share/XHR'
@@ -38,36 +38,34 @@ const Listing = ({awardList, reload}: ListingProps) => {
   const select = (award: AwardResource) => {
     const [current, setCurrent] = useState('option')
     return (
-      <Fragment>
-        <select
-          value={current}
-          onChange={(e) => {
-            switch (e.target.value) {
-              case '1':
-                location.href = `./award/Admin/Award/${award.id}`
-                break
-              case '2':
-                location.href = `./award/Admin/Cycle/?awardId=${award.id}`
-                break
-              case '3':
-                location.href = `./award/Admin/Award/${award.id}/edit`
-                break
-              case '4':
-                setCurrent('option')
-                setCurrentAward(award)
-                setDeleteModal(true)
-                break
-            }
-          }}>
-          <option disabled value="option">
-            -- Options --
-          </option>
-          <option value="1">View award</option>
-          <option value="2">Cycle list</option>
-          <option value="3">Edit</option>
-          <option value="4">Delete</option>
-        </select>
-      </Fragment>
+      <select
+        value={current}
+        onChange={(e) => {
+          switch (e.target.value) {
+            case '1':
+              location.href = `./award/Admin/Award/${award.id}`
+              break
+            case '2':
+              location.href = `./award/Admin/Cycle/?awardId=${award.id}`
+              break
+            case '3':
+              location.href = `./award/Admin/Award/${award.id}/edit`
+              break
+            case '4':
+              setCurrent('option')
+              setCurrentAward(award)
+              setDeleteModal(true)
+              break
+          }
+        }}>
+        <option disabled value="option">
+          -- Options --
+        </option>
+        <option value="1">View award</option>
+        <option value="2">Cycle list</option>
+        <option value="3">Edit</option>
+        <option value="4">Delete</option>
+      </select>
     )
   }
 
