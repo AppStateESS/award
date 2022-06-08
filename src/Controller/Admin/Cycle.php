@@ -31,6 +31,9 @@ class Cycle extends AbstractController
     {
         $awardId = $request->pullGetInteger('awardId');
         $award = AwardFactory::build($awardId);
+        if ($award->getCurrentCycleId()) {
+            return CycleView::currentCycleWarning($award);
+        }
         $cycle = CycleFactory::build();
         $cycle->setAwardId($awardId);
         $cycle->setTerm($award->getCycleTerm());
@@ -38,8 +41,16 @@ class Cycle extends AbstractController
         return CycleView::editForm($cycle);
     }
 
+    protected function delete(Request $request)
+    {
+        $this->idRequired();
+        CycleFactory::delete($this->id);
+        return ['success' => true];
+    }
+
     protected function editHtml()
     {
+        $this->idRequired();
         $cycle = CycleFactory::build($this->id);
         return CycleView::editForm($cycle);
     }
@@ -70,6 +81,7 @@ class Cycle extends AbstractController
 
     protected function put(Request $request)
     {
+        $this->idRequired();
         $cycle = CycleFactory::put($request);
         $cycle = CycleFactory::save($cycle);
 
