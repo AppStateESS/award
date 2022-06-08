@@ -9,7 +9,7 @@ import AwardSelect from './AwardSelect'
 import Listing from './Listing'
 import {CycleResource} from '../../ResourceTypes'
 
-declare const defaultAwardId : number
+declare const defaultAwardId: number
 
 interface AwardTitle {
   id: number
@@ -43,6 +43,10 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
   const {stage, shouldMount} = useTransition(errorMessage.length > 0, 500)
 
   useEffect(() => {
+    loadTitles()
+  }, [])
+
+  const loadTitles = () => {
     const controller = new AbortController()
     const {signal} = controller
     const url = './award/Admin/Award/titles'
@@ -56,21 +60,25 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
       setErrorMessage('Could not retrieve awards')
     }
     getList({url, handleSuccess, handleError, signal})
-  }, [])
+  }
 
   useEffect(() => {
     if (awardId > 0) {
-      setLoading(true)
-      const controller = new AbortController()
-      const {signal} = controller
-      const url = `award/Admin/Cycle/?awardId=${awardId}`
-      const handleSuccess = (data: CycleResource[]) => {
-        setCycleListing(data)
-        setLoading(false)
-      }
-      getList({url, handleSuccess, signal})
+      loadList()
     }
   }, [awardId])
+
+  const loadList = () => {
+    setLoading(true)
+    const controller = new AbortController()
+    const {signal} = controller
+    const url = `award/Admin/Cycle/?awardId=${awardId}`
+    const handleSuccess = (data: CycleResource[]) => {
+      setCycleListing(data)
+      setLoading(false)
+    }
+    getList({url, handleSuccess, signal})
+  }
 
   useEffect(() => {
     if (awardList) {
@@ -92,7 +100,7 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
           {loading ? (
             <Loading things="cycles" />
           ) : (
-            <Listing {...{cycleListing}} />
+            <Listing reload={loadList} {...{cycleListing}} />
           )}
         </div>
       )
@@ -115,6 +123,12 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
           {errorMessage}
         </div>
       )}
+      <a
+        className="btn btn-outline-dark"
+        href={`./award/Admin/Cycle/create?awardId=${awardId}`}>
+        Create new cycle
+      </a>
+      <hr />
       {content}
     </div>
   )
