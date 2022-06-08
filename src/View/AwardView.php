@@ -47,7 +47,9 @@ class AwardView extends AbstractView
      */
     public static function frontPage()
     {
-        $values = ['signedIn' => \award\Factory\ParticipantFactory::isSignedIn()];
+        $values = [];
+        $values['admin'] = \Current_User::allow('award');
+        $values['signedIn'] = \award\Factory\ParticipantFactory::isSignedIn();
         return self::getTemplate('User/FrontPage', $values, true);
     }
 
