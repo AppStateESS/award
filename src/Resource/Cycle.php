@@ -22,16 +22,21 @@ class Cycle extends AbstractResource
 {
 
     /**
+     * The award this cycle represents. Note there is a unique
+     * key on awardId, awardMonth, and awardYear. No repeats
+     * are allowed.
      * @var int
      */
     private int $awardId = 0;
 
     /**
+     * The month this award's cycle represents.
      * @var int
      */
     private int $awardMonth;
 
     /**
+     * The year this award's cycle represents
      * @var int
      */
     private int $awardYear;
