@@ -135,10 +135,23 @@ abstract class AbstractController
     }
 
     /**
+     * Checks if the child object id is set. Used for id dependent
+     * functions (edit, delete, etc.).
+     * If not set, an Exception is thrown
+     * @throws Exception
+     */
+    protected function idRequired(): void
+    {
+        if (empty($this->id)) {
+            throw new \Exception('Missing resource id');
+        }
+    }
+
+    /**
      * Loads the EXPECTED id from the url into the object.
      * If the id is not there, the command fails
      */
-    protected function loadRequestId(Request $request)
+    protected function loadRequestId(Request $request): void
     {
         $id = $request->shiftCommand();
         if (!is_numeric($id)) {
