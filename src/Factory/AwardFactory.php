@@ -42,6 +42,17 @@ class AwardFactory extends AbstractFactory
     }
 
     /**
+     * Clears the current cycle id from the award.
+     * @param int $awardId
+     */
+    public static function clearCycle(int $awardId)
+    {
+        $award = self::build($awardId);
+        $award->setCurrentCycleId(0);
+        self::save($award);
+    }
+
+    /**
      * Flips the deleted flag on the Award resource and saves it.
      * @param int $awardId
      */
@@ -50,6 +61,7 @@ class AwardFactory extends AbstractFactory
         $award = self::build($awardId);
         $award->setDeleted(true);
         self::save($award);
+        CycleFactory::deleteByAwardId($award->id);
     }
 
     public static function getList(array $options = [])
