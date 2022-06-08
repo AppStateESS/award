@@ -34,18 +34,21 @@ class Award extends AbstractController
 
     protected function deleteHtml()
     {
+        $this->idRequired();
         $award = AwardFactory::build($this->id);
         return AwardView::deleteForm($award);
     }
 
     protected function delete(Request $request)
     {
+        $this->idRequired();
         AwardFactory::delete($this->id);
         return ['success' => true];
     }
 
     protected function editHtml()
     {
+        $this->idRequired();
         $award = AwardFactory::build($this->id);
         return AwardView::editForm($award);
     }
@@ -83,6 +86,7 @@ class Award extends AbstractController
 
     protected function put(Request $request)
     {
+        $this->idRequired();
         $award = AwardFactory::put($request, $this->id);
         $award = AwardFactory::save($award);
 
