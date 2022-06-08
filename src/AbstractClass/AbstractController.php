@@ -29,44 +29,6 @@ abstract class AbstractController
         $this->role = $role;
     }
 
-    /**
-     * Returns the current get command
-     * Defaults to a "view" command if an id is set and
-     * "list" if otherwise.
-     * @param Request $request
-     * @return string
-     */
-    protected function pullGetCommand(Request $request)
-    {
-        $command = $request->shiftCommand();
-        if (is_numeric($command)) {
-            $this->id = (int) $command;
-
-            $subcommand = $request->shiftCommand();
-            if (empty($subcommand)) {
-                $command = 'view';
-            } else {
-                return $subcommand;
-            }
-        } else if (empty($command)) {
-            $command = 'list';
-        }
-        return $command;
-    }
-
-    /**
-     * Loads the EXPECTED id from the url into the object.
-     * If the id is not there, the command fails
-     */
-    protected function loadRequestId(Request $request)
-    {
-        $id = $request->shiftCommand();
-        if (!is_numeric($id)) {
-            throw new \award\Exception\ResourceNotFound($id);
-        }
-        $this->id = (int) $id;
-    }
-
     public function getHtml(Request $request)
     {
         $command = $this->pullGetCommand($request);
@@ -167,9 +129,47 @@ abstract class AbstractController
         return $request->isAjax() ? $this->jsonResponse($content) : $this->htmlResponse($content);
     }
 
-    protected function put(Request $request)
+    protected function delete(Request $request)
     {
         throw new BadCommand(__FUNCTION__);
+    }
+
+    /**
+     * Loads the EXPECTED id from the url into the object.
+     * If the id is not there, the command fails
+     */
+    protected function loadRequestId(Request $request)
+    {
+        $id = $request->shiftCommand();
+        if (!is_numeric($id)) {
+            throw new \award\Exception\ResourceNotFound($id);
+        }
+        $this->id = (int) $id;
+    }
+
+    /**
+     * Returns the current get command
+     * Defaults to a "view" command if an id is set and
+     * "list" if otherwise.
+     * @param Request $request
+     * @return string
+     */
+    protected function pullGetCommand(Request $request)
+    {
+        $command = $request->shiftCommand();
+        if (is_numeric($command)) {
+            $this->id = (int) $command;
+
+            $subcommand = $request->shiftCommand();
+            if (empty($subcommand)) {
+                $command = 'view';
+            } else {
+                return $subcommand;
+            }
+        } else if (empty($command)) {
+            $command = 'list';
+        }
+        return $command;
     }
 
     protected function patch(Request $request)
@@ -177,7 +177,7 @@ abstract class AbstractController
         throw new BadCommand(__FUNCTION__);
     }
 
-    protected function delete(Request $request)
+    protected function put(Request $request)
     {
         throw new BadCommand(__FUNCTION__);
     }
