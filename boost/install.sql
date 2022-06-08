@@ -3,7 +3,6 @@ CREATE TABLE award_award (
     active bool DEFAULT 0,
     approvalRequired bool default 0,
     creditNominator bool DEFAULT 0,
-    currentCycleId int DEFAULT 0,
     cycleTerm varchar(20) default 'yearly',
     deleted bool DEFAULT 0,
     description text DEFAULT NULL,
@@ -31,6 +30,7 @@ CREATE TABLE award_cycle (
     voteAllowed bool DEFAULT 0,
     voteType varchar(100) not null,
     INDEX awdIdx(awardId),
+    UNIQUE KEY cyclediff (awardId, awardMonth, awardYear),
     FOREIGN KEY(awardId) REFERENCES award_award(id)
 );
 

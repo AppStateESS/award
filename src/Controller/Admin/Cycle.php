@@ -31,9 +31,6 @@ class Cycle extends AbstractController
     {
         $awardId = $request->pullGetInteger('awardId');
         $award = AwardFactory::build($awardId);
-        if ($award->getCurrentCycleId()) {
-            return CycleView::currentCycleWarning($award);
-        }
         $cycle = CycleFactory::build();
         $cycle->setAwardId($awardId);
         $cycle->setTerm($award->getCycleTerm());
