@@ -37,6 +37,11 @@ class Cycle extends AbstractResource
     private int $awardYear;
 
     /**
+     * @var bool
+     */
+    private bool $deleted = false;
+
+    /**
      * Deadline for nominations
      * @var int
      */
@@ -103,6 +108,14 @@ class Cycle extends AbstractResource
     }
 
     /**
+     * @return bool
+     */
+    public function getDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    /**
      * @return int
      */
     public function getEndDate(): int
@@ -163,6 +176,12 @@ class Cycle extends AbstractResource
     public function setAwardYear(int $awardYear): self
     {
         $this->awardYear = $awardYear;
+        return $this;
+    }
+
+    public function setDeleted(bool $deleted): self
+    {
+        $this->deleted = $deleted;
         return $this;
     }
 
