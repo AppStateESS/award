@@ -15,6 +15,7 @@ namespace award\Factory;
 
 use award\AbstractClass\AbstractFactory;
 use award\Resource\Cycle;
+use award\Factory\AwardFactory;
 use phpws2\Database;
 use Canopy\Request;
 
@@ -38,12 +39,45 @@ class CycleFactory extends AbstractFactory
         }
     }
 
+    /**
+     * Flips the deleted flag on the Cycle resource and saves it.
+     * @param int $cycleId
+     */
+    public static function delete(int $cycleId)
+    {
+        $cycle = self::build($cycleId);
+        $cycle->setDeleted(true);
+        self::save($cycle);
+        AwardFactory::clearCycle($cycle->awardId);
+    }
+
+    /**
+     * Sets the deleted flag to true on all cycles associated with
+     * the award id.
+     * @param int $awardId
+     * @return int
+     */
+    public static function deleteByAwardId(int $awardId): int
+    {
+        $db = parent::getDB();
+        $tbl = $db->addTable('award_cycle');
+        $tbl->addFieldConditional('awardId', $awardId);
+        $tbl->addValue('deleted', 1);
+        return $db->update();
+    }
+
     public static function list(array $options = [])
     {
         $db = parent::getDB();
         $tbl = $db->addTable('award_cycle');
         if (!empty($options['awardId'])) {
             $tbl->addFieldConditional('awardId', (int) $options['awardId']);
+        }
+
+        if (!empty($options['deletedOnly'])) {
+            $tbl->addFieldConditional('deleted', 1);
+        } else {
+            $tbl->addFieldConditional('deleted', 0);
         }
 
         $tbl->addOrderBy('startDate', 'desc');
