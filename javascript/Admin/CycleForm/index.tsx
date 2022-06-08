@@ -89,7 +89,8 @@ const CycleForm = ({
       resource: cycle,
       role: 'Admin',
       resourceName: 'Cycle',
-      success: () => (location.href = './award/Admin/Award'),
+      success: () =>
+        (location.href = './award/Admin/Cycle/?awardId' + cycle.awardId),
       failure: () => {
         setMessage({
           text: 'An error prevented saving the cycle',
