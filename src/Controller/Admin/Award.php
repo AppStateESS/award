@@ -98,9 +98,9 @@ class Award extends AbstractController
      *
      * @param Request $request
      */
-    protected function titlesJson(Request $request)
+    protected function basicJson(Request $request)
     {
-        return AwardFactory::getList(['titleOnly' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
+        return AwardFactory::getList(['basic' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
     }
 
 }
