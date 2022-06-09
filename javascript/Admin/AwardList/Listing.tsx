@@ -116,14 +116,12 @@ const Listing = ({awardList, reload}: ListingProps) => {
           <tr>
             <th style={{width: '15%'}}></th>
             <th>Title</th>
-            <th>Current cycle</th>
           </tr>
           {awardList.map((value: AwardResource) => {
             return (
               <tr key={`award-${value.id}`}>
                 <td>{select(value)}</td>
                 <td>{value.title}</td>
-                <td>{currentCycle(value.id, value.currentCycleId)}</td>
               </tr>
             )
           })}
