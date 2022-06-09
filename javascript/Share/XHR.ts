@@ -24,6 +24,7 @@ interface getListParams {
   url: string
   handleSuccess: (data: Array<any>) => void
   handleError?: (error: AxiosError) => void
+  params?: {[key: string]: any}
   signal?: AbortSignal
 }
 
@@ -32,13 +33,14 @@ const getList = async ({
   handleSuccess,
   handleError,
   signal,
+  params,
 }: getListParams) => {
-  const params = {headers, signal}
+  const config = {headers, params, signal}
   if (handleError === undefined) {
     handleError = (e: AxiosError) => console.error(e)
   }
   return await axios
-    .get(url, params)
+    .get(url, config)
     .then((response) => {
       handleSuccess(response.data)
     })
