@@ -49,7 +49,11 @@ const Listing = ({
   }
 
   if (cycleListing.length === 0) {
-    return <p>No cycles for this award found.</p>
+    return (
+      <div className="lead text-center mt-5">
+        No cycles for this award were found.
+      </div>
+    )
   }
 
   const rows = cycleListing.map((value) => {
@@ -106,7 +110,17 @@ const Listing = ({
         <DeletePrompt cycle={currentCycle} />
       </Modal>
       <table className="table table-striped">
-        <tbody>{rows}</tbody>
+        <tbody>
+          <tr>
+            <th></th>
+            <th>Month</th>
+            <th>Year</th>
+            <th>Cycle type</th>
+            <th>Begins</th>
+            <th>Deadline</th>
+          </tr>
+          {rows}
+        </tbody>
       </table>
     </div>
   )
