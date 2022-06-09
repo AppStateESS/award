@@ -1,9 +1,8 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Fragment} from 'react'
 import PropTypes from 'prop-types'
 import {getList} from '../../Share/XHR'
 import {createRoot} from 'react-dom/client'
-import {useTransition} from 'transition-hook'
 import Loading from '../../Share/Loading'
 import AwardSelect from './AwardSelect'
 import Listing from './Listing'
@@ -11,36 +10,33 @@ import {CycleResource} from '../../ResourceTypes'
 
 declare const defaultAwardId: number
 
-interface AwardTitle {
+interface AwardBasic {
   id: number
   title: string
+  cycleTerm: string
 }
 
-const getAwardTitle = (
-  awardId: number,
-  awardList: Array<AwardTitle>
-): string => {
-  if (awardId === 0) {
-    return ''
-  }
-
-  let awardTitle = ''
+const getAward = (awardId: number, awardList: AwardBasic[]): AwardBasic => {
+  let award = {id: 0, title: '', cycleTerm: ''}
   awardList.forEach((element) => {
     if (awardId === element.id) {
-      awardTitle = element.title
+      award = element
     }
   })
-  return awardTitle
+  return award
 }
 
 const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
   const [awardId, setAwardId] = useState(defaultAwardId)
-  const [awardList, setAwardList] = useState<AwardTitle[] | null>(null)
+  const [awardList, setAwardList] = useState<AwardBasic[]>([])
   const [errorMessage, setErrorMessage] = useState('')
   const [cycleListing, setCycleListing] = useState<CycleResource[]>([])
   const [loading, setLoading] = useState(false)
-  const [awardTitle, setAwardTitle] = useState('')
-  const {stage, shouldMount} = useTransition(errorMessage.length > 0, 500)
+  const [award, setAward] = useState<AwardBasic>({
+    id: 0,
+    title: '',
+    cycleTerm: '',
+  })
 
   useEffect(() => {
     loadTitles()
@@ -49,8 +45,8 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
   const loadTitles = () => {
     const controller = new AbortController()
     const {signal} = controller
-    const url = './award/Admin/Award/titles'
-    const handleSuccess = (data: AwardTitle[]) => {
+    const url = './award/Admin/Award/basic'
+    const handleSuccess = (data: AwardBasic[]) => {
       setAwardList(data)
       if (defaultAwardId === 0) {
         setAwardId(data[0].id)
@@ -74,6 +70,7 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
     const {signal} = controller
     const url = `award/Admin/Cycle/?awardId=${awardId}`
     const handleSuccess = (data: CycleResource[]) => {
+      setAward(getAward(awardId, awardList))
       setCycleListing(data)
       setLoading(false)
     }
@@ -82,7 +79,7 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
 
   useEffect(() => {
     if (awardList) {
-      setAwardTitle(getAwardTitle(awardId, awardList))
+      setAward(getAward(awardId, awardList))
     }
   }, [awardList])
 
@@ -94,15 +91,29 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
       content = <div>No awards have been created.</div>
     } else {
       content = (
-        <div>
-          <AwardSelect {...{awardId, setAwardId, awardList}} />
+        <Fragment>
+          <div className="row">
+            <div className="col-4">
+              <a
+                className="btn btn-success"
+                href={`./award/Admin/Cycle/create?awardId=${awardId}`}>
+                Create new cycle
+              </a>
+            </div>
+            <div className="col-2">
+              <span className="float-left">Change award:</span>
+            </div>
+            <div className="col-4">
+              <AwardSelect {...{awardId, setAwardId, awardList}} />
+            </div>
+          </div>
           <hr />
           {loading ? (
             <Loading things="cycles" />
           ) : (
             <Listing reload={loadList} {...{cycleListing}} />
           )}
-        </div>
+        </Fragment>
       )
     }
   }
@@ -110,25 +121,11 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
   return (
     <div>
       <h2>
-        Cycles
-        {awardTitle.length > 0 ? <span> for {awardTitle}</span> : <span></span>}
+        Cycles for {award.cycleTerm} {award.title}
       </h2>
-      {shouldMount && (
-        <div
-          className="error alert alert-danger"
-          style={{
-            transition: '.3s',
-            opacity: stage === 'enter' ? 1 : 0,
-          }}>
-          {errorMessage}
-        </div>
+      {errorMessage.length > 0 && (
+        <div className="alert alert-danger">{errorMessage}</div>
       )}
-      <a
-        className="btn btn-outline-dark"
-        href={`./award/Admin/Cycle/create?awardId=${awardId}`}>
-        Create new cycle
-      </a>
-      <hr />
       {content}
     </div>
   )
