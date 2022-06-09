@@ -43,7 +43,7 @@ class Award extends AbstractResource
      * Indicates how often the award is offered:
      * - monthly
      * - yearly
-     * - randomly
+     * - random
      *
      * @var string
      */
