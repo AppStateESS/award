@@ -39,6 +39,18 @@ class CycleFactory extends AbstractFactory
         }
     }
 
+    public static function currentYearlyList($awardId)
+    {
+        $db = parent::getDB();
+        $tbl = $db->addTable('award_cycle');
+        $tbl->addField('id');
+        $tbl->addField('awardYear');
+        $tbl->addFieldConditional('awardId', $awardId);
+        $tbl->addFieldConditional('term', 'yearly');
+        $tbl->addFieldConditional('deleted', 0);
+        $db->select();
+    }
+
     /**
      * Flips the deleted flag on the Cycle resource and saves it.
      * @param int $cycleId
@@ -70,6 +82,18 @@ class CycleFactory extends AbstractFactory
     {
         $db = parent::getDB();
         $tbl = $db->addTable('award_cycle');
+        $tbl->addField('id');
+        $tbl->addField('awardMonth');
+        $tbl->addField('awardYear');
+        $tbl->addField('voteAllowed');
+        $tbl->addField('voteType');
+        $tbl->addField('term');
+
+        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $tbl->getField('startDate') . ', "%l:%i %p, %b %e, %Y")', 'startDate');
+        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $tbl->getField('endDate') . ', "%l:%i %p, %b %e, %Y")', 'endDate');
+        $tbl->addField($startDateExpression);
+        $tbl->addField($endDateExpression);
+
         if (!empty($options['awardId'])) {
             $tbl->addFieldConditional('awardId', (int) $options['awardId']);
         }
@@ -81,7 +105,6 @@ class CycleFactory extends AbstractFactory
         }
 
         $tbl->addOrderBy('startDate', 'desc');
-
         return $db->select();
     }
 
