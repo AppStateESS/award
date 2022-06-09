@@ -69,9 +69,10 @@ class AwardFactory extends AbstractFactory
         $db = self::getDB();
         $awardTbl = $db->addTable('award_award');
 
-        if (!empty($options['titleOnly'])) {
+        if (!empty($options['basic'])) {
             $awardTbl->addField('id');
             $awardTbl->addField('title');
+            $awardTbl->addField('cycleTerm');
         }
 
         if (!empty($options['orderBy']) && !empty($options['orderDir'])) {
