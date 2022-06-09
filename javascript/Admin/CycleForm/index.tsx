@@ -48,25 +48,45 @@ const CycleForm = ({
   const [message, setMessage] = useState(defaultMessage)
   const [dateError, setDateError] = useState(false)
   const [voteTypes, setVoteTypes] = useState<VoteTypes[]>([])
-  const [voteTypeOptions, setVoteTypeOptions] = useState<voteOptions[]>([])
+  const [voteTypeOptions, setVoteTypeOptions] = useState<VoteOptions[]>([])
   const [currentVoteType, setCurrentVoteType] = useState(0)
+  const [cyclesInUse, setCyclesInUse] = useState<CurrentCycles[]>([])
 
-  type voteOptions = {label: string; value: string | number}
+  interface VoteOptions {
+    label: string
+    value: string | number
+  }
+
+  interface CurrentCycles {
+    id: number
+    awardYear: number
+  }
 
   useEffect(() => {
     const params = {
       url: 'award/Admin/Vote/types',
-      handleSuccess: (e: Array<any>) => {
-        const vto: voteOptions[] = []
-        e.forEach((value, key) => {
+      handleSuccess: (data: Array<VoteTypes>) => {
+        const vto: VoteOptions[] = []
+        data.forEach((value, key) => {
           vto.push({label: value.title, value: key})
         })
         setVoteTypeOptions(vto)
-        setVoteTypes(e)
+        setVoteTypes(data)
         setCurrentVoteType(0)
       },
     }
     getList(params)
+  }, [])
+
+  useEffect(() => {
+    const config = {
+      url: 'award/Admin/Cycle/currentYearly',
+      params: {awardId: cycle.awardId},
+      handleSuccess: (data: CurrentCycles[]) => {
+        setCyclesInUse(data)
+      },
+    }
+    getList(config)
   }, [])
 
   useEffect(() => {
@@ -90,7 +110,7 @@ const CycleForm = ({
       role: 'Admin',
       resourceName: 'Cycle',
       success: () =>
-        (location.href = './award/Admin/Cycle/?awardId' + cycle.awardId),
+        (location.href = './award/Admin/Cycle/?awardId=' + cycle.awardId),
       failure: () => {
         setMessage({
           text: 'An error prevented saving the cycle',
