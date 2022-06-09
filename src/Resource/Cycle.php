@@ -33,13 +33,13 @@ class Cycle extends AbstractResource
      * The month this award's cycle represents.
      * @var int
      */
-    private int $awardMonth;
+    private int $awardMonth = 0;
 
     /**
      * The year this award's cycle represents
      * @var int
      */
-    private int $awardYear;
+    private int $awardYear = 0;
 
     /**
      * @var bool
@@ -62,7 +62,7 @@ class Cycle extends AbstractResource
      * Determines the time frame of the cycle.
      * -monthly
      * -yearly
-     * -randomly
+     * -random
      * @var string
      */
     private string $term = 'yearly';
@@ -84,8 +84,6 @@ class Cycle extends AbstractResource
     public function __construct()
     {
         parent::__construct('award_cycle');
-        $this->setAwardMonth((int) strftime('%l') + 1);
-        $this->setAwardYear((int) strftime('%l') + 1);
     }
 
     /**
@@ -182,6 +180,26 @@ class Cycle extends AbstractResource
     {
         $this->awardYear = $awardYear;
         return $this;
+    }
+
+    /**
+     * Sets the default month and year depending on the
+     * award's term.
+     */
+    public function setDefaultPeriod()
+    {
+        $year = (int) strftime('%Y');
+        $month = (int) strftime('%l');
+        if ($this->term === 'yearly') {
+            $this->setAwardYear($year);
+        } elseif ($this->term === 'monthly') {
+            if ($month === 12) {
+                $month = 1;
+                $year++;
+            }
+            $this->setAwardMonth($month);
+            $this->setAwardYear($year);
+        }
     }
 
     public function setDeleted(bool $deleted): self
