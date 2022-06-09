@@ -35,7 +35,13 @@ class Cycle extends AbstractController
         $cycle->setAwardId($awardId);
         $cycle->setTerm($award->getCycleTerm());
         $cycle->setVoteType($award->getDefaultVoteType());
+        $cycle->setDefaultPeriod();
         return CycleView::editForm($cycle);
+    }
+
+    protected function currentYearlyJson(Request $request)
+    {
+        return CycleFactory::currentYearlyList();
     }
 
     protected function delete(Request $request)
