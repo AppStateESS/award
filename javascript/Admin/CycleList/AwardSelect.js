@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {Select} from '../../Share/Form/Form'
 
@@ -12,12 +12,16 @@ const AwardSelect = ({awardId, setAwardId, awardList}) => {
     <Select
       name="awardId"
       label="Award"
-      update={setAwardId}
+      update={(value) => setAwardId(parseInt(value))}
       options={options}
       value={awardId}
     />
   )
 }
 
-AwardSelect.propTypes = {}
+AwardSelect.propTypes = {
+  awardId: PropTypes.number,
+  setAwardId: PropTypes.func,
+  awardList: PropTypes.array,
+}
 export default AwardSelect
