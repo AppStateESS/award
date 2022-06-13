@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 const randomKey = () => (Math.random() + 1).toString(36).substring(7)
