@@ -39,16 +39,20 @@ class CycleFactory extends AbstractFactory
         }
     }
 
-    public static function currentYearlyList($awardId)
+    public static function currentList(int $awardId)
     {
+        if (!$awardId) {
+            throw new \Exception('Non-zero id expected');
+        }
         $db = parent::getDB();
         $tbl = $db->addTable('award_cycle');
         $tbl->addField('id');
         $tbl->addField('awardYear');
+        $tbl->addField('awardMonth');
         $tbl->addFieldConditional('awardId', $awardId);
-        $tbl->addFieldConditional('term', 'yearly');
+        $tbl->addFieldConditional('awardYear', strftime('%Y'), '>=');
         $tbl->addFieldConditional('deleted', 0);
-        $db->select();
+        return $db->select();
     }
 
     /**
