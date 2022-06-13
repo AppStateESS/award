@@ -40,7 +40,7 @@ const AwardList = () => {
       </div>
     )
   } else {
-    content = <Listing reload={load} {...{awardList}} />
+    content = <Listing reload={load} {...{awardList, setAwardList}} />
   }
 
   return <div>{content}</div>
