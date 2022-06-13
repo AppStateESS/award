@@ -2,16 +2,18 @@
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import {deleteItem} from '../../Share/XHR'
-import {CycleResource} from '../../ResourceTypes'
+import {CycleResource, AwardBasic} from '../../ResourceTypes'
 import Modal from '../../Share/Modal'
 import DeletePrompt from './DeletePrompt'
 
 const Listing = ({
   cycleListing,
   reload,
+  award,
 }: {
   cycleListing: CycleResource[]
   reload: () => void
+  award: AwardBasic
 }) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [currentCycle, setCurrentCycle] = useState<CycleResource>()
@@ -19,25 +21,27 @@ const Listing = ({
 
   const select = (cycle: CycleResource) => {
     const [current, setCurrent] = useState('option')
+
+    const deleteCycle = () => {
+      setCurrentCycle(cycle)
+      setDeleteModal(true)
+    }
+    const optionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      switch (event.target.value) {
+        case '1':
+          location.href = `./award/Admin/Cycle/${cycle.id}`
+          break
+        case '2':
+          location.href = `./award/Admin/Cycle/${cycle.id}/edit`
+          break
+        case '3':
+          deleteCycle()
+          setCurrent('option')
+          break
+      }
+    }
     return (
-      <select
-        value={current}
-        defaultValue="option"
-        onChange={(e) => {
-          switch (e.target.value) {
-            case '1':
-              location.href = `./award/Admin/Cycle/${cycle.id}`
-              break
-            case '2':
-              location.href = `./award/Admin/Cycle/${cycle.id}/edit`
-              break
-            case '3':
-              setCurrent('option')
-              setCurrentCycle(cycle)
-              setDeleteModal(true)
-              break
-          }
-        }}>
+      <select value={current} onChange={optionChange}>
         <option disabled value="option">
           -- Options --
         </option>
@@ -60,9 +64,8 @@ const Listing = ({
     return (
       <tr key={`cycle-${value.id}`}>
         <td>{select(value)}</td>
-        <td>{value.awardMonth}</td>
+        {award.cycleTerm === 'monthly' && <td>{value.awardMonth}</td>}
         <td>{value.awardYear}</td>
-        <td>{value.term}</td>
         <td>{value.startDate}</td>
         <td>{value.endDate}</td>
       </tr>
@@ -113,9 +116,8 @@ const Listing = ({
         <tbody>
           <tr>
             <th></th>
-            <th>Month</th>
+            {award.cycleTerm === 'monthly' && <th>Month</th>}
             <th>Year</th>
-            <th>Cycle type</th>
             <th>Begins</th>
             <th>Deadline</th>
           </tr>
