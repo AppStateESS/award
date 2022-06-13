@@ -4,12 +4,25 @@ import PropTypes from 'prop-types'
 
 const randomKey = () => (Math.random() + 1).toString(36).substring(7)
 
-const Select = ({name, update, options, value}) => {
+interface Props {
+  name?: string
+  update: (value: any) => void
+  options: Array<
+    {value: string | number; label: string | number} | number | string
+  >
+  value: any
+  disabled?: boolean
+}
+
+const Select = ({name, update, options, value, disabled}: Props) => {
   const keyRoot = randomKey()
   const mappedOptions = options.map((optionValue, count) => {
     if (typeof optionValue === 'object') {
       return (
-        <option key={keyRoot + count} value={optionValue.value}>
+        <option
+          key={keyRoot + count}
+          value={optionValue.value}
+          disabled={disabled}>
           {optionValue.label}
         </option>
       )
@@ -36,9 +49,11 @@ Select.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   options: PropTypes.array.isRequired,
   under: PropTypes.string,
+  disabled: PropTypes.bool,
 }
 
 Select.defaultProps = {
-  columns: [6, 6],
+  disabled: false,
 }
+
 export default Select

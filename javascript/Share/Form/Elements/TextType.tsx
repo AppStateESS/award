@@ -1,19 +1,19 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, Fragment} from 'react'
 import PropTypes from 'prop-types'
 
-const TextType = (props) => {
-  const {value, update, name, allowEmpty, type, columns} = props
+interface TextTypeProps {
+  value: string
+  update: (value: string | number | boolean) => void
+  name?: string
+  allowEmpty: boolean
+  type: string
+}
 
+const TextType = ({value, update, name, allowEmpty, type}: TextTypeProps) => {
   const [emptyError, setEmptyError] = useState(false)
-  const required = props.required || !allowEmpty
   const checkValue = () => {
     setEmptyError(!allowEmpty && value.length === 0)
-  }
-
-  let label
-  if (props.label === undefined) {
-    label = name[0].toUpperCase() + name.substr(1)
   }
 
   let input
@@ -49,21 +49,12 @@ const TextType = (props) => {
   }
 
   return (
-    <div className="form-group row">
-      <label
-        htmlFor={name}
-        className={`col-sm-${columns[0]} col-form-label ${
-          required ? 'required' : ''
-        }`}>
-        {label}
-      </label>
-      <div className={`col-sm-${columns[1]}`}>
-        {input}
-        {emptyError && (
-          <span className="text-danger small">Cannot leave blank</span>
-        )}
-      </div>
-    </div>
+    <Fragment>
+      {input}
+      {emptyError && (
+        <span className="text-danger small">Cannot leave blank</span>
+      )}
+    </Fragment>
   )
 }
 
@@ -75,12 +66,10 @@ TextType.propTypes = {
   allowEmpty: PropTypes.bool,
   required: PropTypes.bool,
   type: PropTypes.string.isRequired,
-  columns: PropTypes.array,
 }
 
 TextType.defaultProps = {
   allowEmpty: true,
-  columns: [6, 6],
 }
 
 export default TextType

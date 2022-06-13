@@ -3,10 +3,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
-const Loading = ({things}) => {
+const Loading = ({things}: {things: string}) => {
   return (
     <p className="lead text-center">
-      <FontAwesomeIcon icon={['fa', 'spinner']} spin /> Loading {things}...
+      <FontAwesomeIcon icon="spinner" spin /> Loading {things}...
     </p>
   )
 }
