@@ -5,7 +5,7 @@ const headers = {'X-Requested-With': 'XMLHttpRequest'}
 const deleteItem = async (role: string, itemName: string, id: number) => {
   const controller = new AbortController()
   const url = `award/${role}/${itemName}/${id}`
-  return await axios.delete(url, {
+  return axios.delete(url, {
     signal: controller.signal,
     headers,
   })
@@ -14,13 +14,13 @@ const deleteItem = async (role: string, itemName: string, id: number) => {
 const getItem = async (role: string, itemName: string, id: number) => {
   const controller = new AbortController()
   const url = `award/${role}/${itemName}/${id}`
-  return await axios.get(url, {
+  return axios.get(url, {
     signal: controller.signal,
     headers,
   })
 }
 
-interface getListParams {
+interface GetListParams {
   url: string
   handleSuccess: (data: Array<any>) => void
   handleError?: (error: AxiosError) => void
@@ -34,18 +34,19 @@ const getList = async ({
   handleError,
   signal,
   params,
-}: getListParams) => {
+}: GetListParams) => {
   const config = {headers, params, signal}
-  if (handleError === undefined) {
-    handleError = (e: AxiosError) => console.error(e)
-  }
-  return await axios
+  return axios
     .get<Record<string, unknown>[]>(url, config)
     .then((response) => {
       handleSuccess(response.data)
     })
     .catch((error: AxiosError) => {
-      handleError?.(error)
+      if (handleError === undefined) {
+        throw error
+      } else {
+        handleError?.(error)
+      }
     })
 }
 
@@ -62,15 +63,12 @@ const saveResource = async ({
   success: (data: any) => void
   failure: (error: Error | AxiosError) => void
 }) => {
-  if (failure === undefined) {
-    failure = (error: Error | AxiosError) => console.error(error)
-  }
   const method = resource.id > 0 ? 'put' : 'post'
   let url = `./award/${role}/${resourceName}`
   if (resource.id > 0) {
     url += '/' + resource.id
   }
-  return await axios({
+  return axios({
     method,
     url,
     data: resource,
@@ -81,7 +79,11 @@ const saveResource = async ({
       success(response.data)
     })
     .catch((error) => {
-      failure(error)
+      if (failure === undefined) {
+        throw failure
+      } else {
+        failure(error)
+      }
     })
 }
 
