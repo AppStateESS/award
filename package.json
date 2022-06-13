@@ -32,6 +32,7 @@
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.17.12",
     "@babel/runtime": "^7.17.9",
+    "@types/axios": "^0.14.0",
     "@types/browser-sync": "^2.26.3",
     "@types/prop-types": "^15.7.5",
     "@types/react": "^18.0.9",
@@ -58,7 +59,6 @@
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "react-datetime-picker": "^3.5.0",
-    "transition-hook": "^1.5.2"
+    "react-datetime-picker": "^3.5.0"
   }
 }
