@@ -1,42 +1,36 @@
 'use strict'
-import React, {useState} from 'react'
+import React, {useState, Dispatch, SetStateAction} from 'react'
 import PropTypes from 'prop-types'
 import {AwardResource} from '../../ResourceTypes'
 import {deleteItem} from '../../Share/XHR'
+import {activate} from '../../Share/AwardXHR'
 import Modal from '../../Share/Modal'
 import DeletePrompt from './DeletePrompt'
 import './style.css'
 
-const currentCycle = (id: number, currentCycleId: number) => {
-  if (currentCycleId === 0) {
-    return (
-      <a
-        href={`./award/Admin/Cycle/create?awardId=${id}`}
-        className="btn btn-sm btn-outline-primary">
-        Create new
-      </a>
-    )
-  } else {
-    return (
-      <div>
-        <a href={`./award/Admin/Cycle/${currentCycleId}`}>Current</a>
-      </div>
-    )
-  }
-}
-
 interface ListingProps {
   awardList: Array<AwardResource>
   reload: () => void
+  setAwardList: Dispatch<SetStateAction<AwardResource[]>>
 }
 
-const Listing = ({awardList, reload}: ListingProps) => {
+const Listing = ({awardList, reload, setAwardList}: ListingProps) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [currentAward, setCurrentAward] = useState<AwardResource>()
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
-  const select = (award: AwardResource) => {
+  const select = (award: AwardResource, key: number) => {
     const [current, setCurrent] = useState('option')
+
+    const updateActive = () => {
+      const active = !award.active
+      award.active = active
+      activate(award.id, active).then(() => {
+        awardList[key] = award
+        setAwardList([...awardList])
+      })
+    }
+
     return (
       <select
         value={current}
@@ -52,6 +46,9 @@ const Listing = ({awardList, reload}: ListingProps) => {
               location.href = `./award/Admin/Award/${award.id}/edit`
               break
             case '4':
+              updateActive()
+              break
+            case '5':
               setCurrent('option')
               setCurrentAward(award)
               setDeleteModal(true)
@@ -64,7 +61,8 @@ const Listing = ({awardList, reload}: ListingProps) => {
         <option value="1">View award</option>
         <option value="2">Cycle list</option>
         <option value="3">Edit</option>
-        <option value="4">Delete</option>
+        <option value="4">{award.active ? 'Deactivate' : 'Activate'}</option>
+        <option value="5">Delete</option>
       </select>
     )
   }
@@ -116,12 +114,22 @@ const Listing = ({awardList, reload}: ListingProps) => {
           <tr>
             <th style={{width: '15%'}}></th>
             <th>Title</th>
+            <th>Term</th>
+            <th>Active</th>
           </tr>
-          {awardList.map((value: AwardResource) => {
+          {awardList.map((value: AwardResource, key: number) => {
             return (
               <tr key={`award-${value.id}`}>
-                <td>{select(value)}</td>
+                <td>{select(value, key)}</td>
                 <td>{value.title}</td>
+                <td>{value.cycleTerm}</td>
+                <td>
+                  {value.active ? (
+                    <span className="text-success">Yes</span>
+                  ) : (
+                    <span className="text-danger">No</span>
+                  )}
+                </td>
               </tr>
             )
           })}
