@@ -15,15 +15,15 @@ import './form.css'
 import {createRoot} from 'react-dom/client'
 
 const referencesRequiredOptions = [0, 1, 2, 3, 4, 5, 6, 6, 8, 9, 10]
-const cycleTermOptions = [
-  {value: 'yearly', label: 'Yearly award'},
-  {value: 'monthly', label: 'Monthly award'},
-  {value: 'randomly', label: 'No set period'},
-]
 
 const judgeMethod = [
   {value: 1, label: 'Judges'},
   {value: 0, label: 'All participants'},
+]
+const cycleTermOptions = [
+  {value: 'yearly', label: 'Yearly award'},
+  {value: 'monthly', label: 'Monthly award'},
+  {value: 'randomly', label: 'No set period'},
 ]
 
 declare const defaultAward: AwardResource
@@ -36,8 +36,7 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
 
   useEffect(() => {
     getHasCycles(award.id).then((resource) => {
-      console.log(resource.data)
-      setHasCycles(resource.data)
+      setHasCycles(resource.data.hasCycles)
     })
   }, [])
 
@@ -113,10 +112,16 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
         label="What time frame does this award represent?">
         <Select
           name="cycleTermOptions"
+          disabled={hasCycles}
           options={cycleTermOptions}
           value={award.cycleTerm}
           update={(value) => update('cycleTerm', value)}
         />
+        {hasCycles && (
+          <div className="small text-danger">
+            *Award currently has cycles. Cannot change term.
+          </div>
+        )}
       </Labeled>
 
       <div className="row">
