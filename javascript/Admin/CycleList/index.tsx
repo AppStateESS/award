@@ -6,15 +6,9 @@ import {createRoot} from 'react-dom/client'
 import Loading from '../../Share/Loading'
 import AwardSelect from './AwardSelect'
 import Listing from './Listing'
-import {CycleResource} from '../../ResourceTypes'
+import {CycleResource, AwardBasic} from '../../ResourceTypes'
 
 declare const defaultAwardId: number
-
-interface AwardBasic {
-  id: number
-  title: string
-  cycleTerm: string
-}
 
 const getAward = (awardId: number, awardList: AwardBasic[]): AwardBasic => {
   let award = {id: 0, title: '', cycleTerm: ''}
@@ -111,7 +105,7 @@ const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
           {loading ? (
             <Loading things="cycles" />
           ) : (
-            <Listing reload={loadList} {...{cycleListing}} />
+            <Listing reload={loadList} {...{award, cycleListing}} />
           )}
         </Fragment>
       )
