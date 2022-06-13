@@ -22,6 +22,11 @@ use Canopy\Request;
 class Award extends AbstractController
 {
 
+    protected function activatePatch(Request $request)
+    {
+        AwardFactory::activate($this->id, $request->pullPatchBoolean('active'));
+    }
+
     /**
      * Returns form for award creation.
      * @return string
