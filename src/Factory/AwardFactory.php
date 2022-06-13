@@ -90,6 +90,20 @@ class AwardFactory extends AbstractFactory
     }
 
     /**
+     * Returns true if the award currently has associated cycles.
+     * @param int $awardId
+     * @return bool
+     */
+    public static function hasCycles(int $awardId): bool
+    {
+        $db = parent::getDB();
+        $tbl = $db->addTable('award_cycle');
+        $tbl->addFieldConditional('awardId', $awardId);
+        $db->setLimit(1);
+        return (bool) $db->selectOneRow();
+    }
+
+    /**
      * Parses the Request for post values to fill an award object.
      * @param Request $request
      */
