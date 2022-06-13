@@ -53,6 +53,11 @@ class Award extends AbstractController
         return AwardView::editForm($award);
     }
 
+    protected function hasCyclesJson(Request $request)
+    {
+        return ['hasCycles' => AwardFactory::hasCycles($this->id)];
+    }
+
     /**
      * HTML listing of Awards seen by the admin.
      * @return type
