@@ -4,12 +4,16 @@ import PropTypes from 'prop-types'
 
 const randomKey = () => (Math.random() + 1).toString(36).substring(7)
 
+interface OptionValue {
+  value: string | number
+  label: string | number
+  disabled?: boolean
+}
+
 interface Props {
   name?: string
   update: (value: any) => void
-  options: Array<
-    {value: string | number; label: string | number} | number | string
-  >
+  options: OptionValue[] | number[] | string[]
   value: any
   disabled?: boolean
 }
@@ -22,7 +26,7 @@ const Select = ({name, update, options, value, disabled}: Props) => {
         <option
           key={keyRoot + count}
           value={optionValue.value}
-          disabled={disabled}>
+          disabled={optionValue.disabled}>
           {optionValue.label}
         </option>
       )
@@ -37,6 +41,7 @@ const Select = ({name, update, options, value, disabled}: Props) => {
       value={value}
       className="form-control mb-1"
       defaultChecked={value}
+      disabled={disabled}
       onChange={(e) => update(e.target.value)}>
       {mappedOptions}
     </select>
