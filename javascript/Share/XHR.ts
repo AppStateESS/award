@@ -24,7 +24,7 @@ interface getListParams {
   url: string
   handleSuccess: (data: Array<any>) => void
   handleError?: (error: AxiosError) => void
-  params?: {[key: string]: any}
+  params?: {[key: string]: string | number | boolean}
   signal?: AbortSignal
 }
 
@@ -40,7 +40,7 @@ const getList = async ({
     handleError = (e: AxiosError) => console.error(e)
   }
   return await axios
-    .get(url, config)
+    .get<Record<string, unknown>[]>(url, config)
     .then((response) => {
       handleSuccess(response.data)
     })
@@ -56,7 +56,7 @@ const saveResource = async ({
   success,
   failure,
 }: {
-  resource: Record<string, any>
+  resource: any
   role: string
   resourceName: string
   success: (data: any) => void
