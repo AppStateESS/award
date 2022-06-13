@@ -10,6 +10,12 @@ export interface CycleResource {
   voteType: string
 }
 
+export interface AwardBasic {
+  id: number
+  title: string
+  cycleTerm: string
+}
+
 export interface AwardResource {
   id: number
   active: boolean
