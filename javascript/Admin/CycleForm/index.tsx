@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
 import DateTimePicker from 'react-datetime-picker'
 import {getList, saveResource} from '../../Share/XHR'
@@ -10,6 +10,7 @@ import './style.css'
 import {Select} from '../../Share/Form/Form'
 import {createRoot} from 'react-dom/client'
 import {CycleResource, VoteTypes} from '../../ResourceTypes'
+import Loading from '../../Share/Loading'
 
 declare const defaultCycle: CycleResource
 declare const awardTitle: string
@@ -31,10 +32,6 @@ const months = [
 
 const currentYear = new Date().getFullYear()
 const nextYear = currentYear + 1
-const years = [
-  {label: new Date().getFullYear(), value: currentYear},
-  {label: new Date().getFullYear() + 1, value: nextYear},
-]
 
 const CycleForm = ({
   defaultCycle,
@@ -50,7 +47,14 @@ const CycleForm = ({
   const [voteTypes, setVoteTypes] = useState<VoteTypes[]>([])
   const [voteTypeOptions, setVoteTypeOptions] = useState<VoteOptions[]>([])
   const [currentVoteType, setCurrentVoteType] = useState(0)
-  const [cyclesInUse, setCyclesInUse] = useState<CurrentCycles[]>([])
+  const [years, setYears] = useState([
+    {label: currentYear, value: currentYear, disabled: false},
+    {label: nextYear, value: nextYear, disabled: false},
+  ])
+  const [yearUnavailable, setYearUnavailable] = useState(false)
+  //const [steps, setSteps] = useState(0)
+
+  const steps = useRef(0)
 
   interface VoteOptions {
     label: string
@@ -62,6 +66,9 @@ const CycleForm = ({
     awardYear: number
   }
 
+  /**
+   * Pull available vote types
+   */
   useEffect(() => {
     const params = {
       url: 'award/Admin/Vote/types',
@@ -73,33 +80,70 @@ const CycleForm = ({
         setVoteTypeOptions(vto)
         setVoteTypes(data)
         setCurrentVoteType(0)
+        steps.current++
+        //setSteps(steps + 1)
       },
     }
     getList(params)
   }, [])
 
+  /**
+   * If this is a new cycle, initialize the start and end date
+   * based on today
+   */
+  useEffect(() => {
+    if (cycle.id === 0) {
+      const today = Math.floor(new Date().getTime() / 1000)
+      const monthLater = today + 86400 * 30
+      if (defaultCycle.startDate === 0) {
+        update('startDate', today)
+      }
+      if (defaultCycle.endDate === 0) {
+        update('endDate', monthLater)
+      }
+    }
+    steps.current++
+    //setSteps(steps + 1)
+  }, [])
+
+  /**
+   * Get cycles within the next year.
+   * Follow up prevents selection of matching years.
+   */
   useEffect(() => {
     const config = {
-      url: 'award/Admin/Cycle/currentYearly',
+      url: 'award/Admin/Cycle/current',
       params: {awardId: cycle.awardId},
       handleSuccess: (data: CurrentCycles[]) => {
-        setCyclesInUse(data)
+        const yearMatch = [years[0].value, years[1].value]
+        const found: number[] = []
+        if (cycle.term === 'yearly') {
+          data.forEach((value) => {
+            const match = yearMatch.indexOf(value.awardYear)
+            if (match !== -1) {
+              found.push(match)
+            }
+          })
+
+          if (found.length === 2) {
+            setYearUnavailable(true)
+          } else {
+            years.splice(found[0], 1)
+            cycle.awardYear = years[0].value
+            setCycle({...cycle})
+          }
+          setYears([...years])
+          steps.current++
+          //setSteps(steps + 1)
+        }
       },
     }
     getList(config)
   }, [])
 
-  useEffect(() => {
-    const today = Math.floor(new Date().getTime() / 1000)
-    const monthLater = today + 86400 * 30
-    if (defaultCycle.startDate === 0) {
-      update('startDate', today)
-    }
-    if (defaultCycle.endDate === 0) {
-      update('endDate', monthLater)
-    }
-  }, [])
-
+  /**
+   * Make sure the end date is later than the start date.
+   */
   useEffect(() => {
     setDateError(cycle.startDate > cycle.endDate)
   }, [cycle.startDate, cycle.endDate])
@@ -156,6 +200,7 @@ const CycleForm = ({
     if (cycle.id > 0) {
       return
     }
+
     if (cycle.term === 'monthly') {
       return (
         <div className="row">
@@ -168,7 +213,6 @@ const CycleForm = ({
               update={(e) => update('awardMonth', e)}
               value={cycle.awardMonth}
               options={months}
-              columns={[4, 4]}
             />
           </div>
           <div className="col-sm-2">
@@ -209,6 +253,29 @@ const CycleForm = ({
     term = 'Monthly'
   }
 
+  if (steps.current < 3) {
+    return (
+      <div>
+        <Loading things="cycle form elements" />
+      </div>
+    )
+  }
+
+  if (yearUnavailable) {
+    return (
+      <div>
+        <h2>No yearly cycles available</h2>
+        <p>Both this year and the next already have active cycles.</p>
+        <p>
+          You will need to{' '}
+          <a href={`./award/Admin/Cycle/?awardId=${cycle.awardId}`}>
+            return to the list
+          </a>{' '}
+          to either delete a cycle or edit a current one.
+        </p>
+      </div>
+    )
+  }
   return (
     <div>
       <h2>
@@ -259,7 +326,6 @@ const CycleForm = ({
             update={updateVoteType}
             value={currentVoteType}
             options={voteTypeOptions}
-            columns={[4, 4]}
           />
           {voteInfo}
         </div>
