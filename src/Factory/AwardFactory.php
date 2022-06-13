@@ -23,6 +23,15 @@ use award\Exception\ResourceNotFound;
 class AwardFactory extends AbstractFactory
 {
 
+    public static function activate(int $awardId, bool $active)
+    {
+        $db = self::getDB();
+        $tbl = $db->addTable('award_award');
+        $tbl->addValue('active', $active);
+        $tbl->addFieldConditional('id', $awardId);
+        return $db->update();
+    }
+
     /**
      * Initiates a Award Resource. If the $id is passed, a retrieval
      * from the database is attempted.
@@ -142,7 +151,9 @@ class AwardFactory extends AbstractFactory
 
         $award->setApprovalRequired($request->pullPutBoolean('approvalRequired'));
         $award->setCreditNominator($request->pullPutBoolean('creditNominator'));
-        $award->setCycleTerm($request->pullPutString('cycleTerm'));
+        if (AwardFactory::hasCycles($award->id) === false) {
+            $award->setCycleTerm($request->pullPutString('cycleTerm'));
+        }
         $award->setDefaultVoteType($request->pullPutString('defaultVoteType', true) ?? AWARD_DEFAULT_VOTE_TYPE);
         $award->setDescription($request->pullPutString('description'));
         $award->setJudgeMethod($request->pullPutInteger('judgeMethod'));
