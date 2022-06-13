@@ -39,9 +39,9 @@ class Cycle extends AbstractController
         return CycleView::editForm($cycle);
     }
 
-    protected function currentYearlyJson(Request $request)
+    protected function currentJson(Request $request)
     {
-        return CycleFactory::currentYearlyList();
+        return CycleFactory::currentList($request->pullGetInteger('awardId'));
     }
 
     protected function delete(Request $request)
