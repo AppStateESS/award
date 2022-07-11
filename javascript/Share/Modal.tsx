@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 
 type Props = {
   show: boolean
+  includeCloseButton?: boolean
   title: string
   close: () => void
   size?: string
@@ -15,7 +16,15 @@ const Backdrop = () => {
   return <div className="modal-backdrop fade show"></div>
 }
 
-const Modal = ({show, title, children, close, size, button}: Props) => {
+const Modal = ({
+  show,
+  title,
+  children,
+  close,
+  size,
+  button,
+  includeCloseButton,
+}: Props) => {
   useEffect(() => {
     document.getElementsByTagName('body')[0].classList.add('modal-open')
 
@@ -45,7 +54,7 @@ const Modal = ({show, title, children, close, size, button}: Props) => {
           <div className="modal-content">
             <div className="modal-header">
               <div className="modal-title">
-                <h3>{title}</h3>
+                <h3 className="m-0">{title}</h3>
               </div>
               <button type="button" className="close" onClick={close}>
                 <span aria-hidden="true">×</span>
@@ -53,12 +62,14 @@ const Modal = ({show, title, children, close, size, button}: Props) => {
             </div>
             <div className="modal-body">
               {children}
-              <hr />
+              {button || includeCloseButton ? <hr /> : null}
               <span className=" float-right">
                 {button}
-                <button className="btn btn-secondary ml-2" onClick={close}>
-                  Close
-                </button>
+                {includeCloseButton && (
+                  <button className="btn btn-secondary ml-2" onClick={close}>
+                    Close
+                  </button>
+                )}
               </span>
             </div>
           </div>
@@ -68,9 +79,14 @@ const Modal = ({show, title, children, close, size, button}: Props) => {
   )
 }
 
+Modal.defaultProps = {
+  includeCloseButton: true,
+}
+
 Modal.propTypes = {
   show: PropTypes.bool,
-  close: PropTypes.func,
+  includeCloseButton: PropTypes.bool,
+  close: PropTypes.func.isRequired,
   title: PropTypes.string,
   size: PropTypes.string,
   children: PropTypes.node,
