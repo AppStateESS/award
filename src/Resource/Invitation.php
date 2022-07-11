@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\Traits\TrackedTrait;
 use award\AbstractClass\AbstractResource;
 
 /**
@@ -28,16 +29,15 @@ use award\AbstractClass\AbstractResource;
  *
  * Once a participant signs up, their participantId must be updated on all
  * invitations.
- * 
+ *
+ * See config/system.php for defines used here.
  *
  * @table award_invitation
  */
-define('AWARD_INVITATION_WAITING', 0);
-define('AWARD_INVITATION_CONFIRMED', 1);
-define('AWARD_INVITATION_REFUSED', 2);
-
 class Invitation extends AbstractResource
 {
+
+    use TrackedTrait;
 
     /**
      * Determines the response to the invitation.
@@ -46,13 +46,13 @@ class Invitation extends AbstractResource
      * 2 - refused
      * @var int
      */
-    private int $confirm;
+    private int $confirm = AWARD_INVITATION_WAITING;
 
     /**
      * Id invitation cycle.
      * @var int
      */
-    private int $cycleId;
+    private int $cycleId = 0;
 
     /**
      * @var string
@@ -60,36 +60,31 @@ class Invitation extends AbstractResource
     private string $email;
 
     /**
+     * Id of participant sent the invite. Will be zero on general invitations.
+     *
      * @var int
      */
-    private int $id;
+    private int $invitedId = 0;
 
     /**
-     * @var bool
-     */
-    private bool $judge;
-
-    /**
-     * @var bool
-     */
-    private bool $nominated;
-
-    /**
+     * The invitation type
      * @var int
      */
-    private int $participantId;
+    private int $inviteType = AWARD_INVITE_TYPE_NEW;
 
     /**
-     * @var bool
+     * Id of participant who sent the invitation. Will be zero if sent by an admin.
+     * @var int
      */
-    private bool $reference;
+    private int $senderId = 0;
 
     public function __construct()
     {
         parent::__construct('award_invitation');
+        self::constructDates();
     }
 
-    public function getConfirm(): bool
+    public function getConfirm(): int
     {
         return $this->confirm;
     }
@@ -119,35 +114,25 @@ class Invitation extends AbstractResource
     }
 
     /**
-     * @return bool
+     * Returns the participant id sent the invite.
+     * @return int
      */
-    public function getJudge(): bool
+    public function getInvitedId(): int
     {
-        return $this->judge;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getNominated(): bool
-    {
-        return $this->nominated;
+        return $this->invitedId;
     }
 
     /**
      * @return int
      */
-    public function getParticipantId(): int
+    public function getInviteType(): int
     {
-        return $this->participantId;
+        return $this->inviteType;
     }
 
-    /**
-     * @return bool
-     */
-    public function getReference(): bool
+    public function getSenderId(): int
     {
-        return $this->reference;
+        return $this->senderId;
     }
 
     public function setConfirm(bool $confirm): self
@@ -187,42 +172,34 @@ class Invitation extends AbstractResource
     }
 
     /**
-     * @param bool $judge
-     * @return self
-     */
-    public function setJudge(bool $judge): self
-    {
-        $this->judge = $judge;
-        return $this;
-    }
-
-    /**
-     * @param bool $nominated
-     * @return self
-     */
-    public function setNominated(bool $nominated): self
-    {
-        $this->nominated = $nominated;
-        return $this;
-    }
-
-    /**
      * @param int $participantId
      * @return self
      */
-    public function setParticipantId(int $participantId): self
+    public function setInvitedId(int $participantId): self
     {
-        $this->participantId = $participantId;
+        $this->invitedId = $participantId;
         return $this;
     }
 
     /**
-     * @param bool $reference
+     *
+     * @param int $inviteType
      * @return self
      */
-    public function setReference(bool $reference): self
+    public function setInviteType(int $inviteType): self
     {
-        $this->reference = $reference;
+        $this->inviteType = $inviteType;
+        return $this;
+    }
+
+    /**
+     *
+     * @param int $senderId
+     * @return self
+     */
+    public function setSenderId(int $senderId): self
+    {
+        $this->senderId = $senderId;
         return $this;
     }
 
