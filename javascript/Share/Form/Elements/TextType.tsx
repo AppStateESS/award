@@ -6,7 +6,7 @@ interface TextTypeProps {
   value: string
   update: (value: string | number | boolean) => void
   name?: string
-  allowEmpty: boolean
+  allowEmpty?: boolean
   type: string
 }
 
