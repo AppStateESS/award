@@ -18,6 +18,8 @@ use award\Factory\StoryMenu;
 use phpws2\Database;
 use Canopy\Request;
 
+require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
+
 abstract class AbstractController
 {
 
