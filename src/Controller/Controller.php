@@ -14,6 +14,7 @@ namespace award\Controller;
 
 use Canopy\Request;
 use phpws2\Database;
+use award\Factory\ParticipantFactory;
 
 class Controller extends \phpws2\Http\Controller
 {
