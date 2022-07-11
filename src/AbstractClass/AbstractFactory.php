@@ -20,6 +20,8 @@ require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
 class AbstractFactory
 {
 
+    static string $table = '';
+
     /**
      * Receives a stack of rows and compares value types against the resourceClass.
      * @param array $rows
@@ -62,6 +64,23 @@ class AbstractFactory
         $db = Database::getDB();
         $db::$PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         return $db;
+    }
+
+    /**
+     * Returns an associative array contain the $db and $table.
+     * Table name derived from an expected static $table in the
+     * extended class.
+     * @return array
+     * @throws \Exception
+     */
+    public static function getDBWithTable(): array
+    {
+        if (!isset(static::$table)) {
+            throw new \Exception('Factory table not set');
+        }
+        $db = self::getDB();
+        $table = $db->addTable(static::$table);
+        return get_defined_vars();
     }
 
     protected static function load(AbstractResource $resource, int $id)
