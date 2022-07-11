@@ -145,7 +145,7 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
           </fieldset>
           <fieldset>
             <legend>References</legend>
-            <Labeled columns={[7, 2]} label="Number of references required">
+            <Labeled columns={[7, 2]} label="References required">
               <Select
                 name="referencesRequiredOptions"
                 options={referencesRequiredOptions}
@@ -156,7 +156,8 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
 
             <Labeled
               columns={[7, 2]}
-              label="References must include reasons for supporting the nomination">
+              label="Reference support reasons required"
+              info="Reference will be required to fill out a form or upload a supporting document.">
               <Checkbox
                 value={award.referenceReasonRequired}
                 update={(value) => update('referenceReasonRequired', value)}
@@ -167,7 +168,8 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
             <legend>Nominations</legend>
             <Labeled
               columns={[7, 2]}
-              label="Nominator must supply a reason for the nomination">
+              label="Nominator support reasons required"
+              info="Reference will be required to fill out a form or upload a supporting document.">
               <Checkbox
                 value={award.nominationReasonRequired}
                 update={(value) => update('nominationReasonRequired', value)}
@@ -183,7 +185,8 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
             </Labeled>
             <Labeled
               columns={[7, 2]}
-              label="Notify a nominee of their nomination">
+              label="Notify a nominee of their nomination"
+              info="Nominee will receive an email and be allowed to opt out.">
               <Checkbox
                 value={award.tipNominated}
                 update={(value) => update('tipNominated', value)}
