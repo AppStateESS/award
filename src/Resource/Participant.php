@@ -14,11 +14,12 @@ declare(strict_types=1);
 namespace award\Resource;
 
 use award\Traits\TrackedTrait;
+use award\AbstractClass\AbstractResource;
 
 /**
  * @table particpant
  */
-class Participant extends \award\AbstractResource
+class Participant extends AbstractResource
 {
 
     use TrackedTrait;
@@ -30,7 +31,7 @@ class Participant extends \award\AbstractResource
 
     /**
      * Defines how the participant signs in.
-     * See conf/system.php for available authorization types.
+     * See config/system.php for available authorization types.
      * @var int
      */
     private int $authType = 0;
@@ -81,14 +82,19 @@ class Participant extends \award\AbstractResource
         return $this;
     }
 
-    /**
-     * Get the value of active
-     *
-     * @return  bool
-     */
     public function getActive(): bool
     {
         return (bool) $this->active;
+    }
+
+    /**
+     * Get the value of active
+     *
+     * @return int
+     */
+    public function getAuthType(): int
+    {
+        return $this->authType;
     }
 
     /**
@@ -166,13 +172,19 @@ class Participant extends \award\AbstractResource
      * @param  bool  $active
      * @return  self
      */
-    public function setActive($active)
+    public function setActive($active): self
     {
         $this->active = (bool) $active;
         return $this;
     }
 
-    public function setBanned($banned)
+    public function setAuthType(int $authType): self
+    {
+        $this->authType = $authType;
+        return $this;
+    }
+
+    public function setBanned($banned): self
     {
         $this->banned = (bool) $banned;
         return $this;
