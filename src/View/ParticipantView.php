@@ -19,6 +19,13 @@ use award\AbstractClass\AbstractView;
 class ParticipantView extends AbstractView
 {
 
+    public static function adminList()
+    {
+        $params['menu'] = self::menu('participant');
+        $params['script'] = self::scriptView('ParticipantList');
+        return self::getTemplate('Admin/AdminForm', $params);
+    }
+
     public static function authorizeComplete()
     {
         return self::getTemplate('User/AuthorizeComplete');
