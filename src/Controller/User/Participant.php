@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace award\Controller\User;
 
 use Canopy\Request;
-use award\Controller\AbstractController;
+use award\AbstractClass\AbstractController;
 use award\View\ParticipantView;
 use award\Factory\ParticipantFactory;
 use award\Factory\EmailFactory;
