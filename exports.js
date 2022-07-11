@@ -8,4 +8,5 @@ exports.entry = {
   AwardForm: exports.APP_DIR + '/Admin/AwardForm/index.tsx',
   CycleForm: exports.APP_DIR + '/Admin/CycleForm/index.tsx',
   CycleList: exports.APP_DIR + '/Admin/CycleList/index.tsx',
+  ParticipantList: exports.APP_DIR + '/Admin/ParticipantList/index.tsx',
 }
