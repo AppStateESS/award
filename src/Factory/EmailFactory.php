@@ -33,6 +33,14 @@ class EmailFactory
         return self::send($email);
     }
 
+    public static function inviteNewParticipant(string $inviteEmail, string $displayName)
+    {
+        $email = self::getEmail();
+        $email->to($inviteEmail)
+            ->html(EmailView::inviteNewParticipant($displayName))->subject('Award site participant invitation');
+        return self::send($email);
+    }
+
     /**
      * Sends an email notifying a user that a participant account has
      * been created for them. It also asks for confirmation via a link.
