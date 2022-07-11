@@ -53,7 +53,7 @@ class ParticipantFactory extends AbstractFactory
      * @param string $hash
      * @return boolean
      */
-    public static function authorize(string $email, string $hash)
+    public static function authorize(string $email, string $hash): bool
     {
         $participant = self::getByEmail($email);
         if ($participant && $participant->getHash() === $hash) {
@@ -74,7 +74,7 @@ class ParticipantFactory extends AbstractFactory
      * @param string $password
      * @return Participant
      */
-    public static function createInternal(string $email, string $password)
+    public static function createInternal(string $email, string $password): Participant
     {
         $participant = new Participant;
         $participant->setActive(false)
@@ -146,6 +146,13 @@ class ParticipantFactory extends AbstractFactory
     public static function isSignedIn()
     {
         return isset($_SESSION['AWARD_PARTICIPANT']);
+    }
+
+    public static function listing(array $options = [])
+    {
+        $db = parent::getDB();
+        $tbl = $db->addTable('award_participant');
+        return $db->select();
     }
 
     /**
