@@ -52,7 +52,6 @@ const CycleForm = ({
     {label: nextYear, value: nextYear, disabled: false},
   ])
   const [yearUnavailable, setYearUnavailable] = useState(false)
-  //const [steps, setSteps] = useState(0)
 
   const steps = useRef(0)
 
@@ -103,7 +102,6 @@ const CycleForm = ({
       }
     }
     steps.current++
-    //setSteps(steps + 1)
   }, [])
 
   /**
@@ -127,14 +125,13 @@ const CycleForm = ({
 
           if (found.length === 2) {
             setYearUnavailable(true)
-          } else {
+          } else if (found.length > 0) {
             years.splice(found[0], 1)
             cycle.awardYear = years[0].value
             setCycle({...cycle})
           }
           setYears([...years])
           steps.current++
-          //setSteps(steps + 1)
         }
       },
     }
