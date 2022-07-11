@@ -7,8 +7,9 @@ interface Props {
   required?: boolean
   children: ReactNode | ReactNode[]
   label: string
+  info?: string
 }
-const Labeled = ({columns, required, children, label}: Props) => {
+const Labeled = ({columns, required, children, label, info}: Props) => {
   return (
     <div className="form-group row">
       <label
@@ -16,6 +17,7 @@ const Labeled = ({columns, required, children, label}: Props) => {
           required ? 'required' : ''
         }`}>
         {label}
+        {info && <div className="small">{info}</div>}
       </label>
       <div className={`col-sm-${columns[1]}`}>{children}</div>
     </div>
@@ -24,6 +26,7 @@ const Labeled = ({columns, required, children, label}: Props) => {
 
 Labeled.propTypes = {
   columns: PropTypes.array,
+  info: PropTypes.string,
   input: PropTypes.node,
   label: PropTypes.string,
   required: PropTypes.bool,
