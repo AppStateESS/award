@@ -10,6 +10,7 @@ award_cyclelog,
 award_document, 
 award_nomination, 
 award_participant,
+award_invitation,
 award_badge,
 award_cycle, 
 award_award;
