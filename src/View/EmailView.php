@@ -19,17 +19,32 @@ use award\AbstractClass\AbstractView;
 class EmailView extends AbstractView
 {
 
+    public static function existParticipantWarning(Participant $participant)
+    {
+        $values = self::defaultEmailValues($participant);
+        return self::getTemplate('User/Email/WarningParticipant', $values);
+    }
+
+    /**
+     * Sends a general invitation on behalf of an administrator.
+     * @param string $displayName Administrator display name.
+     * @return type
+     */
+    public static function inviteNewParticipant(string $displayName)
+    {
+        $values = [];
+        $values['displayName'] = $displayName;
+        $values['siteName'] = '';
+        $values['signupLink'] = '';
+        $values['refuseLink'] = '';
+        return self::getTemplate('Admin/Email/InviteNewParticipant', $values);
+    }
+
     public static function newParticipant(Participant $participant)
     {
         $values = self::defaultEmailValues($participant);
         $values['email'] = $participant->getEmail();
         return self::getTemplate('User/Email/NewParticipant', $values);
-    }
-
-    public static function existParticipantWarning(Participant $participant)
-    {
-        $values = self::defaultEmailValues($participant);
-        return self::getTemplate('User/Email/WarningParticipant', $values);
     }
 
     private static function defaultEmailValues(Participant $participant)
