@@ -4,6 +4,7 @@ CREATE TABLE award_award (
     approvalRequired bool default 0,
     creditNominator bool DEFAULT 0,
     cycleTerm varchar(20) default 'yearly',
+    defaultVoteType varchar(255) NO NULL,
     deleted bool DEFAULT 0,
     description text DEFAULT NULL,
     judgeMethod int DEFAULT 1,
@@ -31,7 +32,7 @@ CREATE TABLE award_cycle (
     voteType varchar(100) not null,
     INDEX awdIdx(awardId),
     UNIQUE KEY cyclediff (awardId, awardMonth, awardYear),
-    FOREIGN KEY(awardId) REFERENCES award_award(id)
+    FOREIGN KEY(awardId) REFERENCES award_award(id) ON DELETE CASCADE
 );
 
 CREATE TABLE award_badge (
@@ -40,18 +41,19 @@ CREATE TABLE award_badge (
     cycleId int,
     filePath varchar(255),
     shortDescription varchar(255) DEFAULT NULL,
-    FOREIGN KEY(awardId) REFERENCES award_award(id)
+    FOREIGN KEY(awardId) REFERENCES award_award(id) ON DELETE CASCADE
 );
 
 CREATE TABLE award_invitation (
     id int PRIMARY KEY AUTO_INCREMENT,
     confirm smallint DEFAULT 0,
     cycleId int DEFAULT 0,
+    created DateTime,
     email varchar(255) not null,
-    judge smallint DEFAULT 0,
-    nominated smallint DEFAULT 0,
-    participantId int DEFAULT 0,
-    reference int DEFAULT 0
+    invitedId int DEFAULT 0,
+    inviteType smallint DEFAULT 0,
+    senderId int DEFAULT 0,
+    updated DateTime
 );
 
 CREATE TABLE award_participant (
@@ -59,12 +61,12 @@ CREATE TABLE award_participant (
     active bool default 0,
     authType smallint default 0,
     banned bool default 0,
+    created DateTime,
     email varchar(255),
     firstName varchar(255),
     hash varchar(255),
     lastName varchar(255),
     password varchar(255) default null,
-    created DateTime,
     updated DateTime,
     UNIQUE KEY uemail (email)
 );
@@ -111,7 +113,8 @@ CREATE TABLE award_cyclewinner (
     image varchar(255),
     nominationId int,
     FOREIGN KEY(awardId) REFERENCES award_award(id),
-    FOREIGN KEY(cycleId) REFERENCES award_cycle(id)
+    FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
+    FOREIGN KEY(nominationId) REFERENCES award_nomination(id)
 );
 
 CREATE TABLE award_email (
