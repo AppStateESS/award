@@ -1,6 +1,5 @@
 import axios from 'axios'
 import {AwardResource} from '../ResourceTypes'
-import 'regenerator-runtime'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
 const activate = async (awardId: number, active: boolean) => {
