@@ -16,10 +16,29 @@ namespace award\Controller\Admin;
 use award\AbstractClass\AbstractController;
 use award\Factory\InvitationFactory;
 use award\Factory\ParticipantFactory;
+use award\View\InvitationView;
 use Canopy\Request;
 
 class Invitation extends AbstractController
 {
+
+    /**
+     * HTML listing of Awards seen by the admin.
+     * @return type
+     */
+    protected function listHtml()
+    {
+        return InvitationView::adminList();
+    }
+
+    protected function listJson(Request $request)
+    {
+        $options['awardId'] = $request->pullGetInteger('awardId', true);
+        $options['confirm'] = $request->pullGetInteger('confirm', true);
+        $options['inviteType'] = $request->pullGetInteger('inviteType', true);
+
+        return InvitationFactory::getList($options);
+    }
 
     public function post(Request $request)
     {
