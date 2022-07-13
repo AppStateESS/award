@@ -1,6 +1,5 @@
 'use strict'
 import React, {useState, useEffect, useRef} from 'react'
-import PropTypes from 'prop-types'
 import DateTimePicker from 'react-datetime-picker'
 import {getList, saveResource} from '../../Share/XHR'
 import 'react-calendar/dist/Calendar.css'
@@ -33,13 +32,7 @@ const months = [
 const currentYear = new Date().getFullYear()
 const nextYear = currentYear + 1
 
-const CycleForm = ({
-  defaultCycle,
-  awardTitle,
-}: {
-  defaultCycle: CycleResource
-  awardTitle: string
-}) => {
+const CycleForm = () => {
   const defaultMessage = {text: '', type: 'danger'}
   const [cycle, setCycle] = useState<CycleResource>(defaultCycle)
   const [message, setMessage] = useState(defaultMessage)
@@ -80,7 +73,6 @@ const CycleForm = ({
         setVoteTypes(data)
         setCurrentVoteType(0)
         steps.current++
-        //setSteps(steps + 1)
       },
     }
     getList(params)
@@ -336,11 +328,6 @@ const CycleForm = ({
   )
 }
 
-CycleForm.propTypes = {
-  defaultCycle: PropTypes.object,
-  awardTitle: PropTypes.string,
-}
-
 const container = document.getElementById('CycleForm') as HTMLElement
 const root = createRoot(container)
-root.render(<CycleForm {...{defaultCycle, awardTitle}} />)
+root.render(<CycleForm />)
