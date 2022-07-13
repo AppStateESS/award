@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace award\AbstractClass;
 
 use phpws2\Database;
+use Canopy\Request;
+use phpws2\Database\Table;
 
 require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
 
@@ -81,6 +83,55 @@ class AbstractFactory
         $db = self::getDB();
         $table = $db->addTable(static::$table);
         return get_defined_vars();
+    }
+
+    /**
+     * Adds field conditionals to the database table object. Values not set if empty (0, null, false, etc.)
+     * @param \phpws2\Database\Table $table
+     * @param array $ids
+     * @param array $options
+     */
+    protected static function addIdOptions(Table $table, array $ids, array $options)
+    {
+        foreach ($ids as $match) {
+            if (!empty($options[$match])) {
+                $table->addFieldConditional($match, $options[$match]);
+            }
+        }
+    }
+
+    /**
+     * Adds field conditionals to the database table object. They just need to be set in the
+     * options array. Their value does not prevent setting like addIdOptions.
+     * @param \phpws2\Database\Table $table
+     * @param array $issets
+     * @param array $options
+     */
+    protected static function addIssetOptions(Table $table, array $issets, array $options)
+    {
+        foreach ($issets as $match) {
+            if (isset($options[$match])) {
+                $table->addFieldConditional($match, $options[$match]);
+            }
+        }
+    }
+
+    protected static function addOrderOptions(Table $table, array $options, string $defaultOrderBy = null, string $defaultOrderDirection = 'asc')
+    {
+        if (!empty($options['orderDir'])) {
+            $direction = $options['orderDir'];
+        } else {
+            $direction = $defaultOrderDirection;
+        }
+        if ($direction !== 'asc' && $defaultOrderDirection !== 'desc') {
+            $direction = 'asc';
+        }
+
+        if (!empty($options['orderBy'])) {
+            $table->addOrderBy($options['orderBy'], $direction);
+        } elseif (!empty($defaultOrderBy)) {
+            $table->addOrderBy($defaultOrderBy, $direction);
+        }
     }
 
     protected static function load(AbstractResource $resource, int $id)
