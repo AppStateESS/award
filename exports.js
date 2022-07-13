@@ -9,4 +9,5 @@ exports.entry = {
   CycleForm: exports.APP_DIR + '/Admin/CycleForm/index.tsx',
   CycleList: exports.APP_DIR + '/Admin/CycleList/index.tsx',
   ParticipantList: exports.APP_DIR + '/Admin/ParticipantList/index.tsx',
+  InvitationList: exports.APP_DIR + '/Admin/InvitationList/index.tsx',
 }
