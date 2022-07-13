@@ -50,6 +50,49 @@ class InvitationFactory extends AbstractFactory
     }
 
     /**
+     * Returns the results of the award_invitation table.
+     * Can be filtered in options with:
+     * - awardId
+     * - cycleId
+     * - email address
+     * - invitedId (participant who was invited)
+     * - inviteType (defines for new, judge, reference, nominated)
+     * - senderId (participant who invited someone)
+     *
+     * Additional options for sorting are:
+     * - sortByConfirm: if true, sort by waiting, confirmed, and refused
+     * - sortByInvite: if true, sort by new, judge, reference, nominated
+     * @param array $options
+     * @return type
+     */
+    public static function getList(array $options = [])
+    {
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable());
+        $idChecks = ['awardId', 'cycleId', 'email', 'invitedId', 'inviteType', 'senderId'];
+
+        self::addIdOptions($table, $idChecks, $options);
+        self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
+        self::addOrderOptions($table, $options, 'email');
+
+        $result = $db->select();
+
+        if (empty($result)) {
+            return [];
+        }
+        if (!empty($options['sortByConfirm'])) {
+            return self::sortByConfirm($result);
+        } elseif (!empty($options['sortByInvite'])) {
+            return self::sortByInvite($result);
+        } else {
+            return $result;
+        }
+    }
+
+    /**
      * Sends a general invitation to sign up as a participant.
      * Checks 3 conditions
      * 1) already a participant
@@ -114,6 +157,57 @@ class InvitationFactory extends AbstractFactory
         $table->addFieldConditional('inviteType', AWARD_INVITE_TYPE_NEW);
         $table->addFieldConditional('confirm', AWARD_INVITATION_REFUSED);
         return (bool) $db->selectOneRow();
+    }
+
+    /**
+     * Sorts the results from list() into their confirmation status.
+     * @param array $list
+     * @return array
+     */
+    private static function sortByConfirm(array $list)
+    {
+        $sorted = ['waiting' => [], 'confirmed' => [], 'refused' => []];
+        foreach ($list as $row) {
+            switch ($row['confirm']) {
+                case AWARD_INVITATION_WAITING:
+                    $sorted['waiting'][] = $row;
+                    break;
+                case AWARD_INVITATION_CONFIRMED:
+                    $sorted['confirmed'][] = $row;
+                    break;
+                case AWARD_INVITATION_REFUSED:
+                    $sorted['refused'][] = $row;
+                    break;
+            }
+        }
+        return $sorted;
+    }
+
+    /**
+     * Sorts the results from list() into their invite type.
+     * @param array $list
+     * @return array
+     */
+    private static function sortByInvite(array $list)
+    {
+        $sorted = ['new' => [], 'judge' => [], 'reference' => [], 'nominated' => []];
+        foreach ($list as $row) {
+            switch ($row['inviteType']) {
+                case AWARD_INVITE_TYPE_NEW:
+                    $sorted['new'][] = $row;
+                    break;
+                case AWARD_INVITE_TYPE_JUDGE:
+                    $sorted['judge'][] = $row;
+                    break;
+                case AWARD_INVITE_TYPE_REFERENCE:
+                    $sorted['reference'][] = $row;
+                    break;
+                case AWARD_INVITE_TYPE_NOMINATED:
+                    $sorted['nominated'][] = $row;
+                    break;
+            }
+        }
+        return $sorted;
     }
 
 }
