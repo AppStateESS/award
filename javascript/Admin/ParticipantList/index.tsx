@@ -2,11 +2,10 @@
 import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
 import {getList} from '../../Share/XHR'
-import {invitationDefault} from '../../Share/DefaultResource'
 import Loading from '../../Share/Loading'
 import Listing from './Listing'
 import Modal from '../../Share/Modal'
-import {ParticipantResource, InvitationResource} from '../../ResourceTypes'
+import {ParticipantResource} from '../../ResourceTypes'
 import InviteForm from './InviteForm'
 import {AxiosError} from 'axios'
 
