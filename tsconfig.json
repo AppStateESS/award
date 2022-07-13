@@ -15,7 +15,8 @@
     "isolatedModules": true,
     "noEmit": false,
     "jsx": "react-jsx",
-    "outDir": "build"
+    "outDir": "build",
+    "sourceMap": true
   },
   "include": ["javascript/**/*.ts", "javascript/**/*.tsx"],
   "exclude": [
