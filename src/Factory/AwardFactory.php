@@ -23,10 +23,15 @@ use award\Exception\ResourceNotFound;
 class AwardFactory extends AbstractFactory
 {
 
+    static string $table = 'award_award';
+
     public static function activate(int $awardId, bool $active)
     {
-        $db = self::getDB();
-        $tbl = $db->addTable('award_award');
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable());
         $tbl->addValue('active', $active);
         $tbl->addFieldConditional('id', $awardId);
         return $db->update();
@@ -75,23 +80,29 @@ class AwardFactory extends AbstractFactory
 
     public static function getList(array $options = [])
     {
-        $db = self::getDB();
-        $awardTbl = $db->addTable('award_award');
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable());
 
         if (!empty($options['basic'])) {
-            $awardTbl->addField('id');
-            $awardTbl->addField('title');
-            $awardTbl->addField('cycleTerm');
+            $table->addField('id');
+            $table->addField('title');
+            $table->addField('cycleTerm');
+        } elseif ($options['asSelect']) {
+            $table->addField('id', 'value');
+            $table->addField('title', 'label');
         }
 
         if (!empty($options['orderBy']) && !empty($options['orderDir'])) {
-            $awardTbl->addOrderBy($options['orderBy'], $options['orderDir']);
+            $table->addOrderBy($options['orderBy'], $options['orderDir']);
         }
 
         if (!empty($options['deletedOnly'])) {
-            $awardTbl->addFieldConditional('deleted', 1);
+            $table->addFieldConditional('deleted', 1);
         } else {
-            $awardTbl->addFieldConditional('deleted', 0);
+            $table->addFieldConditional('deleted', 0);
         }
 
         $result = $db->select();
@@ -106,8 +117,8 @@ class AwardFactory extends AbstractFactory
     public static function hasCycles(int $awardId): bool
     {
         $db = parent::getDB();
-        $tbl = $db->addTable('award_cycle');
-        $tbl->addFieldConditional('awardId', $awardId);
+        $table = $db->addTable('award_cycle');
+        $table->addFieldConditional('awardId', $awardId);
         $db->setLimit(1);
         return (bool) $db->selectOneRow();
     }
