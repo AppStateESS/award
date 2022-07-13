@@ -1,6 +1,5 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
 import {saveAward, getHasCycles} from '../../Share/AwardXHR'
 import {
   Input,
@@ -28,7 +27,7 @@ const cycleTermOptions = [
 
 declare const defaultAward: AwardResource
 
-const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
+const AwardForm = () => {
   const defaultMessage = {text: '', type: 'danger'}
   const [award, setAward] = useState<AwardResource>(defaultAward)
   const [message, setMessage] = useState(defaultMessage)
@@ -209,8 +208,6 @@ const AwardForm = ({defaultAward}: {defaultAward: AwardResource}) => {
   )
 }
 
-AwardForm.propTypes = {defaultAward: PropTypes.object}
-
 const container = document.getElementById('AwardForm') as HTMLElement
 const root = createRoot(container)
-root.render(<AwardForm {...{defaultAward}} />)
+root.render(<AwardForm />)
