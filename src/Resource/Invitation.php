@@ -40,6 +40,12 @@ class Invitation extends AbstractResource
     use TrackedTrait;
 
     /**
+     * Award id
+     * @var int
+     */
+    private int $awardId = 0;
+
+    /**
      * Determines the response to the invitation.
      * 0 - waiting for response
      * 1 - confirmed
@@ -82,6 +88,11 @@ class Invitation extends AbstractResource
     {
         parent::__construct('award_invitation');
         self::constructDates();
+    }
+
+    public function getAwardId(): int
+    {
+        return $this->awardId;
     }
 
     public function getConfirm(): int
@@ -133,6 +144,12 @@ class Invitation extends AbstractResource
     public function getSenderId(): int
     {
         return $this->senderId;
+    }
+
+    public function setAwardId(int $awardId): self
+    {
+        $this->awardId = $awardId;
+        return $this;
     }
 
     public function setConfirm(bool $confirm): self
