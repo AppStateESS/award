@@ -70,7 +70,7 @@ module.exports = (env, argv) => {
       })
     )
 
-    settings.devtool = 'inline-source-map'
+    settings.devtool = 'source-map'
     settings.output = {
       path: setup.path.join(setup.APP_DIR, 'dev'),
       filename: '[name].js',
