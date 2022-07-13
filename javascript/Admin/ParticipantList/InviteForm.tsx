@@ -27,7 +27,7 @@ const InviteForm = ({close}: {close: () => void}) => {
     }
   }, [email])
 
-  const send = (email: string) => {
+  const send = () => {
     sendInvitation(email, 0).then((response) => {
       const {result} = response.data
       setButtonStatus(result)
@@ -48,7 +48,7 @@ const InviteForm = ({close}: {close: () => void}) => {
         <button
           className="btn btn-primary btn-block"
           disabled={disabled}
-          onClick={() => send(email)}>
+          onClick={() => send()}>
           Invite
         </button>
       )
