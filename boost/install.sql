@@ -46,6 +46,7 @@ CREATE TABLE award_badge (
 
 CREATE TABLE award_invitation (
     id int PRIMARY KEY AUTO_INCREMENT,
+    awardId int DEFAULT 0,
     confirm smallint DEFAULT 0,
     cycleId int DEFAULT 0,
     created DateTime,
