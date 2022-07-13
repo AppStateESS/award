@@ -76,9 +76,12 @@ class Award extends AbstractController
      * A listing of the current awards
      * @return array
      */
-    protected function listJson()
+    protected function listJson(Request $request)
     {
-        return AwardFactory::getList();
+        $options = [];
+        $options['basic'] = $request->pullGetBoolean('basic', true);
+        $options['asSelect'] = $request->pullGetBoolean('asSelect', true);
+        return AwardFactory::getList($options);
     }
 
     protected function newAwardHtml()
