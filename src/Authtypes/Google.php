@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 /**
  * MIT License
  * Copyright (c) 2022 Electronic Student Services @ Appalachian State University
@@ -14,30 +15,27 @@ namespace award\Authtypes;
 
 use award\InterfaceClass\InterfaceAuthentication;
 
-/**
- * This class is specifically for AppState.
- */
-class AppstateShibboleth implements InterfaceAuthentication
+class Google implements InterfaceAuthentication
 {
 
     public function getEmail(): string
     {
-        return $_SERVER['HTTP_EPPN'] ?? false;
+
     }
 
     public function getLogin(): string
     {
-        return PHPWS_HOME_HTTP . '/secure/';
+
     }
 
     public function getLogout(): string
     {
-        return PHPWS_HOME_HTTP . '/logout.php';
+
     }
 
     public function getTitle(): string
     {
-        return 'Appalachian State Shibboleth';
+        return 'Google Identity';
     }
 
     public function getUserName(): array
@@ -45,9 +43,6 @@ class AppstateShibboleth implements InterfaceAuthentication
 
     }
 
-    /**
-     *
-     */
     public function initialize()
     {
 
@@ -55,7 +50,7 @@ class AppstateShibboleth implements InterfaceAuthentication
 
     public function isLoggedIn(): bool
     {
-        return isset($_SERVER['HTTP_EPPN']);
+
     }
 
     public function logout()
