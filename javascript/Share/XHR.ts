@@ -1,4 +1,4 @@
-import axios, {AxiosError} from 'axios'
+import axios, {AxiosError, AxiosResponse} from 'axios'
 import 'regenerator-runtime'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
@@ -38,7 +38,7 @@ const getList = async ({
   const config = {headers, params, signal}
   return axios
     .get<Record<string, unknown>[]>(url, config)
-    .then((response) => {
+    .then((response: AxiosResponse) => {
       handleSuccess(response.data)
     })
     .catch((error: AxiosError) => {
