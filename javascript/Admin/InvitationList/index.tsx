@@ -78,36 +78,36 @@ const InvitationList = () => {
       <hr />
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
-          <button
-            className={`btn btn-link nav-link ${confirm === 0 && 'active'}`}
+          <a
+            className={`btn btn-link nav-link ${inviteType === 0 && 'active'}`}
             aria-current="page"
-            onClick={() => setConfirm(0)}>
+            onClick={() => setInviteType(0)}>
             New Participants
-          </button>
+          </a>
         </li>
         <li className="nav-item">
-          <button
-            className={`btn btn-link nav-link ${confirm === 1 && 'active'}`}
+          <a
+            className={`btn btn-link nav-link ${inviteType === 1 && 'active'}`}
             aria-current="page"
-            onClick={() => setConfirm(1)}>
+            onClick={() => setInviteType(1)}>
             Judges
-          </button>
+          </a>
         </li>
         <li className="nav-item">
-          <button
-            className={`btn btn-link nav-link ${confirm === 2 && 'active'}`}
+          <a
+            className={`btn btn-link nav-link ${inviteType === 2 && 'active'}`}
             aria-current="page"
-            onClick={() => setConfirm(2)}>
+            onClick={() => setInviteType(2)}>
             References
-          </button>
+          </a>
         </li>
         <li className="nav-item">
-          <button
-            className={`btn btn-link nav-link ${confirm === 3 && 'active'}`}
+          <a
+            className={`btn btn-link nav-link ${inviteType === 3 && 'active'}`}
             aria-current="page"
-            onClick={() => setConfirm(3)}>
+            onClick={() => setInviteType(3)}>
             Nominees
-          </button>
+          </a>
         </li>
       </ul>
       <div className="row my-3">
