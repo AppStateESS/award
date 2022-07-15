@@ -14,18 +14,35 @@ declare(strict_types=1);
 namespace award\Controller\Admin;
 
 use award\AbstractClass\AbstractController;
-use award\View\DashboardView;
-use award\View\CycleView;
-use award\Factory\CycleFactory;
-use award\Factory\AwardFactory;
+use award\View\SettingView;
 use Canopy\Request;
+use award\Factory\AuthenticateFactory;
+use award\Factory\SettingFactory;
 
 class Setting extends AbstractController
 {
 
     public function listHtml()
     {
-        return 'hi';
+        return SettingView::dashboard();
+    }
+
+    public function listJson()
+    {
+        $settings['authAvailable'] = AuthenticateFactory::getAuthtypeList();
+        return $settings;
+    }
+
+    public function authenticatorTogglePost(Request $request)
+    {
+        $filename = $request->pullPostString('filename');
+        $toggle = $request->pullPostBoolean('toggle');
+        if ($toggle) {
+            SettingFactory::addEnabledAuthenticators($filename);
+        } else {
+            SettingFactory::removeEnabledAuthenticators($filename);
+        }
+        return ['success' => true];
     }
 
 }
