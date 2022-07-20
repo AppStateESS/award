@@ -169,16 +169,6 @@ class ParticipantFactory extends AbstractFactory
     }
 
     /**
-     * Loads a participant object into the static based on the AWARD_PARTICIPANT
-     * session.
-     */
-    private static function loadCurrentParticipant()
-    {
-        self::$currentParticipant = new Participant;
-        self::$currentParticipant->setValues($_SESSION['AWARD_PARTICIPANT'], ['password']);
-    }
-
-    /**
      * Puts participant values into session.
      * @param Participant $participant
      */
@@ -193,6 +183,16 @@ class ParticipantFactory extends AbstractFactory
     public static function signOff()
     {
         unset($_SESSION['AWARD_PARTICIPANT']);
+    }
+
+    /**
+     * Loads a participant object into the static based on the AWARD_PARTICIPANT
+     * session.
+     */
+    private static function loadCurrentParticipant()
+    {
+        self::$currentParticipant = new Participant;
+        self::$currentParticipant->setValues($_SESSION['AWARD_PARTICIPANT'], ['password']);
     }
 
 }
