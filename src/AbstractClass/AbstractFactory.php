@@ -22,7 +22,21 @@ require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
 class AbstractFactory
 {
 
-    static string $table = '';
+    protected static string $table;
+    protected static string $resourceClassName;
+
+    public static function build(int $id = 0)
+    {
+        if (static::$resourceClassName === '') {
+            return false;
+        }
+        $resource = new static::$resourceClassName;
+        if ($id > 0) {
+            return self::load($resource, $id);
+        } else {
+            return $resource;
+        }
+    }
 
     /**
      * Receives a stack of rows and compares value types against the resourceClass.
