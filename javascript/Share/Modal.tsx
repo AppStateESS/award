@@ -37,7 +37,7 @@ const Modal = ({
   if (show) {
     modalClass += ' show'
   }
-  let modalSize
+  let modalSize = ''
   switch (size) {
     case 'lg':
     case 'sm':
