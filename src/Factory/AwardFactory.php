@@ -23,7 +23,8 @@ use award\Exception\ResourceNotFound;
 class AwardFactory extends AbstractFactory
 {
 
-    static string $table = 'award_award';
+    protected static string $table = 'award_award';
+    protected static string $resourceClassName = 'award\Resource\Award';
 
     public static function activate(int $awardId, bool $active)
     {
@@ -32,27 +33,9 @@ class AwardFactory extends AbstractFactory
          * @var \phpws2\Database\Table $table
          */
         extract(self::getDBWithTable());
-        $tbl->addValue('active', $active);
-        $tbl->addFieldConditional('id', $awardId);
+        $table->addValue('active', $active);
+        $table->addFieldConditional('id', $awardId);
         return $db->update();
-    }
-
-    /**
-     * Initiates a Award Resource. If the $id is passed, a retrieval
-     * from the database is attempted.
-     * @param int $id
-     * @return award\Resource\Award
-     */
-    public static function build(int $id = 0): Award
-    {
-        $award = new Award;
-        if ($id) {
-            $result = self::load($award, $id);
-            if (!$result) {
-                throw new ResourceNotFound($id);
-            }
-        }
-        return $award;
     }
 
     /**
