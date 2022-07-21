@@ -11,16 +11,18 @@
         </p>
 
         <div class="sign-in-block">
-          <p>
-            Are you an
-            university
-            student, staff, or faculty
-            member?
-          </p> <a href="./secure" class="btn btn-dark btn-block"> Click here to use Single Sign
-            In</a>
+          <?php
+         if (!empty($signinButtons)):
+         ?>
+          <p>You can quickly create an account by authenticating using the following sources:</p>
+          <?php
+         foreach ($signinButtons as $button):?>
+          <div><?=$button?></div>
+          <?php endforeach;?>
+          <?php endif;?>
         </div>
         <hr />
-        <p>If you are not part of the university, you can create an account below.</p>
+        <p>If you cannot authenticate, create an account by entering the information below.</p>
         <div id="SignUpForm"></div>
       </div>
     </div>
