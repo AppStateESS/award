@@ -175,7 +175,7 @@ class Award extends AbstractResource
      */
     public function getDescription(): string
     {
-        return $this->description ?? '';
+        return $this->description;
     }
 
     /**
@@ -249,7 +249,7 @@ class Award extends AbstractResource
      */
     public function getTitle(): string
     {
-        return $this->title ?? '';
+        return $this->title;
     }
 
     /**
