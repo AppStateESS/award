@@ -18,6 +18,7 @@ use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\ParticipantView;
 use award\Factory\ParticipantFactory;
+use award\Factory\ParticipantHashFactory;
 use award\Factory\EmailFactory;
 use award\Factory\Authenticate;
 
@@ -43,17 +44,8 @@ class Participant extends AbstractController
      */
     protected function createAccountHtml()
     {
-        if (Authenticate::isLoggedIn()) {
-            $email = Authenticate::getLoginEmail();
-            if (!$email) {
-                throw new \Exception('Logged user missing email address.');
-            } else {
-                if (ParticipantFactory::getByEmail($email)) {
-                    \Canopy\Server::forward(PHPWS_HOME_HTTP . '/award/Participant/Participant/dashboard');
-                } else {
-                    return ParticipantView::createSignedInAccount($email);
-                }
-            }
+        if (ParticipantFactory::getCurrentParticipant()) {
+            return 'User:Participant:createAccountHTML already logged in as participant';
         } else {
             return ParticipantView::createAccount();
         }
@@ -75,7 +67,8 @@ class Participant extends AbstractController
             EmailFactory::createWarningOnExisting($participant);
         } else {
             $newParticipant = ParticipantFactory::createInternal($email, $password);
-            EmailFactory::newParticipant($newParticipant);
+            $hash = ParticipantHashFactory::create($newParticipant->id, 12);
+            EmailFactory::newParticipant($newParticipant, $hash);
         }
         return ['success' => true];
     }
@@ -96,6 +89,18 @@ class Participant extends AbstractController
     protected function errorHtml()
     {
         return ParticipantView::error();
+    }
+
+    protected function forgotPasswordHtml()
+    {
+        return ParticipantView::forgotPassword();
+    }
+
+    protected function forgotPasswordPost(Request $request)
+    {
+        $email = strtolower($request->pullPostString('email'));
+        ParticipantFactory::sendForgotEmail($email);
+        return ParticipantView::forgotPasswordPost($email);
     }
 
     protected function saveNewAccountHtml(Request $request)
