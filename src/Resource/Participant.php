@@ -50,22 +50,17 @@ class Participant extends AbstractResource
     /**
      * @var string
      */
-    private string $firstName;
+    private string $firstName = '';
 
     /**
      * @var string
      */
-    private string $hash;
+    private string $lastName = '';
 
     /**
      * @var string
      */
-    private string $lastName;
-
-    /**
-     * @var string
-     */
-    private string $password = null;
+    private string $password;
 
     public function __construct()
     {
@@ -119,16 +114,7 @@ class Participant extends AbstractResource
      */
     public function getFirstName(): string
     {
-        return $this->firstName ?? '';
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getHash(): string
-    {
-        return $this->hash;
+        return $this->firstName;
     }
 
     /**
@@ -136,7 +122,7 @@ class Participant extends AbstractResource
      */
     public function getLastName(): string
     {
-        return $this->lastName ?? '';
+        return $this->lastName;
     }
 
     /**
@@ -205,17 +191,6 @@ class Participant extends AbstractResource
     public function setFirstName(string $firstName): self
     {
         $this->firstName = $firstName;
-        return $this;
-    }
-
-    /**
-     *
-     * @param string $hash
-     * @return self
-     */
-    public function setHash(string $hash): self
-    {
-        $this->hash = $hash;
         return $this;
     }
 
