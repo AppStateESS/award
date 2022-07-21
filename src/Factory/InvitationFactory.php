@@ -21,25 +21,8 @@ use phpws2\Database;
 class InvitationFactory extends AbstractFactory
 {
 
-    static string $table = 'award_invitation';
-
-    /**
-     * Initiates a Invitation Resource. If the $id is passed, a retrieval
-     * from the database is attempted.
-     * @param int $id
-     * @return award\Resource\Invitation
-     */
-    public static function build(int $id = 0): Invitation
-    {
-        $invitation = new Invitation;
-        if ($id) {
-            $result = self::load($invitation, $id);
-            if (!$result) {
-                throw new ResourceNotFound($id);
-            }
-        }
-        return $invitation;
-    }
+    protected static string $table = 'award_invitation';
+    protected static string $resourceClassName = 'award\Resource\Invitation';
 
     public static function createGeneral(string $email): Invitation
     {
