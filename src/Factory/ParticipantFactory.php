@@ -15,12 +15,16 @@ namespace award\Factory;
 
 use award\Resource\Participant;
 use award\AbstractClass\AbstractFactory;
+use award\Factory\ParticipantHashFactory;
+use award\View\EmailView;
 use phpws2\Database;
 
 class ParticipantFactory extends AbstractFactory
 {
 
     static Participant $currentParticipant;
+    protected static string $table = 'award_participant';
+    protected static string $resourceClassName = 'award\Resource\Participant';
 
     /**
      * Attempts to authenticate participant using email and password params. Will
@@ -56,7 +60,8 @@ class ParticipantFactory extends AbstractFactory
     public static function authorize(string $email, string $hash): bool
     {
         $participant = self::getByEmail($email);
-        if ($participant && $participant->getHash() === $hash) {
+        $checkHash = ParticipantHashFactory::get($participant->id);
+        if ($participant && $checkHash === $hash) {
             $participant->setActive(true);
             self::save($participant);
             return true;
@@ -79,8 +84,7 @@ class ParticipantFactory extends AbstractFactory
         $participant = new Participant;
         $participant->setActive(false)
             ->setEmail($email)
-            ->setPassword($password)
-            ->createHash();
+            ->hashPassword($password);
 
         self::save($participant);
         return $participant;
@@ -99,9 +103,13 @@ class ParticipantFactory extends AbstractFactory
      */
     public static function getByEmail(string $email)
     {
-        $db = self::getDB();
-        $tbl = $db->addTable('award_participant');
-        $tbl->addFieldConditional('email', filter_var($email, FILTER_SANITIZE_EMAIL));
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable('award_participant'));
+
+        $table->addFieldConditional('email', filter_var($email, FILTER_SANITIZE_EMAIL));
         $result = $db->selectOneRow();
 
         if (!$result) {
@@ -166,6 +174,29 @@ class ParticipantFactory extends AbstractFactory
         $token = md5(time() . rand());
         $_SESSION['Award_Create_Token'] = $token;
         return $token;
+    }
+
+    /**
+     * Creates an update hash and sends an email allowing users to
+     * change their password.
+     * If the account is not found or their account is not yet active,
+     * it does nothing.
+     *
+     * @param string $email
+     */
+    public static function sendForgotEmail(string $email)
+    {
+        $participant = self::getByEmail($email);
+        if ($participant === false) {
+            return;
+        }
+        $hash = ParticipantHashFactory::create($participant->id);
+        // if the participant is not active, allow them to activate their account
+        if (!$participant->active) {
+            EmailView::sendActivationReminder();
+        } else {
+            EmailView::sendForgotPassword();
+        }
     }
 
     /**
