@@ -47,11 +47,12 @@ class EmailFactory
      * The link is formed in the template.
      *
      * @param Participant $participant
+     * @param string $hash
      */
-    public static function newParticipant(Participant $participant)
+    public static function newParticipant(Participant $participant, string $hash)
     {
         $email = self::getEmail();
-        $email->to($participant->getEmail())->html(EmailView::newParticipant($participant))->subject('New Award account confirmation');
+        $email->to($participant->getEmail())->html(EmailView::newParticipant($participant, $hash))->subject('New Award account confirmation');
         return self::send($email);
     }
 
