@@ -40,10 +40,11 @@ class EmailView extends AbstractView
         return self::getTemplate('Admin/Email/InviteNewParticipant', $values);
     }
 
-    public static function newParticipant(Participant $participant)
+    public static function newParticipant(Participant $participant, string $hash)
     {
         $values = self::defaultEmailValues($participant);
         $values['email'] = $participant->getEmail();
+        $values['hash'] = $hash;
         return self::getTemplate('User/Email/NewParticipant', $values);
     }
 
@@ -51,7 +52,6 @@ class EmailView extends AbstractView
     {
         return [
             'email' => $participant->getEmail(),
-            'hash' => $participant->getHash(),
             'contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail'),
             'contactName' => \phpws2\Settings::get('award', 'siteContactName')
         ];
