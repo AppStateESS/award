@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\View;
 
 use award\Factory\ParticipantFactory;
+use award\Factory\AuthenticateFactory;
 use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
@@ -45,7 +46,8 @@ class ParticipantView extends AbstractView
     public static function createAccount()
     {
         self::scriptView('SignUpForm');
-        return self::getTemplate('User/CreateAccount', [], true);
+        $vars['signinButtons'] = AuthenticateFactory::getSignInButtons();
+        return self::getTemplate('User/CreateAccount', $vars, true);
     }
 
     /**
@@ -80,6 +82,16 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/Error', ['contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail')]);
     }
 
+    public static function forgotPassword()
+    {
+        return self::scriptView('ForgotPassword');
+    }
+
+    public static function forgotPasswordPost($email)
+    {
+        return self::getTemplate('User/ForgotPost', ['email' => $email]);
+    }
+
     public static function notLoggedInError()
     {
         return self::getTemplate('User/NotLoggedIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
@@ -93,7 +105,7 @@ class ParticipantView extends AbstractView
     public static function signIn()
     {
         self::scriptView('SignInForm');
-        return self::getTemplate('User/SignIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
+        return self::getTemplate('User/SignIn');
     }
 
     /**
