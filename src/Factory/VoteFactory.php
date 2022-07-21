@@ -13,8 +13,13 @@ declare(strict_types=1);
 
 namespace award\Factory;
 
-class VoteFactory
+use award\AbstractClass\AbstractFactory;
+
+class VoteFactory extends \award\AbstractClass\AbstractFactory
 {
+
+    protected static string $table = 'award_vote';
+    protected static string $resourceClassName = 'award\Resource\Vote';
 
     public static function getTypeList()
     {
