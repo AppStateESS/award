@@ -20,6 +20,8 @@ use award\Exception\PropertyTypeVerifyFailed;
 trait MagicGetSetTrait
 {
 
+    private static $booleans;
+
     public function __isset($varname)
     {
         return isset($this->$varname);
@@ -55,13 +57,34 @@ trait MagicGetSetTrait
      */
     public function setByMethod(string $valueName, $value)
     {
+        $this->loadBooleans();
         $setMethod = 'set' . ucwords($valueName);
         if (method_exists($this, $setMethod)) {
-            $value = is_bool($this->$valueName) ? (bool) $value : $value;
+            if (in_array($valueName, self::$booleans)) {
+                $value = (bool) $value;
+            }
             $this->$setMethod($value);
         } else {
             $constructClass = get_called_class();
             throw new InaccessibleProperty($constructClass, $valueName);
+        }
+    }
+
+    /**
+     * Checks the class for boolean params so they can be cast when set.
+     */
+    private function loadBooleans()
+    {
+        if (self::$booleans === null) {
+            $reflection = new \ReflectionClass(get_class($this));
+            $properties = $reflection->getProperties();
+            self::$booleans = [];
+            foreach ($properties as $property) {
+                $propType = $property->getType()->getName();
+                if ($propType === 'bool') {
+                    self::$booleans[] = $property->name;
+                }
+            }
         }
     }
 
