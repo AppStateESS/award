@@ -32,7 +32,7 @@ CREATE TABLE award_cycle (
     voteType varchar(100) not null,
     INDEX awdIdx(awardId),
     UNIQUE KEY cyclediff (awardId, awardMonth, awardYear),
-    FOREIGN KEY(awardId) REFERENCES award_award(id) ON DELETE CASCADE
+    FOREIGN KEY(awardId) REFERENCES award_award(id)
 );
 
 CREATE TABLE award_badge (
@@ -41,7 +41,7 @@ CREATE TABLE award_badge (
     cycleId int,
     filePath varchar(255),
     shortDescription varchar(255) DEFAULT NULL,
-    FOREIGN KEY(awardId) REFERENCES award_award(id) ON DELETE CASCADE
+    FOREIGN KEY(awardId) REFERENCES award_award(id)
 );
 
 CREATE TABLE award_invitation (
@@ -65,11 +65,18 @@ CREATE TABLE award_participant (
     created DateTime,
     email varchar(255),
     firstName varchar(255),
-    hash varchar(255),
     lastName varchar(255),
     password varchar(255) default null,
     updated DateTime,
     UNIQUE KEY uemail (email)
+);
+
+CREATE TABLE award_participant_hash (
+    participantId int NOT NULL,
+    hash varchar(255) NOT NULL,
+    timeout int NOT NULL,
+    UNIQUE KEY onep (participantId),
+    FOREIGN KEY(participantId) REFERENCES award_participant(id)
 );
 
 CREATE TABLE award_nomination (
