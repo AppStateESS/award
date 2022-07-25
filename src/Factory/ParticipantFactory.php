@@ -177,6 +177,20 @@ class ParticipantFactory extends AbstractFactory
     }
 
     /**
+     * Updates the participant password.
+     * @param int $participantId
+     * @param string $password
+     */
+    public static function resetPassword(int $participantId, string $password)
+    {
+        $participant = self::build($participantId);
+        if ($participant) {
+            $participant->hashPassword($password);
+            self::save($participant);
+        }
+    }
+
+    /**
      * Creates an update hash and sends an email allowing users to
      * change their password.
      * If the account is not found or their account is not yet active,
@@ -193,9 +207,9 @@ class ParticipantFactory extends AbstractFactory
         $hash = ParticipantHashFactory::create($participant->id);
         // if the participant is not active, allow them to activate their account
         if (!$participant->active) {
-            EmailView::sendActivationReminder();
+            EmailFactory::sendActivationReminder($participant, $hash);
         } else {
-            EmailView::sendForgotPassword();
+            EmailFactory::sendForgotPassword($participant, $hash);
         }
     }
 
@@ -210,8 +224,10 @@ class ParticipantFactory extends AbstractFactory
 
     /**
      * Clears participant session.
+     * To clear any authentication source, AuthenticateFactory::signOut must
+     * also be called.
      */
-    public static function signOff()
+    public static function signOut()
     {
         unset($_SESSION['AWARD_PARTICIPANT']);
     }
