@@ -26,11 +26,13 @@ const SignUpForm = () => {
         if (response.data.success === true) {
           location.href = './award/User/Participant/emailSent'
         } else {
-          location.href = './award/User/Participant/error'
+          console.log(response)
+          //location.href = './award/User/Participant/error'
         }
       })
       .catch((error) => {
-        location.href = './award/User/Participant/error'
+        console.log(error)
+        //location.href = './award/User/Participant/error'
       })
   }
 
@@ -87,7 +89,7 @@ const SignUpForm = () => {
           <div className="input-group mb-3">
             <input
               type={showPassword ? 'text' : 'password'}
-              tabIndex="1"
+              tabIndex={1}
               className="form-control"
               name="password1"
               onBlur={checkPassword}
@@ -95,7 +97,10 @@ const SignUpForm = () => {
               onChange={(e) => setPassword1(e.target.value)}
             />
             <div className="input-group-append">
-              <button className="btn btn-outline-dark" onClick={togglePassword}>
+              <button
+                tabIndex={3}
+                className="btn btn-outline-dark"
+                onClick={togglePassword}>
                 <i className="fas fa-eye"></i>
               </button>
             </div>
@@ -115,7 +120,7 @@ const SignUpForm = () => {
         <div className="col-sm-8">
           <input
             type={showPassword ? 'text' : 'password'}
-            tabIndex="2"
+            tabIndex={2}
             className="form-control"
             name="password2"
             onBlur={checkPassword}
