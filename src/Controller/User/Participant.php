@@ -103,6 +103,29 @@ class Participant extends AbstractController
         return ParticipantView::forgotPasswordPost($email);
     }
 
+    protected function resetPasswordHtml(Request $request)
+    {
+        $participantId = $request->pullGetInteger('pid');
+        $hash = $request->pullGetString('hash');
+        if (ParticipantHashFactory::isValid($participantId, $hash)) {
+            return ParticipantView::resetPassword($participantId, $hash);
+        } else {
+            return ParticipantView::invalidHash();
+        }
+    }
+
+    protected function resetPasswordPut(Request $request)
+    {
+        $password = $request->pullPutString('password');
+        $hash = $request->pullPutString('hash');
+        if (ParticipantHashFactory::isValid($this->id, $hash)) {
+            ParticipantFactory::resetPassword($this->id, $password);
+            return ['success' => true];
+        } else {
+            return ['success' => false, 'error' => 'Invalid identification'];
+        }
+    }
+
     protected function saveNewAccountHtml(Request $request)
     {
         if (!Authenticate::isLoggedIn()) {
@@ -122,9 +145,9 @@ class Participant extends AbstractController
      * Displays a form for a participant to sign in to the system.
      * @return string
      */
-    protected function signinHtml()
+    protected function signInHtml()
     {
-        return ParticipantView::signin();
+        return ParticipantView::signIn();
     }
 
     /**
