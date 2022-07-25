@@ -56,6 +56,13 @@ class EmailFactory
         return self::send($email);
     }
 
+    public static function sendForgotPassword(Participant $participant, string $hash)
+    {
+        $email = self::getEmail();
+        $email->to($participant->getEmail())->html(EmailView::sendForgotPassword($participant, $hash))->subject('Award site password reset');
+        return self::send($email);
+    }
+
     /**
      * Returns an Email object with default from and reply-to settings.
      * @return Email
