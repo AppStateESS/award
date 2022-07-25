@@ -92,9 +92,24 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/ForgotPost', ['email' => $email]);
     }
 
+    /**
+     * A user attempted to perform a Participant action (create account, change password)
+     * but the hash was incorrect or timed out.
+     * @return type
+     */
+    public static function invalidHash()
+    {
+        return self::getTemplate('User/InvalidHash');
+    }
+
     public static function notLoggedInError()
     {
         return self::getTemplate('User/NotLoggedIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
+    }
+
+    public static function resetPassword($participantId, $hash)
+    {
+        return self::scriptView('ResetPassword', ['participantId' => $participantId, 'hash' => $hash]);
     }
 
     /**
@@ -106,6 +121,11 @@ class ParticipantView extends AbstractView
     {
         self::scriptView('SignInForm');
         return self::getTemplate('User/SignIn');
+    }
+
+    public static function signedOut()
+    {
+        return self::getTemplate('Participant/SignedOut');
     }
 
     /**
