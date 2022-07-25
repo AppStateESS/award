@@ -31,4 +31,13 @@ class Participant extends AbstractController
         return 'Participant dashboard here';
     }
 
+    protected function signoutHtml()
+    {
+        $participant = ParticipantFactory::getCurrentParticipant();
+
+        \award\Factory\ParticipantFactory::signOut();
+        \award\Factory\AuthenticateFactory::signOut($participant->authType);
+        return ParticipantView::signedOut();
+    }
+
 }
