@@ -21,9 +21,11 @@ class ParticipantHashFactory extends AbstractFactory
     protected static string $table = 'award_participant_hash';
 
     /**
-     * Creates a request hash for a participant.
+     * Creates a request hash for a participant and returns the hash string.
+     *
      * @param int $participantId
      * @param int $hours How many hours in advance to set the timeout.
+     * @return string
      */
     public static function create(int $participantId, int $hours = AWARD_HASH_DEFAULT_TIMER_HOURS)
     {
@@ -33,10 +35,11 @@ class ParticipantHashFactory extends AbstractFactory
          * @var \phpws2\Database\Table $table
          */
         extract(self::getDBWithTable());
+        $timeout = time() + ($hours * 3600);
         $hash = sha1((string) (rand() + time()));
         $table->addValue('participantId', $participantId);
         $table->addValue('hash', $hash);
-        $table->addValue('timeout', time() + ($hours * 3600));
+        $table->addValue('timeout', $timeout);
         $table->insert();
         return $hash;
     }
@@ -58,6 +61,11 @@ class ParticipantHashFactory extends AbstractFactory
         $table->addFieldConditional('participantId', $participantId);
         $table->addFieldConditional('timeout', time(), '>=');
         return $db->selectColumn();
+    }
+
+    public static function isValid(int $participantId, string $hash): bool
+    {
+        return self::get($participantId) === $hash;
     }
 
     public static function remove(int $participantId)
