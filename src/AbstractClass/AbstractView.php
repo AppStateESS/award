@@ -64,6 +64,11 @@ class AbstractView
         return self::getTemplate('User/Error', ['contactEmail' => $siteContactEmail]);
     }
 
+    public static function centerCard(string $title, string $content)
+    {
+        return self::getTemplate('CenterCard', ['title' => $title, 'content' => $content]);
+    }
+
     protected static function getScript($scriptName)
     {
         $jsDirectory = self::getHttp() . 'javascript/';
