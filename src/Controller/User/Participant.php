@@ -103,6 +103,16 @@ class Participant extends AbstractController
         return ParticipantView::forgotPasswordPost($email);
     }
 
+    protected function invalidHash()
+    {
+        return ParticipantView::invalidHash();
+    }
+
+    protected function passwordChangeCompleteHtml()
+    {
+        return ParticipantView::passwordChangeComplete();
+    }
+
     protected function resetPasswordHtml(Request $request)
     {
         $participantId = $request->pullGetInteger('pid');
@@ -114,15 +124,21 @@ class Participant extends AbstractController
         }
     }
 
+    /**
+     * If the hash is valid, resets the participant's password.
+     * @param Request $request
+     * @return array
+     */
     protected function resetPasswordPut(Request $request)
     {
         $password = $request->pullPutString('password');
         $hash = $request->pullPutString('hash');
         if (ParticipantHashFactory::isValid($this->id, $hash)) {
             ParticipantFactory::resetPassword($this->id, $password);
+            ParticipantHashFactory::remove($this->id);
             return ['success' => true];
         } else {
-            return ['success' => false, 'error' => 'Invalid identification'];
+            return ['success' => false];
         }
     }
 
