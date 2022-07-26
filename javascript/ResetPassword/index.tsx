@@ -13,6 +13,7 @@ const ResetPassword = () => {
   const [password2, setPassword2] = useState('')
   const [passwordError, setPasswordError] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [complete, setComplete] = useState(false)
 
   const firstPassword = useRef<HTMLInputElement>(null)
 
@@ -28,7 +29,11 @@ const ResetPassword = () => {
 
   const checkAndSave = () => {
     resetPassword(participantId, password1, hash).then((response) => {
-      console.log(response.data)
+      if (response.data.success) {
+        location.href = './award/User/Participant/passwordChangeComplete'
+      } else {
+        location.href = './award/User/Participant/invalidHash'
+      }
     })
   }
 
