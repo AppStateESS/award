@@ -107,6 +107,11 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/NotLoggedIn', ['loginLink' => \award\Factory\Authenticate::getLoginLink()]);
     }
 
+    public static function passwordChangeComplete()
+    {
+        return self::centerCard('Password change complete', self::getTemplate('User/PasswordChangeComplete'));
+    }
+
     public static function resetPassword($participantId, $hash)
     {
         return self::scriptView('ResetPassword', ['participantId' => $participantId, 'hash' => $hash]);
