@@ -28,6 +28,16 @@ class Award extends AbstractController
     }
 
     /**
+     * Retrieves a listing of award id and titles only.
+     *
+     * @param Request $request
+     */
+    protected function basicJson(Request $request)
+    {
+        return AwardFactory::getList(['basic' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
+    }
+
+    /**
      * Returns form for award creation.
      * @return string
      */
@@ -104,16 +114,6 @@ class Award extends AbstractController
         $award = AwardFactory::save($award);
 
         return ['success' => true, 'id' => $award->getId()];
-    }
-
-    /**
-     * Retrieves a listing of award id and titles only.
-     *
-     * @param Request $request
-     */
-    protected function basicJson(Request $request)
-    {
-        return AwardFactory::getList(['basic' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
     }
 
 }
