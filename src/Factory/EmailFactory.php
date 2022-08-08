@@ -33,11 +33,11 @@ class EmailFactory
         return self::send($email);
     }
 
-    public static function inviteNewParticipant(string $inviteEmail, string $displayName)
+    public static function inviteNewParticipant($invitation, string $from)
     {
         $email = self::getEmail();
-        $email->to($inviteEmail)
-            ->html(EmailView::inviteNewParticipant($displayName))->subject('Award site participant invitation');
+        $email->to($invitation->email)
+            ->html(EmailView::inviteNewParticipant($invitation, $from))->subject('Award site participant invitation');
         return self::send($email);
     }
 
@@ -82,7 +82,8 @@ class EmailFactory
     {
         $transport = Transport::fromDsn('sendmail://default');
         $mailer = new Mailer($transport);
-        return $mailer->send($email);
+        $mailer->send($email);
+        return true;
     }
 
 }
