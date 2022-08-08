@@ -57,10 +57,11 @@ trait MagicGetSetTrait
      */
     public function setByMethod(string $valueName, $value)
     {
+        $className = get_class($this);
         $this->loadBooleans();
         $setMethod = 'set' . ucwords($valueName);
         if (method_exists($this, $setMethod)) {
-            if (in_array($valueName, self::$booleans)) {
+            if (in_array($valueName, self::$booleans[$className])) {
                 $value = (bool) $value;
             }
             $this->$setMethod($value);
@@ -75,14 +76,16 @@ trait MagicGetSetTrait
      */
     private function loadBooleans()
     {
-        if (self::$booleans === null) {
-            $reflection = new \ReflectionClass(get_class($this));
+        $className = get_class($this);
+
+        if (empty(self::$booleans) || !isset(self::$booleans[$className])) {
+            $reflection = new \ReflectionClass($className);
             $properties = $reflection->getProperties();
-            self::$booleans = [];
+            self::$booleans[$className] = [];
             foreach ($properties as $property) {
                 $propType = $property->getType()->getName();
                 if ($propType === 'bool') {
-                    self::$booleans[] = $property->name;
+                    self::$booleans[$className][] = $property->name;
                 }
             }
         }
