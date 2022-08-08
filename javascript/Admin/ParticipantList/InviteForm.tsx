@@ -10,6 +10,7 @@ const InviteForm = ({close}: {close: () => void}) => {
   const [refused, setRefused] = useState(false)
   const [checkMade, setCheckMade] = useState(false)
   const [buttonStatus, setButtonStatus] = useState('send')
+  const [failReason, setFailReason] = useState('')
 
   const emailCheckTimer = useRef<ReturnType<typeof setTimeout>>()
 
@@ -28,10 +29,33 @@ const InviteForm = ({close}: {close: () => void}) => {
   }, [email])
 
   const send = () => {
-    sendInvitation(email, 0).then((response) => {
-      const {result} = response.data
-      setButtonStatus(result)
-    })
+    sendInvitation(email, 0)
+      .then((response) => {
+        const {result, confirm} = response.data
+        setButtonStatus(result)
+        if (result === 'notsent') {
+          switch (confirm) {
+            case 0:
+              setFailReason('Awaiting a previous new account request.')
+              break
+            case 1:
+              setFailReason('The user has already signed up.')
+              break
+
+            case 2:
+              setFailReason('The user refused the previous request.')
+              break
+
+            case 3:
+              setFailReason('The user has asked not to be contacted.')
+              break
+          }
+        }
+      })
+      .catch(() => {
+        setButtonStatus('notsent')
+        setFailReason('Server failure.')
+      })
   }
 
   const disabled =
@@ -63,7 +87,7 @@ const InviteForm = ({close}: {close: () => void}) => {
     case 'notsent':
       button = (
         <button className="btn btn-danger btn-block" onClick={close}>
-          Invite previously sent. Did not resend.
+          Email not sent. {failReason}
         </button>
       )
       break
