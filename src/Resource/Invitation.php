@@ -47,9 +47,9 @@ class Invitation extends AbstractResource
 
     /**
      * Determines the response to the invitation.
-     * 0 - waiting for response
-     * 1 - confirmed
-     * 2 - refused
+     * AWARD_INVITATION_WAITING - waiting for response
+     * AWARD_INVITATION_CONFIRMED - confirmed
+     * AWARD_INVITATION_REFUSED - refused
      * @var int
      */
     private int $confirm = AWARD_INVITATION_WAITING;
@@ -152,7 +152,7 @@ class Invitation extends AbstractResource
         return $this;
     }
 
-    public function setConfirm(bool $confirm): self
+    public function setConfirm(int $confirm): self
     {
         $this->confirm = $confirm;
         return $this;
@@ -174,7 +174,7 @@ class Invitation extends AbstractResource
      */
     public function setEmail(string $email): self
     {
-        $this->email = $email;
+        $this->email = strtolower($email);
         return $this;
     }
 
