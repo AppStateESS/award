@@ -9,6 +9,7 @@ exports.entry = {
   CycleList: exports.APP_DIR + '/Admin/CycleList/index.tsx',
   ForgotPassword: exports.APP_DIR + '/ForgotPassword/index.tsx',
   InvitationList: exports.APP_DIR + '/Admin/InvitationList/index.tsx',
+  Judges: exports.APP_DIR + '/Admin/Judges/index.tsx',
   ParticipantList: exports.APP_DIR + '/Admin/ParticipantList/index.tsx',
   ResetPassword: exports.APP_DIR + '/ResetPassword/index.tsx',
   Setting: exports.APP_DIR + '/Setting/index.tsx',
