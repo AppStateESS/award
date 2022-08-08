@@ -16,6 +16,7 @@ namespace award\View;
 
 use award\Resource\Participant;
 use award\AbstractClass\AbstractView;
+use award\Resource\Invitation;
 
 /**
  * This view is used solely to populate email messages. No HTML is sent to the browser.
@@ -34,13 +35,13 @@ class EmailView extends AbstractView
      * @param string $displayName Administrator display name.
      * @return type
      */
-    public static function inviteNewParticipant(string $displayName)
+    public static function inviteNewParticipant(Invitation $invitation, string $from)
     {
-        $values = [];
-        $values['displayName'] = $displayName;
-        $values['siteName'] = '';
-        $values['signupLink'] = '';
-        $values['refuseLink'] = '';
+        $values = self::defaultEmailValues();
+        $values['from'] = $from;
+
+        $values['signupLink'] = 'award/User/Participant/createAccount';
+        $values['refuseLink'] = "award/User/Invitation/{$invitation->id}/refuse?email={$invitation->email}";
         return self::getTemplate('Admin/Email/InviteNewParticipant', $values);
     }
 
@@ -78,12 +79,11 @@ class EmailView extends AbstractView
         }
     }
 
-    private static function defaultEmailValues(Participant $participant)
+    private static function defaultEmailValues()
     {
         return [
             'homeSite' => \Canopy\Server::getSiteUrl(),
             'hostName' => \Layout::getPageTitle(true),
-            'email' => $participant->getEmail(),
             'contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail'),
             'contactName' => \phpws2\Settings::get('award', 'siteContactName')
         ];
