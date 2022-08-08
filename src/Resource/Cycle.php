@@ -87,6 +87,26 @@ class Cycle extends AbstractResource
     }
 
     /**
+     *
+     * @param type $format
+     * @return string
+     */
+    public function formatEndDate($format = '%c'): string
+    {
+        return strftime($format, $this->endDate);
+    }
+
+    /**
+     *
+     * @param type $format
+     * @return string
+     */
+    public function formatStartDate($format = '%c'): string
+    {
+        return strftime($format, $this->startDate);
+    }
+
+    /**
      * @return int
      */
     public function getAwardId(): int
@@ -124,6 +144,20 @@ class Cycle extends AbstractResource
     public function getEndDate(): int
     {
         return $this->endDate;
+    }
+
+    /**
+     * Returns the cycle's period as a string based on the term.
+     * If the term is not a time frame, returns null.
+     * @return string|null
+     */
+    public function getPeriod(): string
+    {
+        if ($this->term === 'yearly') {
+            return (string) $this->awardYear;
+        } elseif ($this->term === 'monthly') {
+            return $this->awardMonth . ', ' . $this->awardYear;
+        }
     }
 
     /**
