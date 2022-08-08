@@ -70,6 +70,7 @@ class CycleFactory extends AbstractFactory
 
     public static function list(array $options = [])
     {
+
         $db = parent::getDB();
         $tbl = $db->addTable('award_cycle');
         $tbl->addField('id');
@@ -86,6 +87,11 @@ class CycleFactory extends AbstractFactory
 
         if (!empty($options['awardId'])) {
             $tbl->addFieldConditional('awardId', (int) $options['awardId']);
+            if (!empty($options['includeAward'])) {
+                $awardTbl = $db->addTable('award_award');
+                $awardTbl->addField('judgeMethod');
+                $awardTbl->addFieldConditional('id', $options['awardId']);
+            }
         }
 
         if (!empty($options['deletedOnly'])) {
