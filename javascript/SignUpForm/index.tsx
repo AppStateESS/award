@@ -3,18 +3,22 @@ import React, {useState, useEffect, useRef} from 'react'
 import {saveNewParticipant} from '../Share/ParticipantXHR'
 import {createRoot} from 'react-dom/client'
 
+declare const defaultEmail: string
+
 const SignUpForm = () => {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(defaultEmail)
   const [password1, setPassword1] = useState('')
   const [password2, setPassword2] = useState('')
   const [emailError, setEmailError] = useState(false)
   const [passwordError, setPasswordError] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const tab1 = useRef()
+  const inputVar = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    tab1.current.focus()
+    if (inputVar.current) {
+      inputVar.current.focus()
+    }
   }, [])
 
   const checkAndSave = () => {
@@ -66,9 +70,9 @@ const SignUpForm = () => {
         <div className="col-sm-8">
           <input
             type="text"
-            tabIndex="0"
+            tabIndex={0}
             className="form-control"
-            ref={tab1}
+            ref={inputVar}
             name="email"
             value={email}
             onBlur={matchEmail}
