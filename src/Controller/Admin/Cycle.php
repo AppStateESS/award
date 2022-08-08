@@ -65,7 +65,7 @@ class Cycle extends AbstractController
 
     protected function listJson(Request $request)
     {
-        $options = [];
+        $options = ['includeAward' => true];
         $awardId = $request->pullGetInteger('awardId', true);
         if ($awardId) {
             $options['awardId'] = $awardId;
@@ -89,6 +89,14 @@ class Cycle extends AbstractController
         $cycle = CycleFactory::save($cycle);
 
         return ['success' => true, 'id' => $cycle->getId()];
+    }
+
+    protected function viewHtml()
+    {
+        $this->idRequired();
+        $cycle = CycleFactory::build($this->id);
+        $award = AwardFactory::build($cycle->awardId);
+        return CycleView::adminView($cycle, $award);
     }
 
 }
