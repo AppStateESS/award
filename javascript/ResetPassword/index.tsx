@@ -13,7 +13,6 @@ const ResetPassword = () => {
   const [password2, setPassword2] = useState('')
   const [passwordError, setPasswordError] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [complete, setComplete] = useState(false)
 
   const firstPassword = useRef<HTMLInputElement>(null)
 
