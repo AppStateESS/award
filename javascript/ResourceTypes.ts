@@ -31,6 +31,7 @@ export interface CycleResource {
   awardMonth: number
   awardYear: number
   endDate: number
+  judgeMethod?: number
   startDate: number
   term: string
   voteAllowed: boolean
