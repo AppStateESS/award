@@ -22,7 +22,7 @@ const Listing = ({
   const select = (cycle: CycleResource) => {
     const [current, setCurrent] = useState('option')
 
-    const deleteCycle = () => {
+    const deleteCycleModal = () => {
       setCurrentCycle(cycle)
       setDeleteModal(true)
     }
@@ -35,7 +35,7 @@ const Listing = ({
           location.href = `./award/Admin/Cycle/${cycle.id}/edit`
           break
         case '3':
-          deleteCycle()
+          deleteCycleModal()
           setCurrent('option')
           break
       }
@@ -61,11 +61,15 @@ const Listing = ({
   }
 
   const rows = cycleListing.map((value) => {
+    const judge = value.judgeMethod === 1 ? 'Judged' : 'Popular vote'
+
     return (
       <tr key={`cycle-${value.id}`}>
         <td>{select(value)}</td>
         {award.cycleTerm === 'monthly' && <td>{value.awardMonth}</td>}
         <td>{value.awardYear}</td>
+        <td>{judge}</td>
+        <td>{value.voteType}</td>
         <td>{value.startDate}</td>
         <td>{value.endDate}</td>
       </tr>
@@ -118,6 +122,8 @@ const Listing = ({
             <th></th>
             {award.cycleTerm === 'monthly' && <th>Month</th>}
             <th>Year</th>
+            <th>Judge type</th>
+            <th>Vote type</th>
             <th>Begins</th>
             <th>Deadline</th>
           </tr>
