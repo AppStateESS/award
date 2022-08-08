@@ -158,8 +158,16 @@ class ParticipantFactory extends AbstractFactory
 
     public static function listing(array $options = [])
     {
-        $db = parent::getDB();
-        $tbl = $db->addTable('award_participant');
+        extract(self::getDBWithTable());
+        $table->addField('id');
+        $table->addField('active');
+        $table->addField('authType');
+        $table->addField('banned');
+        $table->addField('created');
+        $table->addField('email');
+        $table->addField('firstName');
+        $table->addField('lastName');
+        $table->addField('updated');
         return $db->select();
     }
 
