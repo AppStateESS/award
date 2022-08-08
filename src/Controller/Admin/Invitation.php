@@ -17,6 +17,7 @@ use award\AbstractClass\AbstractController;
 use award\Factory\InvitationFactory;
 use award\Factory\ParticipantFactory;
 use award\View\InvitationView;
+use award\Factory\EmailFactory;
 use Canopy\Request;
 
 class Invitation extends AbstractController
@@ -44,15 +45,35 @@ class Invitation extends AbstractController
     {
         $email = $request->pullPostString('email');
         $type = $request->pullPostInteger('type');
+
+        // check if a previous invitation was sent to join the site.
+        $previousInvite = InvitationFactory::getPreviousInvite($email, AWARD_INVITE_TYPE_NEW);
+
+        // If it exists, then stop here and send back the reason.
+        if ($previousInvite) {
+            return ['result' => 'notsent', 'confirm' => $previousInvite->confirm];
+        }
+
         switch ($type) {
             case AWARD_INVITE_TYPE_NEW:
-                if (InvitationFactory::sendGeneral($email)) {
-                    InvitationFactory::createGeneral($email);
-                    return ['result' => 'sent'];
-                } else {
-                    // Tried to send an invite that was previously sent.
-                    return ['result' => 'notsent'];
-                }
+                return self::newParticipant($email);
+        }
+    }
+
+    /**
+     * Creates a new participate invitation and sends an email to bring them to the site.
+     * If the person refuses, they may not serve as a judge, nominator, or reference.
+     * @param type $email
+     * @return type
+     */
+    private function newParticipant($email)
+    {
+        $invitation = InvitationFactory::createNewAccountInvite($email);
+
+        if (EmailFactory::inviteNewParticipant($invitation, \Current_User::getDisplayName())) {
+            return ['result' => 'sent'];
+        } else {
+            return ['result' => 'notsent', 'reason' => 'failed to send email'];
         }
     }
 
