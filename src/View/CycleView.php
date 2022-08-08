@@ -16,6 +16,7 @@ namespace award\View;
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractView;
+use award\Resource\Award;
 use award\Resource\Cycle;
 
 class CycleView extends AbstractView
@@ -27,18 +28,34 @@ class CycleView extends AbstractView
      */
     public static function adminList(int $awardId = 0)
     {
-        $tplValues['menu'] = self::menu('cycle');
-        $tplValues['script'] = self::scriptView('CycleList', ['defaultAwardId' => $awardId]);
-        return self::getTemplate('Admin/AdminForm', $tplValues);
+        $values['menu'] = self::menu('cycle');
+        $values['script'] = self::scriptView('CycleList', ['defaultAwardId' => $awardId]);
+        return self::getTemplate('Admin/AdminForm', $values);
+    }
+
+    public static function adminView(Cycle $cycle, Award $award)
+    {
+        $values['menu'] = self::menu('cycle');
+        $values['award'] = $award;
+        $values['cycle'] = $cycle;
+        $values['startDate'] = $cycle->formatStartDate();
+        $values['endDate'] = $cycle->formatStartDate();
+        if ($award->judgeMethod === 1) {
+            $values['judges'] = self::scriptView('Judges', ['cycleId' => $cycle->id]);
+        } else {
+            $values['judges'] = 'No judges, popular vote';
+        }
+
+        return self::getTemplate('Admin/CycleView', $values);
     }
 
     public static function currentCycleWarning(\award\Resource\Award $award)
     {
         $cycle = CycleFactory::build($award->getCycleId());
-        $tpl = $cycle->getValues();
-        $tpl['menu'] = self::menu('cycle');
+        $values = $cycle->getValues();
+        $values['menu'] = self::menu('cycle');
 
-        return self::getTemplate('Admin/CurrentCycleWarning', $tpl);
+        return self::getTemplate('Admin/CurrentCycleWarning', $values);
     }
 
     public static function editForm(Cycle $cycle): string
@@ -46,9 +63,9 @@ class CycleView extends AbstractView
         $award = AwardFactory::build($cycle->getAwardId());
         $js['defaultCycle'] = $cycle->getValues();
         $js['awardTitle'] = $award->getTitle();
-        $tplvars['menu'] = self::menu('cycle');
-        $tplvars['script'] = self::scriptView('CycleForm', $js);
-        return self::getTemplate('Admin/AdminForm', $tplvars);
+        $values['menu'] = self::menu('cycle');
+        $values['script'] = self::scriptView('CycleForm', $js);
+        return self::getTemplate('Admin/AdminForm', $values);
     }
 
     /**
