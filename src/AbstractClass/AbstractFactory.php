@@ -25,6 +25,12 @@ class AbstractFactory
     protected static string $table;
     protected static string $resourceClassName;
 
+    /**
+     * Returns the Resource object if id === 0 or the resource is found in the
+     * table by id. Returns false, if the id > 0 and it could not be found.
+     * @param int $id
+     * @return boolean
+     */
     public static function build(int $id = 0)
     {
         if (static::$resourceClassName === '') {
