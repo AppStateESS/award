@@ -24,12 +24,30 @@ class InvitationFactory extends AbstractFactory
     protected static string $table = 'award_invitation';
     protected static string $resourceClassName = 'award\Resource\Invitation';
 
-    public static function createGeneral(string $email): Invitation
+    public static function createNewAccountInvite(string $email): Invitation
     {
         $invitation = self::build();
         $invitation->setEmail($email);
         $invitation->setInviteType(AWARD_INVITE_TYPE_NEW);
         return self::save($invitation);
+    }
+
+    /**
+     * Searches the invitation table by email to see if recipient requested
+     * to never be bothered.
+     * This would be an invitation with a new invite type, zero cycleId (only new invites
+     * have this) and a no contact confirm.
+     * @param string $email
+     * @return bool
+     */
+    public static function checkNoContact(string $email): bool
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('email', strtolower($email));
+        $table->addFieldConditional('inviteType', AWARD_INVITE_TYPE_NEW);
+        $table->addFieldConditional('cycleId', 0);
+        $table->addFieldConditional('confirm', AWARD_INVITATION_NO_CONTACT);
+        return !empty($db->selectOneRow());
     }
 
     /**
@@ -75,34 +93,6 @@ class InvitationFactory extends AbstractFactory
         }
     }
 
-    /**
-     * Sends a general invitation to sign up as a participant.
-     * Checks 3 conditions
-     * 1) already a participant
-     * 2) previously refused
-     * 3) previously invited but did not respond.
-     *
-     * Returns true if email sent or false if previously invited.
-     * @param string $email
-     * @return bool
-     */
-    public static function sendGeneral(string $email): bool
-    {
-        $displayName = \Current_User::getDisplayName();
-        $previousInvite = self::getPreviousInvite($email, AWARD_INVITE_TYPE_NEW);
-
-        if (ParticipantFactory::getByEmail($email)) {
-            throw \Exception('Participant already exists');
-        } elseif (self::userRefusedGeneral($email)) {
-            throw \Exception('Previously refused invitation may not be sent.');
-        } elseif (!empty($previousInvite)) {
-            return false;
-        } else {
-            EmailFactory::inviteNewParticipant($email, $displayName);
-            return true;
-        }
-    }
-
     public static function getPreviousInvite(string $email, int $inviteType, int $cycleId = 0)
     {
         /**
@@ -115,31 +105,14 @@ class InvitationFactory extends AbstractFactory
         $table->addFieldConditional('inviteType', $inviteType);
         $table->addFieldConditional('cycleId', $cycleId);
 
-        return $db->selectOneRow();
-    }
-
-    /**
-     * Tests if a person can be invited with a general invitation. This is
-     * their initial request to join without a purpose (judge, reference, etc.).
-     *
-     * Returns FALSE if the user can be invited to site.
-     * Returns TRUE if the user has been previously invited and refused
-     * The invitation record will not exist if they have already created an
-     * account so a ParticipantFactory::getByEmail() test should be used instead.
-     * @param string $email
-     * @return boolean
-     */
-    public static function userRefusedGeneral(string $email)
-    {
-        /**
-         * @var \phpws2\Database\DB $db
-         * @var \phpws2\Database\Table $table
-         */
-        extract(self::getDBWithTable());
-        $table->addFieldConditional('email', $email);
-        $table->addFieldConditional('inviteType', AWARD_INVITE_TYPE_NEW);
-        $table->addFieldConditional('confirm', AWARD_INVITATION_REFUSED);
-        return (bool) $db->selectOneRow();
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return false;
+        } else {
+            $invitation = self::build();
+            $invitation->setValues($result);
+            return $invitation;
+        }
     }
 
     /**
