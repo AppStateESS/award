@@ -20,7 +20,7 @@ const getAward = (awardId: number, awardList: AwardBasic[]): AwardBasic => {
   return award
 }
 
-const CycleList = ({defaultAwardId}: {defaultAwardId: number}) => {
+const CycleList = () => {
   const [awardId, setAwardId] = useState(defaultAwardId)
   const [awardList, setAwardList] = useState<AwardBasic[]>([])
   const [errorMessage, setErrorMessage] = useState('')
@@ -130,4 +130,4 @@ CycleList.propTypes = {defaultAwardId: PropTypes.number}
 const container = document.getElementById('CycleList') as HTMLElement
 const root = createRoot(container)
 
-root.render(<CycleList defaultAwardId={defaultAwardId} />)
+root.render(<CycleList />)
