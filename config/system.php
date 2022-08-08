@@ -21,9 +21,14 @@
 define('AWARD_AUTH_TYPES', [0 => 'local', 1 => 'AppstateShibboleth']);
 define('AWARD_DEFAULT_VOTE_TYPE', 'SingleVote');
 
+/**
+ * The invitation status. A refuse always will prevent the person from
+ * ever being sent an email.
+ */
 define('AWARD_INVITATION_WAITING', 0);
 define('AWARD_INVITATION_CONFIRMED', 1);
 define('AWARD_INVITATION_REFUSED', 2);
+define('AWARD_INVITATION_NO_CONTACT', 3);
 
 define('AWARD_INVITE_TYPE_NEW', 0);
 define('AWARD_INVITE_TYPE_JUDGE', 1);
