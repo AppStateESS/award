@@ -116,4 +116,14 @@ class Award extends AbstractController
         return ['success' => true, 'id' => $award->getId()];
     }
 
+    protected function viewHtml()
+    {
+        $this->idRequired();
+        $award = AwardFactory::build($this->id);
+        if ($award === false) {
+            throw \award\Exception\ResourceNotFound;
+        }
+        return AwardView::adminView($award);
+    }
+
 }
