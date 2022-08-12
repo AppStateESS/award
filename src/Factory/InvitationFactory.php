@@ -24,14 +24,6 @@ class InvitationFactory extends AbstractFactory
     protected static string $table = 'award_invitation';
     protected static string $resourceClassName = 'award\Resource\Invitation';
 
-    public static function createNewAccountInvite(string $email): Invitation
-    {
-        $invitation = self::build();
-        $invitation->setEmail($email);
-        $invitation->setInviteType(AWARD_INVITE_TYPE_NEW);
-        return self::save($invitation);
-    }
-
     /**
      * Searches the invitation table by email to see if recipient requested
      * to never be bothered.
@@ -48,6 +40,14 @@ class InvitationFactory extends AbstractFactory
         $table->addFieldConditional('cycleId', 0);
         $table->addFieldConditional('confirm', AWARD_INVITATION_NO_CONTACT);
         return !empty($db->selectOneRow());
+    }
+
+    public static function createNewAccountInvite(string $email): Invitation
+    {
+        $invitation = self::build();
+        $invitation->setEmail($email);
+        $invitation->setInviteType(AWARD_INVITE_TYPE_NEW);
+        return self::save($invitation);
     }
 
     /**
