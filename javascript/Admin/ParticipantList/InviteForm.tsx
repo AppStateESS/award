@@ -51,10 +51,16 @@ const InviteForm = ({close}: {close: () => void}) => {
               break
           }
         }
+        setTimeout(() => {
+          close()
+        }, 5000)
       })
       .catch(() => {
         setButtonStatus('notsent')
         setFailReason('Server failure.')
+        setTimeout(() => {
+          close()
+        }, 5000)
       })
   }
 
