@@ -1,6 +1,6 @@
 'use strict'
 import React, {useState, useEffect, useRef} from 'react'
-import {saveNewParticipant} from '../Share/ParticipantXHR'
+import {saveNewParticipant} from '../../Share/ParticipantXHR'
 import {createRoot} from 'react-dom/client'
 
 declare const defaultEmail: string
@@ -143,6 +143,6 @@ const SignUpForm = () => {
   )
 }
 
-const container = document.getElementById('SignUpForm')
+const container = document.getElementById('SignUpForm') as HTMLElement
 const root = createRoot(container)
 root.render(<SignUpForm />)
