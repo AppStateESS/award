@@ -28,7 +28,7 @@ class Participant extends AbstractController
 
     protected function dashboardHtml()
     {
-        return 'Participant dashboard here';
+        return ParticipantView::dashboard();
     }
 
     protected function signoutHtml()
