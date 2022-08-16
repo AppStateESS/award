@@ -1,8 +1,9 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
-import {signInPost} from '../Share/ParticipantXHR'
+import React, {useState, KeyboardEvent} from 'react'
+import {signInPost} from '../../Share/ParticipantXHR'
 import {createRoot} from 'react-dom/client'
-import Modal from '../Share/Modal'
+import Modal from '../../Share/Modal'
+import {AxiosResponse} from 'axios'
 
 const SignInForm = () => {
   const [showModal, setShowModal] = useState(false)
@@ -21,7 +22,7 @@ const SignInForm = () => {
       return
     } else {
       signInPost(email, password)
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           if (response.data) {
             if (response.data.success) {
               location.href = './award/Participant/Participant/dashboard'
@@ -33,13 +34,13 @@ const SignInForm = () => {
           }
         })
         .catch(() => {
-          //location.href = './award/User/Participant/error'
+          location.href = './award/User/Participant/error'
         })
     }
   }
 
-  const checkEnter = (key) => {
-    if (key.which === 13 && checkPassword() && checkEmail()) {
+  const checkEnter = (key: KeyboardEvent) => {
+    if (key.code === 'Enter' && checkPassword() && checkEmail()) {
       signIn()
     }
   }
@@ -133,6 +134,6 @@ const SignInForm = () => {
   )
 }
 
-const container = document.getElementById('SignInForm')
+const container = document.getElementById('SignInForm') as HTMLElement
 const root = createRoot(container)
 root.render(<SignInForm />)
