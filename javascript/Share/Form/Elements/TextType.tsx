@@ -8,9 +8,17 @@ interface TextTypeProps {
   name?: string
   allowEmpty?: boolean
   type: string
+  placeholder?: string
 }
 
-const TextType = ({value, update, name, allowEmpty, type}: TextTypeProps) => {
+const TextType = ({
+  value,
+  update,
+  name,
+  allowEmpty,
+  type,
+  placeholder,
+}: TextTypeProps) => {
   const [emptyError, setEmptyError] = useState(false)
   const checkValue = () => {
     setEmptyError(!allowEmpty && value.length === 0)
@@ -38,6 +46,7 @@ const TextType = ({value, update, name, allowEmpty, type}: TextTypeProps) => {
         <input
           type={type === 'password' ? 'password' : 'text'}
           className="form-control"
+          placeholder={placeholder}
           name={name}
           onBlur={checkValue}
           value={value}
