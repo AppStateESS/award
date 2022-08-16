@@ -17,6 +17,10 @@ namespace award\View;
 use award\Resource\Participant;
 use award\AbstractClass\AbstractView;
 use award\Resource\Invitation;
+use award\Resource\Cycle;
+use award\Resource\Award;
+use award\Factory\CycleFactory;
+use award\Factory\AwardFactory;
 
 /**
  * This view is used solely to populate email messages. No HTML is sent to the browser.
@@ -26,7 +30,7 @@ class EmailView extends AbstractView
 
     public static function existParticipantWarning(Participant $participant)
     {
-        $values = self::defaultEmailValues($participant);
+        $values = self::defaultEmailValues();
         return self::getTemplate('User/Email/WarningParticipant', $values);
     }
 
@@ -40,17 +44,23 @@ class EmailView extends AbstractView
         $values = self::defaultEmailValues();
         $values['from'] = $from;
 
-        $values['signupLink'] = 'award/User/Participant/createAccount';
+        $values['signupLink'] = 'award/User/Participant/createAccount/?email=' . $invitation->email;
         $values['refuseLink'] = "award/User/Invitation/{$invitation->id}/refuse?email={$invitation->email}";
         return self::getTemplate('Admin/Email/InviteNewParticipant', $values);
     }
 
     public static function newParticipant(Participant $participant, string $hash)
     {
-        $values = self::defaultEmailValues($participant);
+        $values = self::defaultEmailValues();
         $values['email'] = $participant->getEmail();
         $values['hash'] = $hash;
         return self::getTemplate('User/Email/NewParticipant', $values);
+    }
+
+    public static function participantJudgeInvitation(Invitation $invitation)
+    {
+        $values = array_merge(self::getInvitationObjects($invitation), self::defaultEmailValues());
+        return self::getTemplate('Admin/Email/JudgeInvitation', $values);
     }
 
     public static function sendActivationReminder($participant, $hash)
@@ -68,7 +78,7 @@ class EmailView extends AbstractView
      */
     public static function sendForgotPassword(Participant $participant, $hash)
     {
-        $values = self::defaultEmailValues($participant);
+        $values = self::defaultEmailValues();
 
         if ($participant->getAuthType() === 0) {
             $values['forgotLink'] = "award/User/Participant/resetPassword?pid={$participant->id}&hash=$hash";
@@ -81,12 +91,39 @@ class EmailView extends AbstractView
 
     private static function defaultEmailValues()
     {
+        $siteUrl = \Canopy\Server::getSiteUrl();
         return [
-            'homeSite' => \Canopy\Server::getSiteUrl(),
+            'homeSite' => $siteurl,
             'hostName' => \Layout::getPageTitle(true),
+            'signIn' => $siteUrl . 'award/User/Participant/signIn',
             'contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail'),
             'contactName' => \phpws2\Settings::get('award', 'siteContactName')
         ];
+    }
+
+    /**
+     * Returns resource objects Cycle, Award, and Participant (as 'invitee' or 'nomiunator')
+     *  based upon the ids
+     * set in the invitation resource.
+     * @param Invitation $invitation
+     * @return array
+     */
+    private static function getInvitationObjects(Invitation $invitation)
+    {
+        $values = [];
+        if ($invitation->cycleId) {
+            $values['cycle'] = CycleFactory::build($invitation->cycleId);
+            $values['award'] = AwardFactory::build($invitation->awardId);
+        }
+
+        if ($invitation->invitedId) {
+            $values['invitee'] = ParticipantFactory::build($invitation->invitedId);
+        }
+
+        if ($invitation->senderId) {
+            $values['nominator'] = ParticipantFactory::build($invitation->senderId);
+        }
+        return $values;
     }
 
 }
