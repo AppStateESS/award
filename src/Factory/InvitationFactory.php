@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\Resource\Invitation;
+use award\Resource\Participant;
 use award\Factory\ParticipantFactory;
+use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractFactory;
 use phpws2\Database;
 
@@ -29,8 +31,11 @@ class InvitationFactory extends AbstractFactory
      * to never be bothered.
      * This would be an invitation with a new invite type, zero cycleId (only new invites
      * have this) and a no contact confirm.
+     * One someone becomes a participant, they need to become inactive to prevent
+     * further contact.
+     *
      * @param string $email
-     * @return bool
+     * @return bool True if participant chooses never to be contacted.
      */
     public static function checkNoContact(string $email): bool
     {
@@ -40,6 +45,37 @@ class InvitationFactory extends AbstractFactory
         $table->addFieldConditional('cycleId', 0);
         $table->addFieldConditional('confirm', AWARD_INVITATION_NO_CONTACT);
         return !empty($db->selectOneRow());
+    }
+
+    public static function confirmReason(int $confirm)
+    {
+        switch ($confirm) {
+            case AWARD_INVITATION_WAITING:
+                return 'participant has not responded to a previous invitation.';
+            case AWARD_INVITATION_CONFIRMED:
+                return 'participant previously confirmed.';
+            case AWARD_INVITATION_REFUSED:
+                return 'participant refused invitation.';
+        }
+    }
+
+    /**
+     * Creates an invitation for a judge request. Must be a participant.
+     *
+     * @param int $cycleId
+     * @param int $invitedId
+     * @throws ResourceNotFound
+     */
+    public static function createJudgeInvitation(Participant $invited, int $cycleId)
+    {
+        $invitation = self::build();
+        $invitation->email = $invited->email;
+        $invitation->cycleId = $cycleId;
+        $invitation->invitedId = $invited->id;
+        $invitation->inviteType = AWARD_INVITE_TYPE_JUDGE;
+        $invitation->awardId = CycleFactory::getAwardId($cycleId);
+        self::save($invitation);
+        return $invitation;
     }
 
     public static function createNewAccountInvite(string $email): Invitation
@@ -93,6 +129,13 @@ class InvitationFactory extends AbstractFactory
         }
     }
 
+    /**
+     * Checks for previous invitation to help prevent a repeated request.
+     * @param string $email
+     * @param int $inviteType
+     * @param int $cycleId
+     * @return boolean
+     */
     public static function getPreviousInvite(string $email, int $inviteType, int $cycleId = 0)
     {
         /**
