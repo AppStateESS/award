@@ -93,7 +93,7 @@ const ParticipantList = () => {
             }}
           />
         </Modal>
-        <Listing participantList={participantList} />
+        <Listing participantList={participantList} load={load} />
       </div>
     )
   }
