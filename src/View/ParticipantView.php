@@ -43,9 +43,9 @@ class ParticipantView extends AbstractView
      *
      * @return string
      */
-    public static function createAccount()
+    public static function createAccount(string $email = null)
     {
-        self::scriptView('SignUpForm');
+        self::scriptView('SignUpForm', ['defaultEmail' => $email]);
         $vars['signinButtons'] = AuthenticateFactory::getSignInButtons();
         return self::getTemplate('User/CreateAccount', $vars, true);
     }
@@ -64,6 +64,15 @@ class ParticipantView extends AbstractView
                     'signUpLink' => "./award/User/Participant/saveNewAccount?token=$token"
                 ]
         );
+    }
+
+    /**
+     * View for participants to manage their award duties.
+     */
+    public static function dashboard()
+    {
+        $values['participant'] = ParticipantFactory::getCurrentParticipant();
+        return self::getTemplate('Participant/Dashboard', $values);
     }
 
     /**
