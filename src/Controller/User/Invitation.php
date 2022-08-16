@@ -23,13 +23,12 @@ class Invitation extends AbstractController
 
     public function refuseHtml(Request $request)
     {
-        $invitationId = $this->id;
         $email = strtolower($request->pullGetString('email'));
         $invitation = InvitationFactory::build($this->id);
         if ($invitation->email !== $email) {
             throw new \award\Exception\ResourceNotFound;
         }
-        InvitationView::refuse($invitationId);
+        return InvitationView::refuse($invitation);
     }
 
 }
