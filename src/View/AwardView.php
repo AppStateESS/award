@@ -26,6 +26,12 @@ class AwardView extends AbstractView
         return self::getTemplate('Admin/AwardList', $params);
     }
 
+    public static function adminView(Award $award)
+    {
+        $params['menu'] = self::menu('award');
+        return 'Admin Award details';
+    }
+
     public static function deleteForm(Award $award)
     {
         $tplvars['awardTitle'] = $award->title;
