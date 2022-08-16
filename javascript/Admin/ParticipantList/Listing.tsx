@@ -1,35 +1,78 @@
 'use strict'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import {ParticipantResource} from '../../ResourceTypes'
+import ListOptions from './ListOptions'
+import BanForm from './BanForm'
+import EditForm from './EditForm'
+import DeleteForm from './DeleteForm'
+import Modal from '../../Share/Modal'
 
 interface ListingProps {
   participantList: Array<ParticipantResource>
+  load: () => void
 }
 
-const Listing = ({participantList}: ListingProps) => {
-  const adminOption = (choice: string, participantId: number) => {
-    console.log(choice, participantId)
+const Listing = ({participantList, load}: ListingProps) => {
+  const [show, setShow] = useState(false)
+  const [modalTitle, setModalTitle] = useState('')
+  const [modalContentType, setModalContentType] = useState('')
+  const [modalContent, setModalContent] = useState(<span></span>)
+  const [currentParticipant, setCurrentParticipant] = useState<
+    ParticipantResource | undefined
+  >()
+  const [modalKey, setModalKey] = useState(new Date().getMilliseconds())
+
+  const loadParticipant = (key: number) => {
+    setCurrentParticipant(participantList[key])
   }
 
-  const options = (participantId: number) => {
-    return (
-      <select onChange={(e) => adminOption(e.target.value, participantId)}>
-        <option value="default"></option>
-        <option value="edit">Edit</option>
-        <option value="ban">Ban</option>
-        <option value="delete">Delete</option>
-      </select>
-    )
+  const close = () => {
+    setShow(false)
   }
 
-  const rows = participantList.map((value) => {
+  useEffect(() => {
+    if (modalContentType !== '') {
+      switch (modalContentType) {
+        case 'edit':
+          setModalTitle('Update participant')
+          setModalContent(<EditForm {...{currentParticipant, close, load}} />)
+          break
+        case 'ban':
+          setModalTitle('Ban participant')
+          setModalContent(<BanForm {...{currentParticipant, close}} />)
+          break
+        case 'delete':
+          setModalTitle('Remove participant')
+          setModalContent(<DeleteForm {...{currentParticipant, close}} />)
+          break
+      }
+      setShow(true)
+    }
+  }, [modalContentType])
+
+  useEffect(() => {
+    if (!show) {
+      setModalKey(new Date().getMilliseconds())
+      setModalContentType('')
+    }
+  }, [show])
+
+  const rows = participantList.map((value, key) => {
     return (
       <tr key={`participant-${value.id}`}>
-        <td>{options(value.id)}</td>
+        <td>
+          <ListOptions
+            {...{
+              setModalContentType,
+              participantKey: key,
+              loadParticipant,
+            }}
+          />
+        </td>
         <td>{value.email}</td>
-        <td>{value.lastName.length > 0 ? value.lastName : <em>Empty</em>}</td>
-        <td>{value.firstName.length > 0 ? value.firstName : <em>Empty</em>}</td>
+        <td>{value.lastName || <em>Empty</em>}</td>
+        <td>{value.firstName || <em>Empty</em>}</td>
         <td>{value.created}</td>
         <td>{value.updated}</td>
       </tr>
@@ -42,6 +85,11 @@ const Listing = ({participantList}: ListingProps) => {
   }
   return (
     <div>
+      <Modal
+        key={modalKey}
+        {...{show, title: modalTitle, close, includeCloseButton: false}}>
+        {modalContent}
+      </Modal>
       <h2>Participants</h2>
       <table className="table table-striped">
         <tbody>
