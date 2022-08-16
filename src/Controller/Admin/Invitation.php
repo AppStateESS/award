@@ -18,6 +18,7 @@ use award\Factory\InvitationFactory;
 use award\Factory\ParticipantFactory;
 use award\View\InvitationView;
 use award\Factory\EmailFactory;
+use award\Resource\Participant;
 use Canopy\Request;
 
 class Invitation extends AbstractController
@@ -39,6 +40,21 @@ class Invitation extends AbstractController
         $options['inviteType'] = $request->pullGetInteger('inviteType', true);
 
         return InvitationFactory::getList($options);
+    }
+
+    protected function participantJudgePost(Request $request)
+    {
+        $cycleId = $request->pullPostInteger('cycleId');
+        $invitedId = $request->pullPostInteger('invitedId');
+        $invited = ParticipantFactory::build($invitedId);
+        $result = self::testParticipant($invited, $cycleId);
+        if (is_array($result)) {
+            return $result;
+        }
+
+        $invitation = InvitationFactory::createJudgeInvitation($invited, $cycleId);
+        EmailFactory::sendParticipantJudgeInvitation($invitation);
+        return ['success' => true];
     }
 
     public function post(Request $request)
@@ -74,6 +90,24 @@ class Invitation extends AbstractController
             return ['result' => 'sent'];
         } else {
             return ['result' => 'notsent', 'reason' => 'failed to send email'];
+        }
+    }
+
+    private function testParticipant(Participant $participant, int $cycleId)
+    {
+        if (!$participant) {
+            return ['success' => false, 'message' => 'Cannot create invitation because the invited participant was not found.'];
+        }
+
+        try {
+            ParticipantFactory::isViable($participant);
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Cannot create invitation because ' . $e->getMessage()];
+        }
+
+        $previousInvite = InvitationFactory::getPreviousInvite($participant->email, AWARD_INVITE_TYPE_JUDGE, $cycleId);
+        if ($previousInvite) {
+            return ['success' => false, 'message' => 'Cannot create invitation because ' . InvitationFactory::confirmReason($previousInvite->confirm)];
         }
     }
 
