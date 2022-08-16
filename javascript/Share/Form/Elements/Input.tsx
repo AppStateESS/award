@@ -7,6 +7,7 @@ interface TextTypeProps {
   update: (value: any) => void
   name?: string
   allowEmpty?: boolean
+  placeholder?: string
 }
 
 const Input = (props: TextTypeProps) => {
