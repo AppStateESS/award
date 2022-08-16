@@ -28,6 +28,29 @@ class AuthenticateFactory
         return self::authenticationInfo($filtered);
     }
 
+    /**
+     * Returns an array of sign in buttons based on enabled authentication methods.
+     */
+    public static function getSignInButtons(): array
+    {
+        return ['<button>Sign in 1</button>', '<button>Sign In 2</button>'];
+    }
+
+    /**
+     * Signs out of the $authType received (if applicable).
+     * The local authType (i.e. zero) does nothing. ParticipantFactory::signOut()
+     * is must be called regardless.
+     *
+     * @param int $authType
+     * @return type
+     */
+    public static function signOut(int $authType)
+    {
+        if ($authType === 0) {
+            return;
+        }
+    }
+
     private static function authenticationInfo(array $filelist)
     {
         $authenticators = SettingFactory::getEnabledAuthenticators();
