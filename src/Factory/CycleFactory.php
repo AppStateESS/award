@@ -30,14 +30,14 @@ class CycleFactory extends AbstractFactory
         if (!$awardId) {
             throw new \Exception('Non-zero id expected');
         }
-        $db = parent::getDB();
-        $tbl = $db->addTable('award_cycle');
-        $tbl->addField('id');
-        $tbl->addField('awardYear');
-        $tbl->addField('awardMonth');
-        $tbl->addFieldConditional('awardId', $awardId);
-        $tbl->addFieldConditional('awardYear', strftime('%Y'), '>=');
-        $tbl->addFieldConditional('deleted', 0);
+        extract(self::getDBWithTable());
+
+        $table->addField('id');
+        $table->addField('awardYear');
+        $table->addField('awardMonth');
+        $table->addFieldConditional('awardId', $awardId);
+        $table->addFieldConditional('awardYear', strftime('%Y'), '>=');
+        $table->addFieldConditional('deleted', 0);
         return $db->select();
     }
 
@@ -61,32 +61,44 @@ class CycleFactory extends AbstractFactory
      */
     public static function deleteByAwardId(int $awardId): int
     {
-        $db = parent::getDB();
-        $tbl = $db->addTable('award_cycle');
-        $tbl->addFieldConditional('awardId', $awardId);
-        $tbl->addValue('deleted', 1);
+        extract(self::getDBWithTable());
+
+        $table = $db->addTable('award_cycle');
+        $table->addFieldConditional('awardId', $awardId);
+        $table->addValue('deleted', 1);
         return $db->update();
+    }
+
+    /**
+     * Returns the award ID for a cycle by primary key.
+     * @param int $cycleId
+     * @return int
+     */
+    public static function getAwardId(int $cycleId): int
+    {
+        extract(self::getDBWithTable());
+        $table->addField('awardId');
+        $table->addFieldConditional('id', $cycleId);
+        return $db->selectColumn();
     }
 
     public static function list(array $options = [])
     {
+        extract(self::getDBWithTable());
+        $table->addField('id');
+        $table->addField('awardMonth');
+        $table->addField('awardYear');
+        $table->addField('voteAllowed');
+        $table->addField('voteType');
+        $table->addField('term');
 
-        $db = parent::getDB();
-        $tbl = $db->addTable('award_cycle');
-        $tbl->addField('id');
-        $tbl->addField('awardMonth');
-        $tbl->addField('awardYear');
-        $tbl->addField('voteAllowed');
-        $tbl->addField('voteType');
-        $tbl->addField('term');
-
-        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $tbl->getField('startDate') . ', "%l:%i %p, %b %e, %Y")', 'startDate');
-        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $tbl->getField('endDate') . ', "%l:%i %p, %b %e, %Y")', 'endDate');
-        $tbl->addField($startDateExpression);
-        $tbl->addField($endDateExpression);
+        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "%l:%i %p, %b %e, %Y")', 'startDate');
+        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "%l:%i %p, %b %e, %Y")', 'endDate');
+        $table->addField($startDateExpression);
+        $table->addField($endDateExpression);
 
         if (!empty($options['awardId'])) {
-            $tbl->addFieldConditional('awardId', (int) $options['awardId']);
+            $table->addFieldConditional('awardId', (int) $options['awardId']);
             if (!empty($options['includeAward'])) {
                 $awardTbl = $db->addTable('award_award');
                 $awardTbl->addField('judgeMethod');
@@ -95,12 +107,12 @@ class CycleFactory extends AbstractFactory
         }
 
         if (!empty($options['deletedOnly'])) {
-            $tbl->addFieldConditional('deleted', 1);
+            $table->addFieldConditional('deleted', 1);
         } else {
-            $tbl->addFieldConditional('deleted', 0);
+            $table->addFieldConditional('deleted', 0);
         }
 
-        $tbl->addOrderBy('startDate', 'desc');
+        $table->addOrderBy('startDate', 'desc');
         return $db->select();
     }
 
