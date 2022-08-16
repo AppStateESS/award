@@ -1,0 +1,13 @@
+<p>Hello <?=$participant->firstName?>,</p>
+
+<p>You have been invited to be an award judge.</p>
+
+<ul>
+  <li>Award: <?=$award->title?></li>
+  <li>Nomination begins: <?=$award->startDate?></li>
+  <li>Nomination deadline: <?=$award->endDate?></li>
+</ul>
+
+<p>After the deadline, you will be asked to review nominations and then vote for one or more winners.</p>
+
+<p>Please <a href="<?=$signIn?>">go to the award website</a>, sign in, and either accept or refuse the invitation.</p>
