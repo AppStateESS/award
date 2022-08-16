@@ -20,4 +20,8 @@ const userScripts = {
   SignUpForm: exports.APP_DIR + '/User/SignUpForm/index.tsx',
 }
 
-exports.entry = {...adminScripts, ...userScripts}
+const participantScripts = {
+  Name: exports.APP_DIR + '/Participant/Name/index.tsx',
+}
+
+exports.entry = {...adminScripts, ...userScripts, ...participantScripts}
