@@ -30,6 +30,20 @@ const resetPassword = async (
   })
 }
 
+const updateParticipant = async (
+  participantId: number,
+  firstName: string,
+  lastName: string
+) => {
+  return axios({
+    method: 'put',
+    url: 'award/Admin/Participant/' + participantId,
+    data: {firstName, lastName},
+    timeout: 3000,
+    headers,
+  })
+}
+
 const saveNewParticipant = async (email: string, password: string) => {
   const data = {email, password}
   const url = 'award/User/Participant/create'
@@ -81,4 +95,5 @@ export {
   saveNewParticipant,
   sendInvitation,
   signInPost,
+  updateParticipant,
 }
