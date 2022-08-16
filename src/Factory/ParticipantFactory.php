@@ -18,6 +18,8 @@ use award\AbstractClass\AbstractFactory;
 use award\Factory\ParticipantHashFactory;
 use award\View\EmailView;
 use phpws2\Database;
+use award\Exception\BannedParticipant;
+use award\Exception\InactiveParticipant;
 
 class ParticipantFactory extends AbstractFactory
 {
@@ -156,18 +158,52 @@ class ParticipantFactory extends AbstractFactory
         return isset($_SESSION['AWARD_PARTICIPANT']);
     }
 
+    /**
+     * Throws exceptions if participant is not usable.
+     * @param Participant $participant
+     * @throws BannedParticipant
+     */
+    public static function isViable(Participant $participant)
+    {
+        if ($participant->banned) {
+            throw new BannedParticipant($participant->email);
+        }
+        if (!$participant->active) {
+            throw new InactiveParticipant($participant->email);
+        }
+    }
+
     public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
-        $table->addField('id');
-        $table->addField('active');
-        $table->addField('authType');
-        $table->addField('banned');
-        $table->addField('created');
-        $table->addField('email');
-        $table->addField('firstName');
-        $table->addField('lastName');
-        $table->addField('updated');
+
+        if (!empty($options['search'])) {
+            $search = preg_replace('/[\W]/', '', $options['search']);
+            $firstCond = new Database\Conditional($db, $table->getField('firstName'), "%$search%", 'like');
+            $lastCond = new Database\Conditional($db, $table->getField('lastName'), "%$search%", 'like');
+            $emailCond = new Database\Conditional($db, $table->getField('email'), "%$search%", 'like');
+            $meldCond = new Database\Conditional($db, $firstCond, $lastCond, 'or');
+            $meldCond2 = new Database\Conditional($db, $meldCond, $emailCond, 'or');
+
+            $db->addConditional($meldCond2);
+        }
+
+        if (!empty($options['asSelect'])) {
+            $table->addField('id', 'value');
+            $expString = 'concat(firstName, " ", lastName, " ", " ", email)';
+            $dbExpression = new \phpws2\Database\Expression($expString, 'label');
+            $table->addField($dbExpression);
+        } else {
+            $table->addField('id');
+            $table->addField('active');
+            $table->addField('authType');
+            $table->addField('banned');
+            $table->addField('created');
+            $table->addField('email');
+            $table->addField('firstName');
+            $table->addField('lastName');
+            $table->addField('updated');
+        }
         return $db->select();
     }
 
