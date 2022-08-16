@@ -20,6 +20,9 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 use phpws2\Settings;
 use award\Resource\Participant;
+use award\Resource\Invitation;
+use award\Resource\Cycle;
+use award\Resource\Award;
 use award\View\EmailView;
 
 class EmailFactory
@@ -63,9 +66,16 @@ class EmailFactory
         return self::send($email);
     }
 
+    public static function sendParticipantJudgeInvitation(Invitation $invitation)
+    {
+        $email = self::getEmail();
+        $email->to($invitation->email)->html(EmailView::participantJudgeInvitation($invitation))->subject('Award site judge request');
+        return self::sendEmail();
+    }
+
     /**
      * Returns an Email object with default from and reply-to settings.
-     * @return Email
+     * @return Symfony\Component\Mime\Email
      */
     private static function getEmail()
     {
