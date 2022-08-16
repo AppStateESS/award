@@ -42,12 +42,13 @@ class Participant extends AbstractController
      *
      * @return string
      */
-    protected function createAccountHtml()
+    protected function createAccountHtml(Request $request)
     {
         if (ParticipantFactory::getCurrentParticipant()) {
             return 'User:Participant:createAccountHTML already logged in as participant';
         } else {
-            return ParticipantView::createAccount();
+            $email = $request->pullGetString('email', true);
+            return ParticipantView::createAccount($email ? $email : null);
         }
     }
 
