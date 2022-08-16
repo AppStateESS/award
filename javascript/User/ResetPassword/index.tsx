@@ -1,6 +1,6 @@
 'use strict'
 import React, {useState, useEffect, useRef} from 'react'
-import {resetPassword} from '../Share/ParticipantXHR'
+import {resetPassword} from '../../Share/ParticipantXHR'
 import {createRoot} from 'react-dom/client'
 
 type Props = {}
