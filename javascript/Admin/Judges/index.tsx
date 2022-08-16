@@ -6,6 +6,7 @@ import Modal from '../../Share/Modal'
 import {getList} from '../../Share/XHR'
 import Current from './Current'
 import Form from './Form'
+import {Message, MessageType} from '../../Share/Message'
 
 declare const cycleId: number
 
@@ -14,9 +15,13 @@ const Judges = () => {
   const [inviteModal, setInviteModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [formKey, setFormKey] = useState(0)
+  const [message, setMessage] = useState<MessageType>({
+    message: '',
+    type: '',
+  })
 
   useEffect(() => {
-    const controller = load()
+    const controller = loadJudges()
     return () => controller.abort()
   }, [])
 
@@ -24,7 +29,7 @@ const Judges = () => {
     setFormKey(new Date().getTime())
   }, [inviteModal])
 
-  const load = () => {
+  const loadJudges = () => {
     const controller = new AbortController()
     const {signal} = controller
     const url = './award/Admin/Judge/'
@@ -36,6 +41,7 @@ const Judges = () => {
     getList({url, params, handleSuccess, signal})
     return controller
   }
+
   let content
   if (loading) {
     content = <div>Loading judges</div>
@@ -49,6 +55,15 @@ const Judges = () => {
     setInviteModal(true)
   }
 
+  const inviteSent = (inviteMessage: MessageType) => {
+    setMessage(inviteMessage)
+    setTimeout(() => {
+      setMessage({message: '', type: ''})
+    }, 5000)
+    setInviteModal(false)
+    loadJudges()
+  }
+
   return (
     <div>
       <Modal
@@ -56,9 +71,9 @@ const Judges = () => {
         size="lg"
         show={inviteModal}
         close={() => setInviteModal(false)}>
-        <Form key={formKey} />
+        <Form key={formKey} inviteSent={inviteSent} cycleId={cycleId} />
       </Modal>
-
+      <Message message={message} />
       <div className="card">
         <div className="card-header p-1">
           <button
