@@ -44,9 +44,26 @@ class Participant extends AbstractController
         return ParticipantView::adminList();
     }
 
-    public function listJson()
+    public function listJson(Request $request)
     {
-        return ParticipantFactory::listing();
+        $options['asSelect'] = $request->pullGetBoolean('asSelect', true);
+        $options['search'] = $request->pullGetString('search', true);
+        return ParticipantFactory::listing($options);
+    }
+
+    public function put(Request $request)
+    {
+        $participant = ParticipantFactory::build($this->id);
+        $firstName = $request->pullPutString('firstName', true);
+        if ($firstName) {
+            $participant->setFirstName($firstName);
+        }
+        $lastName = $request->pullPutString('lastName', true);
+        if ($lastName) {
+            $participant->setLastName($lastName);
+        }
+        ParticipantFactory::save($participant);
+        return ['success' => true];
     }
 
 }
