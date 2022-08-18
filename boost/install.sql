@@ -24,6 +24,7 @@ CREATE TABLE award_cycle (
     awardId int,
     awardMonth smallint DEFAULT 0,
     awardYear smallint DEFAULT 0,
+    completed smallint DEFAULT 0,
     deleted smallint DEFAULT 0,
     endDate int default 0,
     startDate int default 0,
