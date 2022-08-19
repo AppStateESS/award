@@ -13,21 +13,28 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\AbstractClass\AbstractResource;
+
 /**
  * @table reference
  */
-class Judge extends award\AbstractResource
+class Judge extends AbstractResource
 {
 
     /**
      * @var int
      */
-    private int $cycleId;
+    protected int $cycleId = 0;
 
     /**
      * @var int
      */
-    private int $participantId;
+    protected int $participantId = 0;
+
+    public function __construct()
+    {
+        parent::__construct('award_judge');
+    }
 
     /**
      * @return int
