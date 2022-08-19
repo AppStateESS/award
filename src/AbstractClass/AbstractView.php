@@ -96,7 +96,8 @@ class AbstractView
 
     protected static function menu($active)
     {
-        $params = ['active' => $active];
+        $auth = \Current_User::getAuthorization();
+        $params = ['active' => $active, 'logoutUrl' => $auth->logout_link];
         return self::getTemplate('Admin/Menu', $params);
     }
 
