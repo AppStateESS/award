@@ -15,6 +15,7 @@ namespace award\View;
 
 use award\Factory\ParticipantFactory;
 use award\Factory\AuthenticateFactory;
+use award\Factory\InvitationFactory;
 use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
@@ -72,6 +73,9 @@ class ParticipantView extends AbstractView
     public static function dashboard()
     {
         $values['participant'] = ParticipantFactory::getCurrentParticipant();
+
+        $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
+
         return self::getTemplate('Participant/Dashboard', $values);
     }
 
