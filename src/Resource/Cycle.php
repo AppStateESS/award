@@ -42,6 +42,12 @@ class Cycle extends AbstractResource
     private int $awardYear = 0;
 
     /**
+     * If true, the winner has been selected and the cycle is complete.
+     * @var bool
+     */
+    private bool $completed = false;
+
+    /**
      * @var bool
      */
     private bool $deleted = false;
@@ -130,6 +136,11 @@ class Cycle extends AbstractResource
         return $this->awardYear;
     }
 
+    public function getCompleted(): bool
+    {
+        return $this->completed;
+    }
+
     /**
      * @return bool
      */
@@ -213,6 +224,12 @@ class Cycle extends AbstractResource
     public function setAwardYear(int $awardYear): self
     {
         $this->awardYear = $awardYear;
+        return $this;
+    }
+
+    public function setCompleted(bool $completed): self
+    {
+        $this->completed = $completed;
         return $this;
     }
 
