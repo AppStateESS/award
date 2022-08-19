@@ -45,6 +45,9 @@ export interface InvitationResource {
   email: string
   inviteType: number
   participantId: number
+  firstName?: string
+  lastName?: string
+  awardTitle?: string
 }
 
 export interface ParticipantResource {
