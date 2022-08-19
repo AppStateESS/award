@@ -23,7 +23,8 @@ define('AWARD_DEFAULT_VOTE_TYPE', 'SingleVote');
 
 /**
  * The invitation status. A refuse always will prevent the person from
- * ever being sent an email.
+ * ever being sent an email. Changes to the settings below **must** be updated in
+ * scripts as well.
  */
 define('AWARD_INVITATION_WAITING', 0);
 define('AWARD_INVITATION_CONFIRMED', 1);
