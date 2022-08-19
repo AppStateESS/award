@@ -44,8 +44,14 @@ const updateParticipant = async (
   })
 }
 
-const saveNewParticipant = async (email: string, password: string) => {
-  const data = {email, password}
+interface NewParticipant {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+}
+
+const saveNewParticipant = async (data: NewParticipant) => {
   const url = 'award/User/Participant/create'
   return axios({
     method: 'post',
