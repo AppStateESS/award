@@ -1,26 +1,21 @@
+<div class="float-right"><a href="./controlpanel"><i class="fas fa-cog"></i></a> | <a href="<?=$logoutUrl?>"><i class="fas fa-sign-out-alt"></i></a></div>
 <ul class="nav nav-tabs mb-3">
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'dashboard' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Dashboard">Dashboard</a>
+    <a class="nav-link<?=$active === 'dashboard' ? ' active':null?>" <?=$active === 'dashboard' ? 'aria-current="page"' : null?> href="./award/Admin/Dashboard">Dashboard</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'award' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Award">Awards</a>
+    <a class="nav-link<?=$active === 'award' ? ' active':null?>" <?=$active === 'award' ? 'aria-current="page"' : null?> href="./award/Admin/Award">Awards</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'cycle' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Cycle">Cycles</a>
+    <a class="nav-link<?=$active === 'cycle' ? ' active':null?>" <?=$active === 'cycle' ? 'aria-current="page"' : null?> href="./award/Admin/Cycle">Cycles</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'participant' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Participant">Participants</a>
+    <a class="nav-link<?=$active === 'participant' ? ' active':null?>" <?=$active === 'participant' ? 'aria-current="page"' : null?> href="./award/Admin/Participant">Participants</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'invitation' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Invitation">Invitations</a>
+    <a class="nav-link<?=$active === 'invitation' ? ' active':null?>" <?=$active === 'invitation' ? 'aria-current="page"' : null?> href="./award/Admin/Invitation">Invitations</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link<?=$active === 'settings' ? ' active':null?>" aria-current="page"
-      href="./award/Admin/Setting">Settings</a>
+    <a class="nav-link<?=$active === 'settings' ? ' active':null?>" <?=$active === 'settings' ? 'aria-current="page"' : null?> href="./award/Admin/Setting">Settings</a>
   </li>
 </ul>
