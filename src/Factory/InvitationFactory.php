@@ -16,6 +16,7 @@ namespace award\Factory;
 use award\Resource\Invitation;
 use award\Resource\Participant;
 use award\Factory\ParticipantFactory;
+use award\Factory\JudgeFactory;
 use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractFactory;
 use phpws2\Database;
@@ -45,6 +46,17 @@ class InvitationFactory extends AbstractFactory
         $table->addFieldConditional('cycleId', 0);
         $table->addFieldConditional('confirm', AWARD_INVITATION_NO_CONTACT);
         return !empty($db->selectOneRow());
+    }
+
+    /**
+     * Sets the invitation confirm to AWARD_INVITATION_CONFIRMED and
+     * creates a new Judge.
+     * @param Invitation $invitation
+     */
+    public static function confirmJudge(Invitation $invitation)
+    {
+        $invitation->confirm = AWARD_INVITATION_CONFIRMED;
+        InvitationFactory::save($invitation);
     }
 
     public static function confirmReason(int $confirm)
@@ -96,6 +108,9 @@ class InvitationFactory extends AbstractFactory
      * - inviteType (defines for new, judge, reference, nominated)
      * - senderId (participant who invited someone)
      *
+     * Additional information
+     * - includeInvited - includes participant information joined on invitedId
+     *
      * Additional options for sorting are:
      * - sortByConfirm: if true, sort by waiting, confirmed, and refused
      * - sortByInvite: if true, sort by new, judge, reference, nominated
@@ -105,15 +120,39 @@ class InvitationFactory extends AbstractFactory
     public static function getList(array $options = [])
     {
         /**
+         * Options
+         * Conditionals
+         * - awardId
+         * - cycleId
+         * - inviteId
+         * - senderId
+         * - inviteType
+         * - confirm
+         *
+         * Information
+         * includeInvited: adds participant information
+         * includeAward: adds award information.
          * @var \phpws2\Database\DB $db
          * @var \phpws2\Database\Table $table
          */
         extract(self::getDBWithTable());
-        $idChecks = ['awardId', 'cycleId', 'email', 'invitedId', 'inviteType', 'senderId'];
 
-        self::addIdOptions($table, $idChecks, $options);
+        self::addIdOptions($table, ['awardId', 'cycleId', 'inviteId', 'senderId'], $options);
         self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
         self::addOrderOptions($table, $options, 'email');
+
+        if (!empty($options['includeInvited'])) {
+            $partTable = $db->addTable('award_participant');
+            $partTable->addField('firstName');
+            $partTable->addField('lastName');
+            $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('invitedId'), $partTable->getField('id'), '='));
+        }
+
+        if (!empty($options['includeAward'])) {
+            $awardTable = $db->addTable('award_award');
+            $awardTable->addField('title', 'awardTitle');
+            $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
+        }
 
         $result = $db->select();
 
@@ -156,6 +195,12 @@ class InvitationFactory extends AbstractFactory
             $invitation->setValues($result);
             return $invitation;
         }
+    }
+
+    public static function refuseJudge(Invitation $invitation)
+    {
+        $invitation->confirm = AWARD_INVITATION_REFUSED;
+        InvitationFactory::save($invitation);
     }
 
     /**
