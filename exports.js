@@ -7,6 +7,8 @@ const adminScripts = {
   AwardForm: exports.APP_DIR + '/Admin/AwardForm/index.tsx',
   CycleForm: exports.APP_DIR + '/Admin/CycleForm/index.tsx',
   CycleList: exports.APP_DIR + '/Admin/CycleList/index.tsx',
+  CycleInvitationStatus:
+    exports.APP_DIR + '/Admin/CycleInvitationStatus/index.tsx',
   InvitationList: exports.APP_DIR + '/Admin/InvitationList/index.tsx',
   Judges: exports.APP_DIR + '/Admin/Judges/index.tsx',
   ParticipantList: exports.APP_DIR + '/Admin/ParticipantList/index.tsx',
@@ -22,6 +24,8 @@ const userScripts = {
 
 const participantScripts = {
   Name: exports.APP_DIR + '/Participant/Name/index.tsx',
+  ParticipantInvitations:
+    exports.APP_DIR + '/Participant/ParticipantInvitations/index.tsx',
 }
 
 exports.entry = {...adminScripts, ...userScripts, ...participantScripts}
