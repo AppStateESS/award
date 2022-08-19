@@ -28,6 +28,22 @@ use award\View\EmailView;
 class EmailFactory
 {
 
+    /**
+     * Sends a confirmation email to the administators to let them know a judge
+     * confirmed their invitation.
+     *
+     * @param Award $award
+     * @param Cycle $cycle
+     * @param Participant $participant
+     * @return type
+     */
+    public static function judgeConfirmed(Award $award, Cycle $cycle, Participant $participant)
+    {
+        $email = self::getEmail();
+        $email->to(Settings::get('award', 'siteContactEmail'))->html(EmailView::judgeConfirmed($award, $cycle, $participant))->subject('Award judge confirmed their participation');
+        return self::send($email);
+    }
+
     public static function createWarningOnExisting(Participant $participant)
     {
         $email = self::getEmail();
@@ -70,7 +86,7 @@ class EmailFactory
     {
         $email = self::getEmail();
         $email->to($invitation->email)->html(EmailView::participantJudgeInvitation($invitation))->subject('Award site judge request');
-        return self::sendEmail();
+        return self::send($email);
     }
 
     /**
