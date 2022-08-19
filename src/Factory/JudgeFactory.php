@@ -21,7 +21,16 @@ use phpws2\Database;
 class JudgeFactory extends AbstractFactory
 {
 
+    protected static string $resourceClassName = 'award\Resource\Judge';
     protected static string $table = 'award_judge';
+
+    public static function create(int $cycleId, int $participantId)
+    {
+        $judge = JudgeFactory::build();
+        $judge->cycleId = $cycleId;
+        $judge->participantId = $participantId;
+        JudgeFactory::save($judge);
+    }
 
     public static function listing(array $options = [])
     {
