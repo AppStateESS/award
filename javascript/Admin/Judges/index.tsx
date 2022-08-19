@@ -75,7 +75,7 @@ const Judges = () => {
       </Modal>
       <Message message={message} />
       <div className="card">
-        <div className="card-header p-1">
+        <div className="card-header p-2">
           <button
             title="Invite judge"
             onClick={invite}
