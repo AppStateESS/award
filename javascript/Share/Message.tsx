@@ -7,10 +7,15 @@ export interface MessageType {
   type: string
 }
 
+const emptyMessage = {
+  message: '',
+  type: '',
+}
+
 type Props = {
   message: MessageType
 }
-export const Message = ({message}: Props) => {
+const Message = ({message}: Props) => {
   if (message.message.length > 0) {
     return (
       <div className={`alert alert-${message.type}`}>{message.message}</div>
@@ -21,3 +26,5 @@ export const Message = ({message}: Props) => {
 }
 
 Message.propTypes = {message: PropTypes.object}
+
+export {Message, emptyMessage}
