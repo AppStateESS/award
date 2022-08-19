@@ -21,6 +21,7 @@ use award\Resource\Cycle;
 use award\Resource\Award;
 use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
+use award\Factory\ParticipantFactory;
 
 /**
  * This view is used solely to populate email messages. No HTML is sent to the browser.
@@ -47,6 +48,15 @@ class EmailView extends AbstractView
         $values['signupLink'] = 'award/User/Participant/createAccount/?email=' . $invitation->email;
         $values['refuseLink'] = "award/User/Invitation/{$invitation->id}/refuse?email={$invitation->email}";
         return self::getTemplate('Admin/Email/InviteNewParticipant', $values);
+    }
+
+    public static function judgeConfirmed($award, $cycle, $participant)
+    {
+        $values = self::defaultEmailValues();
+        $values['award'] = $award;
+        $values['participant'] = $participant;
+        $values['cycle'] = $cycle;
+        return self::getTemplate('Admin/Email/JudgeConfirmed', $values);
     }
 
     public static function newParticipant(Participant $participant, string $hash)
@@ -93,7 +103,7 @@ class EmailView extends AbstractView
     {
         $siteUrl = \Canopy\Server::getSiteUrl();
         return [
-            'homeSite' => $siteurl,
+            'homeSite' => $siteUrl,
             'hostName' => \Layout::getPageTitle(true),
             'signIn' => $siteUrl . 'award/User/Participant/signIn',
             'contactEmail' => \phpws2\Settings::get('award', 'siteContactEmail'),
@@ -117,7 +127,7 @@ class EmailView extends AbstractView
         }
 
         if ($invitation->invitedId) {
-            $values['invitee'] = ParticipantFactory::build($invitation->invitedId);
+            $values['invited'] = ParticipantFactory::build($invitation->invitedId);
         }
 
         if ($invitation->senderId) {
