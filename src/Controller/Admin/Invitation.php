@@ -35,9 +35,12 @@ class Invitation extends AbstractController
 
     protected function listJson(Request $request)
     {
-        $options['awardId'] = $request->pullGetInteger('awardId', true);
-        $options['confirm'] = $request->pullGetInteger('confirm', true);
-        $options['inviteType'] = $request->pullGetInteger('inviteType', true);
+
+        $options['confirm'] = $request->pullGetInteger('confirm', true) ? $request->pullGetInteger('confirm') : null;
+        $options['inviteType'] = $request->pullGetInteger('inviteType', true) ? $request->pullGetInteger('inviteType') : null;
+        $options['awardId'] = (int) $request->pullGetInteger('awardId', true);
+        $options['cycleId'] = (int) $request->pullGetInteger('cycleId', true);
+        $options['includeInvited'] = $request->pullGetBoolean('includeInvited');
 
         return InvitationFactory::getList($options);
     }
