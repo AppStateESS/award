@@ -15,6 +15,7 @@ namespace award\View;
 
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
+use award\Factory\InvitationFactory;
 use award\AbstractClass\AbstractView;
 use award\Resource\Award;
 use award\Resource\Cycle;
@@ -45,6 +46,8 @@ class CycleView extends AbstractView
         } else {
             $values['judges'] = 'No judges, popular vote';
         }
+        // Uses cycleId from the Judges script
+        $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
 
         return self::getTemplate('Admin/CycleView', $values);
     }
@@ -70,10 +73,28 @@ class CycleView extends AbstractView
 
     /**
      * Returns a listing of cycles that need attention (vote approval, nomination ending)
+     * Used by Dashboard view
      */
-    public static function noteworthy(): string
+    public static function upcoming(): string
     {
-        return 'Noteworthy item listing';
+        $options = ['incompleteOnly' => true, 'includeAward' => true];
+
+        $cycleList = CycleFactory::list($options);
+
+        $today = time();
+        $format = '%b. %e, %Y - %l:%M %p';
+        foreach ($cycleList as &$cycle) {
+            if ($cycle['startDate'] > $today) {
+                $cycle['label'] = 'Nominations start ' . stftime($format, $cycle['startDate']);
+            } elseif ($cycle['endDate'] > $today) {
+                $cycle['label'] = 'Nominations deadline ' . strftime($format, $cycle['endDate']);
+            } else {
+                $cycle['label'] = 'Voting ready';
+            }
+        }
+        $values['cycleList'] = $cycleList;
+
+        return self::getTemplate('Admin/UpcomingCycles', $values);
     }
 
 }
