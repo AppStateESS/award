@@ -82,6 +82,16 @@ class CycleFactory extends AbstractFactory
         return $db->selectColumn();
     }
 
+    /**
+     * Returns an array of cycles.
+     * Options
+     * - awardId:int - only cycles with the same awardId
+     * - deletedOnly:bool - only deleted cycles
+     * - incompletedOnly:int - only cycles that end in the future.
+     * - dateFormat:string - formats the date with SQL strftime codes.
+     * @param array $options
+     * @return array
+     */
     public static function list(array $options = [])
     {
         extract(self::getDBWithTable());
@@ -92,24 +102,40 @@ class CycleFactory extends AbstractFactory
         $table->addField('voteType');
         $table->addField('term');
 
-        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "%l:%i %p, %b %e, %Y")', 'startDate');
-        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "%l:%i %p, %b %e, %Y")', 'endDate');
-        $table->addField($startDateExpression);
-        $table->addField($endDateExpression);
+        if (!empty($options['dateFormat'])) {
+            $format = '%l:%i %p, %b %e, %Y';
+            if (is_string($options['dateFormat'])) {
+                $format = is_string($options['dateFormat']);
+            }
+            $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "' . $format . '")', 'startDate');
+            $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "' . $format . '")', 'endDate');
+            $table->addField($startDateExpression);
+            $table->addField($endDateExpression);
+        } else {
+            $table->addField('startDate');
+            $table->addField('endDate');
+        }
 
         if (!empty($options['awardId'])) {
             $table->addFieldConditional('awardId', (int) $options['awardId']);
-            if (!empty($options['includeAward'])) {
-                $awardTbl = $db->addTable('award_award');
-                $awardTbl->addField('judgeMethod');
-                $awardTbl->addFieldConditional('id', $options['awardId']);
-            }
         }
+
+        if (!empty($options['includeAward'])) {
+            $awardTbl = $db->addTable('award_award');
+            $awardTbl->addField('judgeMethod');
+            $awardTbl->addField('title');
+            $db->joinResources($table, $awardTbl, new Database\Conditional($db, $table->getField('awardId'), $awardTbl->getField('id'), '='));
+        }
+
 
         if (!empty($options['deletedOnly'])) {
             $table->addFieldConditional('deleted', 1);
         } else {
             $table->addFieldConditional('deleted', 0);
+        }
+
+        if (!empty($options['incompleteOnly'])) {
+            $table->addFieldConditional('completed', 0);
         }
 
         $table->addOrderBy('startDate', 'desc');
@@ -132,6 +158,21 @@ class CycleFactory extends AbstractFactory
         $cycle->setStartDate($request->pullPostInteger('startDate'));
         $cycle->setTerm($request->pullPostString('term'));
         $cycle->setVoteType($request->pullPostString('voteType'));
+        return $cycle;
+    }
+
+    /**
+     * Copies the post information to cycle object.
+     * Does not set currentActive or voteAllowed. Both default to false.
+     * @param Request $request
+     */
+    public static function put(int $cycleId, Request $request)
+    {
+        $cycle = self::build($cycleId);
+
+        $cycle->setEndDate($request->pullPutInteger('endDate'));
+        $cycle->setStartDate($request->pullPutInteger('startDate'));
+        $cycle->setVoteType($request->pullPutString('voteType'));
         return $cycle;
     }
 
