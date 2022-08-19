@@ -7,7 +7,7 @@
  * @param status
  * @returns string
  */
-export const confirmStatus = (status: number) => {
+const confirmStatus = (status: number) => {
   switch (status) {
     case 0:
       return 'Waiting'
@@ -17,3 +17,16 @@ export const confirmStatus = (status: number) => {
       return 'Refused'
   }
 }
+
+const getInviteType = (inviteType: number) => {
+  switch (inviteType) {
+    case 1:
+      return 'Judge'
+    case 2:
+      return 'Reference'
+    case 3:
+      return 'Nominated'
+  }
+}
+
+export {confirmStatus, getInviteType}
