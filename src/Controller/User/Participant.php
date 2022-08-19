@@ -48,7 +48,7 @@ class Participant extends AbstractController
             return 'User:Participant:createAccountHTML already logged in as participant';
         } else {
             $email = $request->pullGetString('email', true);
-            return ParticipantView::createAccount($email ? $email : null);
+            return ParticipantView::createAccount($email ? $email : '');
         }
     }
 
@@ -63,6 +63,8 @@ class Participant extends AbstractController
     {
         $email = $request->pullPostString('email');
         $password = $request->pullPostString('password');
+        $firstName = $request->pullPostString('firstName');
+        $lastName = $request->pullPostString('lastName');
         $participant = ParticipantFactory::getByEmail($email);
         if ($participant) {
             EmailFactory::createWarningOnExisting($participant);
