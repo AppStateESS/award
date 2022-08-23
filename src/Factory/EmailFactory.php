@@ -75,6 +75,11 @@ class EmailFactory
         return self::send($email);
     }
 
+    public function referenceConfirmed(Award $award, Cycle $cycle, Participant $participant)
+    {
+        
+    }
+
     public static function sendForgotPassword(Participant $participant, string $hash)
     {
         $email = self::getEmail();
