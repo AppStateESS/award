@@ -26,6 +26,7 @@ class Judge extends AbstractController
     {
         $options = [];
         $options['cycleId'] = $request->pullGetInteger('cycleId', true);
+        $options['includeParticipant'] = true;
         return JudgeFactory::listing($options);
     }
 
