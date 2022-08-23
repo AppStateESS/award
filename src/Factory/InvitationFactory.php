@@ -137,7 +137,7 @@ class InvitationFactory extends AbstractFactory
          */
         extract(self::getDBWithTable());
 
-        self::addIdOptions($table, ['awardId', 'cycleId', 'inviteId', 'senderId'], $options);
+        self::addIdOptions($table, ['awardId', 'cycleId', 'invitedId', 'senderId'], $options);
         self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
         self::addOrderOptions($table, $options, 'email');
 
