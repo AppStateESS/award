@@ -9,7 +9,9 @@ const Current = ({judgeList}: Props) => {
   const content = judgeList.map((value) => {
     return (
       <div key={`judge-${value.id}`}>
-        {value.firstName} {value.lastName}
+        <a href={`mailto:${value.email}`}>
+          {value.firstName} {value.lastName}
+        </a>
       </div>
     )
   })
