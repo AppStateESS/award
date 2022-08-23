@@ -146,6 +146,16 @@ class Invitation extends AbstractResource
         return $this->senderId;
     }
 
+    public function isJudge(): bool
+    {
+        return $this->inviteType === AWARD_INVITE_TYPE_JUDGE;
+    }
+
+    public function isReference(): bool
+    {
+        return $this->inviteType === AWARD_INVITE_TYPE_REFERENCE;
+    }
+
     public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
