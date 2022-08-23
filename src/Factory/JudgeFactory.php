@@ -38,6 +38,14 @@ class JudgeFactory extends AbstractFactory
         if (!empty($options['cycleId'])) {
             $table->addFieldConditional('cycleId', $options['cycleId']);
         }
+
+        if (!empty($options['includeParticipant'])) {
+            $partTable = $db->addTable('award_participant');
+            $partTable->addField('firstName');
+            $partTable->addField('lastName');
+            $partTable->addField('email');
+            $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('participantId'), $partTable->getField('id'), '='));
+        }
         return $db->select();
     }
 
