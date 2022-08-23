@@ -1,0 +1,23 @@
+<?php if (empty($cycleList)):?>
+<p>No upcoming cycles</p>
+<?php return; endif; ?>
+<table class="table table-striped">
+  <caption>Listing of cycles stages.</caption>
+  <tbody>
+    <tr>
+      <th></th>
+      <th>Award</th>
+      <th>Term</th>
+      <th>Note</th>
+    </tr>
+    <?php foreach ($cycleList as $cycle):?>
+    <tr>
+      <td><a href="./award/Admin/Cycle/<?=$cycle['id']?>">View</a></td>
+      <td><?=$cycle['title']?></td>
+      <td><?=$cycle['term']?></td>
+      <td><?=$cycle['label']?></td>
+    </tr>
+    <?php endforeach;?>
+
+  </tbody>
+</table>
