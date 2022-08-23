@@ -18,14 +18,14 @@ const confirmStatus = (status: number) => {
   }
 }
 
-const getInviteType = (inviteType: number) => {
+const getInviteType = (inviteType: number, titleCase = true) => {
   switch (inviteType) {
     case 1:
-      return 'Judge'
+      return titleCase ? 'Judge' : 'judge'
     case 2:
-      return 'Reference'
+      return titleCase ? 'Reference' : 'reference'
     case 3:
-      return 'Nominated'
+      return titleCase ? 'Nominated' : 'nominated'
   }
 }
 
