@@ -50,7 +50,10 @@ const Form = ({inviteSent, cycleId}: Props) => {
   const inviteParticipant = () => {
     sendParticipantJudgeInvitation(participantId, cycleId).then((response) => {
       if (response.data.success) {
-        inviteSent({message: 'Judge invitiation sent', type: 'success'})
+        inviteSent({
+          message: 'Judge invitiation sent. Refreshing...',
+          type: 'success',
+        })
       } else {
         inviteSent({message: response.data.message, type: 'danger'})
       }
