@@ -58,10 +58,9 @@ const Judges = () => {
   const inviteSent = (inviteMessage: MessageType) => {
     setMessage(inviteMessage)
     setTimeout(() => {
-      setMessage({message: '', type: ''})
-    }, 5000)
+      window.location.reload()
+    }, 3000)
     setInviteModal(false)
-    loadJudges()
   }
 
   return (
