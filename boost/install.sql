@@ -155,6 +155,7 @@ CREATE TABLE award_judge  (
     id int PRIMARY KEY AUTO_INCREMENT,
     cycleId int,
     participantId int,
+    UNIQUE KEY cycpar (cycleId, participantId),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(participantId) REFERENCES award_participant(id)
 );
