@@ -110,7 +110,7 @@ class ParticipantFactory extends AbstractFactory
          * @var \phpws2\Database\Table $table
          */
         extract(self::getDBWithTable('award_participant'));
-
+        $email = strtolower($email);
         $table->addFieldConditional('email', filter_var($email, FILTER_SANITIZE_EMAIL));
         $result = $db->selectOneRow();
 
