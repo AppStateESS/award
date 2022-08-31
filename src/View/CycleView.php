@@ -40,7 +40,7 @@ class CycleView extends AbstractView
         $values['award'] = $award;
         $values['cycle'] = $cycle;
         $values['startDate'] = $cycle->formatStartDate();
-        $values['endDate'] = $cycle->formatStartDate();
+        $values['endDate'] = $cycle->formatEndDate();
         if ($award->judgeMethod === 1) {
             $values['judges'] = self::scriptView('Judges', ['cycleId' => $cycle->id]);
         } else {
