@@ -40,13 +40,11 @@ const SignUpForm = () => {
         if (response.data.success === true) {
           location.href = './award/User/Participant/emailSent'
         } else {
-          console.log(response)
-          //location.href = './award/User/Participant/error'
+          location.href = './award/User/Participant/error'
         }
       })
       .catch((error) => {
-        console.log(error)
-        //location.href = './award/User/Participant/error'
+        location.href = './award/User/Participant/error'
       })
   }
 
