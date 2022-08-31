@@ -4,6 +4,7 @@ import {getCycleInvitations} from '../../Share/InvitationXHR'
 import {InvitationResource} from '../../ResourceTypes'
 import Loading from '../../Share/Loading'
 import {createRoot} from 'react-dom/client'
+import {getInviteType} from '../../Share/Invitation'
 
 declare const cycleId: number
 
@@ -52,8 +53,11 @@ const CycleInvitationStatus = () => {
           <td>
             {value.firstName} {value.lastName}
           </td>
-          <td>{value.email}</td>
-          <td>{}</td>
+          <td>{getInviteType(value.inviteType)}</td>
+          <td>
+            <a href={`mailto:${value.email}`}>{value.email}</a>
+          </td>
+
           <td>{confirmStatus(value.confirm)}</td>
         </tr>
       )
