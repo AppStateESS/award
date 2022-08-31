@@ -85,10 +85,15 @@ class CycleFactory extends AbstractFactory
     /**
      * Returns an array of cycles.
      * Options
-     * - awardId:int - only cycles with the same awardId
-     * - deletedOnly:bool - only deleted cycles
+     * - awardId:int         - only cycles with the same awardId
+     * - judgeId: int        - only return cycles judged by this participant ID. This setting
+     *                         overwrites the referenceId option
+     * - referenceId: int    - only return cycles referenced by this participant ID. This option
+     *                         if overwritten by the judgeId option.
+     * - deletedOnly:bool    - only deleted cycles
      * - incompletedOnly:int - only cycles that end in the future.
-     * - dateFormat:string - formats the date with SQL strftime codes.
+     * - upcoming: bool      - get upcoming and ongoing cycles.
+     * - dateFormat:string    - formats the date with SQL strftime codes.
      * @param array $options
      * @return array
      */
@@ -116,8 +121,22 @@ class CycleFactory extends AbstractFactory
             $table->addField('endDate');
         }
 
+        if (!empty($options['judgeId'])) {
+            $judgeTable = $db->addTable('award_judge');
+            $judgeTable->addFieldConditional('participantId', (int) $options['judgeId']);
+            $db->joinResources($table, $judgeTable, new Database\Conditional($db, $table->getField('id'), $judgeTable->getField('cycleId'), '='));
+        } elseif (!empty($options['referenceId'])) {
+            $judgeTable = $db->addTable('award_judge');
+            $judgeTable->addFieldConditional('participantId', (int) $options['referenceId']);
+            $db->joinResources($table, $judgeTable, new Database\Conditional($db, $table->getField('id'), $judgeTable->getField('cycleId'), '='));
+        }
+
         if (!empty($options['awardId'])) {
             $table->addFieldConditional('awardId', (int) $options['awardId']);
+        }
+
+        if (!empty('upcoming')) {
+            $table->addFieldConditional('endDate', time(), '>');
         }
 
         if (!empty($options['includeAward'])) {
@@ -150,7 +169,9 @@ class CycleFactory extends AbstractFactory
     public static function post(Request $request)
     {
         $cycle = self::build();
-
+        /**
+         * @var $cycle \award\Resource\Cycle
+         */
         $cycle->setAwardId($request->pullPostInteger('awardId'));
         $cycle->setAwardMonth($request->pullPostInteger('awardMonth'));
         $cycle->setAwardYear($request->pullPostInteger('awardYear'));
@@ -174,6 +195,34 @@ class CycleFactory extends AbstractFactory
         $cycle->setStartDate($request->pullPutInteger('startDate'));
         $cycle->setVoteType($request->pullPutString('voteType'));
         return $cycle;
+    }
+
+    /**
+     * Returns a list of cycles that a participant is judging.
+     * @param int $participantId
+     * @return array
+     */
+    public static function upcomingJudged(int $participantId)
+    {
+        $options['upcoming'] = true;
+        $options['includeAward'] = true;
+        $options['judgeId'] = $participantId;
+        $options['dateFormat'] = true;
+        return self::list($options);
+    }
+
+    /**
+     * Returns cycle list in which a participant is serving as a reference.
+     * @param int $participant
+     * @return array
+     */
+    public static function upcomingReferences(int $participantId)
+    {
+        $options['upcoming'] = true;
+        $options['includeAward'] = true;
+        $options['referenceId'] = $participantId;
+        $options['dateFormat'] = true;
+        return self::list($options);
     }
 
 }
