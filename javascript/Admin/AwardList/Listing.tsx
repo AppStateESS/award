@@ -37,7 +37,7 @@ const Listing = ({awardList, reload, setAwardList}: ListingProps) => {
         onChange={(e) => {
           switch (e.target.value) {
             case '1':
-              location.href = `./award/Admin/Award/${award.id}`
+              location.href = `./award/User/Award/${award.id}`
               break
             case '2':
               location.href = `./award/Admin/Cycle/?awardId=${award.id}`
