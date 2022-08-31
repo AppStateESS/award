@@ -1,5 +1,5 @@
 <h2>Welcome <?=$participant->firstName?>!</h2>
-
+<a href="<?=$logoutUrl?>"><i class="fas fa-sign-out-alt"></i></a>
 <div>
   <h4>Invitations</h4>
   <?=$participantInvitations?>
@@ -7,6 +7,18 @@
 <hr />
 
 <h4>Upcoming deadlines</h4>
+<?php if (!empty($judged)):?>
+<?php foreach ($judged as $j):?>
+<div><span class="badge badge-info mr-2 text-white">Judge</span>Voting starts for <strong><a href="./award/User/Award/<?=$j['id']?>"><?=$j['title']?></a></strong> on <?=$j['endDate']?>.</div>
+<?php endforeach;?>
+<?php endif;?>
+
+
 <hr />
 
 <h4>Current awards</h4>
+<?php if (!empty($upcomingCycles)):?>
+<?php foreach ($upcomingCycles as $c):?>
+<div><strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> on <?=$c['endDate']?>.</div>
+<?php endforeach;?>
+<?php endif;?>
