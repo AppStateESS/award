@@ -31,6 +31,11 @@ class Judge extends AbstractResource
      */
     protected int $participantId = 0;
 
+    /**
+     * @var bool
+     */
+    protected bool $voteComplete = false;
+
     public function __construct()
     {
         parent::__construct('award_judge');
@@ -52,6 +57,11 @@ class Judge extends AbstractResource
         return $this->participantId;
     }
 
+    public function getVoteComplete(): bool
+    {
+        return $this->voteComplete;
+    }
+
     /**
      * @param int $cycleId
      */
@@ -67,6 +77,12 @@ class Judge extends AbstractResource
     public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
+        return $this;
+    }
+
+    public function setVoteComplete(bool $voteComplete): self
+    {
+        $this->voteComplete = $voteComplete;
         return $this;
     }
 
