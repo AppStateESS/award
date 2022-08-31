@@ -70,4 +70,10 @@ class AwardView extends AbstractView
         return self::getTemplate('Admin/NewAward', $values);
     }
 
+    public static function view(Award $award)
+    {
+        $values = $award->getValues();
+        return self::getTemplate('User/Award', $values);
+    }
+
 }
