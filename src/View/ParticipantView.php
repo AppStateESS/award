@@ -16,6 +16,7 @@ namespace award\View;
 use award\Factory\ParticipantFactory;
 use award\Factory\AuthenticateFactory;
 use award\Factory\InvitationFactory;
+use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
@@ -72,9 +73,24 @@ class ParticipantView extends AbstractView
      */
     public static function dashboard()
     {
-        $values['participant'] = ParticipantFactory::getCurrentParticipant();
+        $auth = \Current_User::getAuthorization();
+        /**
+         * @TODO this needs to use the authentication system
+         */
+        $values['logoutUrl'] = $auth->logout_link;
+
+        $participant = ParticipantFactory::getCurrentParticipant();
+        $values['participant'] = $participant;
 
         $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
+
+        $values['judged'] = CycleFactory::upcomingJudged($participant->id);
+        $values['references'] = CycleFactory::upcomingReferences($participant->id);
+
+        $cycleOptions['upcoming'] = true;
+        $cycleOptions['includeAward'] = true;
+        $upcomingCycles = CycleFactory::list($cycleOptions);
+        $values['upcomingCycles'] = $upcomingCycles;
 
         return self::getTemplate('Participant/Dashboard', $values);
     }
