@@ -70,6 +70,8 @@ class Participant extends AbstractController
             EmailFactory::createWarningOnExisting($participant);
         } else {
             $newParticipant = ParticipantFactory::createInternal($email, $password);
+            $newParticipant->firstName = $firstName;
+            $newParticipant->lastName = $lastName;
             $hash = ParticipantHashFactory::create($newParticipant->id, 12);
             EmailFactory::newParticipant($newParticipant, $hash);
         }
