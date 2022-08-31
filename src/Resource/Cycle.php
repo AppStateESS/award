@@ -97,7 +97,7 @@ class Cycle extends AbstractResource
      * @param type $format
      * @return string
      */
-    public function formatEndDate($format = '%c'): string
+    public function formatEndDate($format = '%l:%M %p, %B %e, %Y'): string
     {
         return strftime($format, $this->endDate);
     }
@@ -107,7 +107,7 @@ class Cycle extends AbstractResource
      * @param type $format
      * @return string
      */
-    public function formatStartDate($format = '%c'): string
+    public function formatStartDate($format = '%l:%M %p, %B %e, %Y'): string
     {
         return strftime($format, $this->startDate);
     }
