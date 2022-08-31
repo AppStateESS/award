@@ -34,7 +34,7 @@ class Participant extends AbstractController
     {
         $email = $request->pullGetString('email');
         $exists = (bool) ParticipantFactory::getByEmail($email);
-        $refused = InvitationFactory::userRefusedGeneral($email);
+        $refused = InvitationFactory::checkNoContact($email);
 
         return ['exists' => $exists, 'refused' => $refused];
     }
