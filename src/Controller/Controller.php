@@ -58,7 +58,7 @@ class Controller extends \phpws2\Http\Controller
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
             throw new \award\Exception\PrivilegeMissing;
-        } elseif ($roleController === 'Participant' && !$this->role->isParticipant()) {
+        } elseif ($roleController === 'Participant' && (!$this->role->isParticipant() || !ParticipantFactory::isSignedIn())) {
             throw new \award\Exception\ParticipantPrivilegeMissing;
         }
 
