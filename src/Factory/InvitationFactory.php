@@ -177,6 +177,7 @@ class InvitationFactory extends AbstractFactory
      */
     public static function getPreviousInvite(string $email, int $inviteType, int $cycleId = 0)
     {
+        $email = strtolower($email);
         /**
          * @var \phpws2\Database\DB $db
          * @var \phpws2\Database\Table $table
