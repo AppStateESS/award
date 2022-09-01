@@ -4,7 +4,7 @@ CREATE TABLE award_award (
     approvalRequired bool default 0,
     creditNominator bool DEFAULT 0,
     cycleTerm varchar(20) default 'yearly',
-    defaultVoteType varchar(255) NO NULL,
+    defaultVoteType varchar(255) NOT NULL,
     deleted bool DEFAULT 0,
     description text DEFAULT NULL,
     judgeMethod int DEFAULT 1,
