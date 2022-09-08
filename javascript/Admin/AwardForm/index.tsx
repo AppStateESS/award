@@ -84,7 +84,11 @@ const AwardForm = () => {
         />
       </Labeled>
 
-      <Labeled columns={[4, 8]} required={true} label="Description">
+      <Labeled
+        columns={[4, 8]}
+        required={true}
+        label="Description"
+        info="Describe the award and include any nomination conditions.">
         <Textarea
           value={award.description}
           update={(value: keyof AwardResource) => update('description', value)}
