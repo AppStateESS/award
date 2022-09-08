@@ -30,7 +30,7 @@ class Participant extends AbstractController
      * @param Request $request
      * @return array [exists: boolean, refused: boolean]
      */
-    public function canInviteGeneralJson(Request $request)
+    protected function canInviteGeneralJson(Request $request)
     {
         $email = $request->pullGetString('email');
         $exists = (bool) ParticipantFactory::getByEmail($email);
@@ -39,19 +39,19 @@ class Participant extends AbstractController
         return ['exists' => $exists, 'refused' => $refused];
     }
 
-    public function listHtml()
+    protected function listHtml()
     {
         return ParticipantView::adminList();
     }
 
-    public function listJson(Request $request)
+    protected function listJson(Request $request)
     {
         $options['asSelect'] = $request->pullGetBoolean('asSelect', true);
         $options['search'] = $request->pullGetString('search', true);
         return ParticipantFactory::listing($options);
     }
 
-    public function put(Request $request)
+    protected function put(Request $request)
     {
         $participant = ParticipantFactory::build($this->id);
         $firstName = $request->pullPutString('firstName', true);
