@@ -14,15 +14,45 @@ declare(strict_types=1);
 namespace award\Controller\Admin;
 
 use award\AbstractClass\AbstractController;
-//use award\View\JudgeView;
+use award\View\JudgeView;
 use award\Factory\JudgeFactory;
+use award\Factory\CycleFactory;
 use award\Factory\ParticipantFactory;
+use award\Factory\EmailFactory;
 use Canopy\Request;
 
 class Judge extends AbstractController
 {
 
-    public static function listJson(Request $request)
+    protected function remindHtml(Request $request)
+    {
+        $cycle = CycleFactory::build($request->pullGetInteger('cycleId'));
+        if (empty($cycle)) {
+            throw new ResourceNotFound();
+        }
+        return JudgeView::remind($cycle);
+    }
+
+    protected function remindPost(Request $request)
+    {
+        $cycleId = $request->pullGetInteger('cycleId');
+        $cycle = CycleFactory::build($cycleId);
+        $header = JudgeView::remindHeader($cycle);
+        $extra = trim($request->pullPostString('extra'));
+        if (!empty($extra)) {
+            if (!preg_match("/<\/\w/", $extra)) {
+                $extra = '<p>' . nl2br($extra) . '</p>';
+            }
+        }
+        $content = $header . $extra;
+        try {
+            EmailFactory::remindJudges($cycleId, $content);
+        } catch (\award\Exception\NoJudges $e) {
+            return JudgeView::noJudges($cycle);
+        }
+    }
+
+    protected function listJson(Request $request)
     {
         $options = [];
         $options['cycleId'] = $request->pullGetInteger('cycleId', true);
