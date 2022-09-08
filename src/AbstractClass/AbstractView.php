@@ -32,6 +32,21 @@ class AbstractView
         return self::getTemplate('User/Error', ['contactEmail' => $siteContactEmail]);
     }
 
+    public static function getFullAwardTitle(\award\Resource\Award $award, \award\Resource\Cycle $cycle)
+    {
+        $awardTitle = '';
+        if ($cycle->term === 'yearly') {
+            $awardTitle = $cycle->awardYear . ' ' . $award->title;
+        } else {
+            $awardTitle = $cycle->awardMonth . ' ' . $award->title;
+        }
+
+        if (preg_match('/ award$/i', $awardTitle)) {
+            $awardTitle .= ' award';
+        }
+        return $awardTitle;
+    }
+
     public static function getTemplate(string $templateFile, array $values = [], bool $css = false)
     {
         if ($css) {
