@@ -154,11 +154,25 @@ class AbstractFactory
         }
     }
 
-    protected static function load(AbstractResource $resource, int $id)
+    /**
+     * Loads a resource from the table name set in the object by the id parameter.
+     * If allowedDeleted is true, a previously deleted object may be returned.
+     * @param AbstractResource $resource
+     * @param int $id
+     * @param bool $allowDeleted
+     * @return boolean| AbstractResource
+     */
+    protected static function load(AbstractResource $resource, int $id, bool $allowDeleted = false)
     {
         $db = self::getDB();
         $tbl = $db->addTable($resource->getTableName());
         $tbl->addFieldConditional('id', $id);
+        /**
+         * If resource has a deleted property, it is prohibited from loading.
+         */
+        if (!$allowDeleted && property_exists($resource, 'deleted')) {
+            $tbl->addFieldConditional('deleted', 0);
+        }
         $result = $db->selectOneRow();
         if (empty($result)) {
             return false;
