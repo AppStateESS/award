@@ -19,11 +19,13 @@ use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 use phpws2\Settings;
+use award\Factory\JudgeFactory;
 use award\Resource\Participant;
 use award\Resource\Invitation;
 use award\Resource\Cycle;
 use award\Resource\Award;
 use award\View\EmailView;
+use award\Exception\NoJudges;
 
 class EmailFactory
 {
@@ -75,9 +77,20 @@ class EmailFactory
         return self::send($email);
     }
 
-    public function referenceConfirmed(Award $award, Cycle $cycle, Participant $participant)
+    public static function referenceConfirmed(Award $award, Cycle $cycle, Participant $participant)
     {
-        
+
+    }
+
+    public static function remindJudges($cycleId, $content)
+    {
+        $judges = JudgeFactory::listing(['cycleId' => $cycleId, 'includeParticipant' => true]);
+        if (!empty($judges)) {
+            throw new NoJudges();
+        }
+
+        $email = self::getEmail();
+        //$email->to
     }
 
     public static function sendForgotPassword(Participant $participant, string $hash)
