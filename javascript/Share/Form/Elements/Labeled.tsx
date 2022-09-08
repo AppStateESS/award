@@ -12,13 +12,10 @@ interface Props {
 const Labeled = ({columns, required, children, label, info}: Props) => {
   return (
     <div className="form-group row">
-      <label
-        className={`col-sm-${columns[0]} col-form-label ${
-          required ? 'required' : ''
-        }`}>
-        {label}
+      <div className={`col-sm-${columns[0]} col-form-label`}>
+        <label className={`${required ? 'required' : ''}`}>{label}</label>
         {info && <div className="small">{info}</div>}
-      </label>
+      </div>
       <div className={`col-sm-${columns[1]}`}>{children}</div>
     </div>
   )
