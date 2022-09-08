@@ -1,0 +1,26 @@
+<div>
+  <h2>Judge voting reminder for <?=$awardTitle?></h2>
+  <p>
+    This will send a one-time reminder to all judges that they can now vote
+    on the current award cycle.
+  </p>
+
+  <div class="card">
+    <div class="card-body">
+      <p><strong>Subject:</strong> Time to Vote for <?=$awardTitle?>!</p>
+      <div class="small">
+        <em>Award details automatically included</em>
+      </div>
+      <div class="border rounded p-2 mb-3"><?=$judgeHeader?></div>
+      <div class="small">
+        <em>Add extra as needed below</em>
+      </div>
+      <form action="./award/Admin/Judge/remind?cycleId=<?=$cycleId?>" method="post">
+        <textarea name="extra" class="form-control mb-3"></textarea>
+        <button class="btn btn-primary" type="submit">
+          Send email
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
