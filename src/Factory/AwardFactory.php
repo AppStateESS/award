@@ -107,6 +107,19 @@ class AwardFactory extends AbstractFactory
     }
 
     /**
+     * Returns an array of values a participant doesn't need from
+     * an award object.
+     */
+    public static function participantIgnoreValues(): array
+    {
+        return [
+            'active', 'approvalRequired', 'creditNominator',
+            'deleted', 'judgeMethod', 'tipNominate', 'winnerAmount',
+            'defaultVoteType'
+        ];
+    }
+
+    /**
      * Parses the Request for post values to fill an award object.
      * @param Request $request
      */
