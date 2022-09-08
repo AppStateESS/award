@@ -65,7 +65,7 @@ class Cycle extends AbstractController
 
     protected function listJson(Request $request)
     {
-        $options = ['includeAward' => true, 'dateFormat' => true];
+        $options = ['includeAward' => true];
         $awardId = $request->pullGetInteger('awardId', true);
         if ($awardId) {
             $options['awardId'] = $awardId;
