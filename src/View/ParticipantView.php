@@ -89,6 +89,7 @@ class ParticipantView extends AbstractView
 
         $cycleOptions['upcoming'] = true;
         $cycleOptions['includeAward'] = true;
+        $cycleOptions['dateFormat'] = true;
         $upcomingCycles = CycleFactory::list($cycleOptions);
         $values['upcomingCycles'] = $upcomingCycles;
 
