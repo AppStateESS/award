@@ -19,6 +19,9 @@
 <h4>Current awards</h4>
 <?php if (!empty($upcomingCycles)):?>
 <?php foreach ($upcomingCycles as $c):?>
-<div><strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> on <?=$c['endDate']?>.</div>
+<div>
+  <strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> nominations available until <?=$c['endDate']?>.
+  <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate!</a>
+</div>
 <?php endforeach;?>
 <?php endif;?>
