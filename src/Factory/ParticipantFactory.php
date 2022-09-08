@@ -81,12 +81,11 @@ class ParticipantFactory extends AbstractFactory
      * @param string $password
      * @return Participant
      */
-    public static function createInternal(string $email, string $password): Participant
+    public static function createInternal(string $email, string $password, string $firstName, string $lastName): Participant
     {
         $participant = new Participant;
-        $participant->setActive(false)
-            ->setEmail($email)
-            ->hashPassword($password);
+        $participant->setActive(false)->setEmail($email)->setFirstName($firstName)
+            ->setLastName($lastName)->hashPassword($password);
 
         self::save($participant);
         return $participant;
