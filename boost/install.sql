@@ -108,8 +108,13 @@ CREATE TABLE award_document (
 CREATE TABLE award_cyclelog (
     id int PRIMARY KEY AUTO_INCREMENT,
     action varchar(255) NOT NULL,
-    documentId int,
-    participantId int,
+    awardId int NOT NULL,
+    cycleId int NOT NULL,
+    documentId int NULL,
+    participantId int NULL,
+    stamped TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY(awardId) REFERENCES award_award(id),
+    FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(documentId) REFERENCES award_document(id),
     FOREIGN KEY(participantId) REFERENCES award_participant(id)
 );
