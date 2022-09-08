@@ -135,7 +135,7 @@ class CycleFactory extends AbstractFactory
             $table->addFieldConditional('awardId', (int) $options['awardId']);
         }
 
-        if (!empty('upcoming')) {
+        if (!empty($options['upcoming'])) {
             $table->addFieldConditional('endDate', time(), '>');
         }
 
