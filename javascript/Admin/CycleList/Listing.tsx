@@ -62,7 +62,8 @@ const Listing = ({
 
   const rows = cycleListing.map((value) => {
     const judge = value.judgeMethod === 1 ? 'Judged' : 'Popular vote'
-
+    const startDate = new Date(value.endDate * 1000)
+    const endDate = new Date(value.endDate * 1000)
     return (
       <tr key={`cycle-${value.id}`}>
         <td>{select(value)}</td>
@@ -70,8 +71,12 @@ const Listing = ({
         <td>{value.awardYear}</td>
         <td>{judge}</td>
         <td>{value.voteType}</td>
-        <td>{value.startDate}</td>
-        <td>{value.endDate}</td>
+        <td>
+          {startDate.toLocaleTimeString()}, {startDate.toLocaleDateString()}
+        </td>
+        <td>
+          {endDate.toLocaleTimeString()}, {endDate.toLocaleDateString()}
+        </td>
       </tr>
     )
   })
