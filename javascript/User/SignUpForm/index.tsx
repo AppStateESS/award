@@ -43,7 +43,7 @@ const SignUpForm = () => {
           location.href = './award/User/Participant/error'
         }
       })
-      .catch((error) => {
+      .catch(() => {
         location.href = './award/User/Participant/error'
       })
   }
