@@ -58,6 +58,12 @@ class Cycle extends AbstractController
         return CycleView::editForm($cycle);
     }
 
+    protected function judgeReminderSentHtml()
+    {
+        $cycle = CycleFactory::build($this->id);
+        return CycleView::judgeReminderSent($cycle);
+    }
+
     protected function listHtml(Request $request)
     {
         return CycleView::adminList((int) $request->pullGetInteger('awardId', true));
