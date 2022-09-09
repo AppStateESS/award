@@ -26,7 +26,7 @@ class CycleLogFactory extends AbstractFactory
     protected static string $table = 'award_cyclelog';
     protected static string $resourceClassName = 'award\Resource\CycleLog';
 
-    public function stampJudgeRemind(Cycle $cycle)
+    public static function stampJudgeRemind(Cycle $cycle)
     {
         $log = self::build();
         $log->setCycle($cycle);
