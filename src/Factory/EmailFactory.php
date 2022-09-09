@@ -84,13 +84,16 @@ class EmailFactory
 
     public static function remindJudges($cycleId, $content)
     {
+        $cycle = CycleFactory::build($cycleId);
         $judges = JudgeFactory::listing(['cycleId' => $cycleId, 'includeParticipant' => true]);
-        if (!empty($judges)) {
+        if (empty($judges)) {
             throw new NoJudges();
         }
-
-        $email = self::getEmail();
-        //$email->to
+        foreach ($judges as $j) {
+            $email = self::getEmail();
+            $email->to($j['email'])->html($content)->subject('Time to Vote for Plemmons Medallion!');
+            self::send($email);
+        }
     }
 
     public static function sendForgotPassword(Participant $participant, string $hash)
