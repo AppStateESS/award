@@ -38,7 +38,7 @@ class JudgeView extends AbstractView
     public static function remind(Cycle $cycle)
     {
         $award = AwardFactory::build($cycle->awardId);
-        $values['awardTitle'] = $award->title;
+        $values['awardTitle'] = self::getFullAwardTitle($award, $cycle);
         $values['cycleId'] = $cycle->id;
         $values['judgeHeader'] = self::remindHeader($cycle);
         return self::getTemplate('Admin/RemindJudges', $values);
