@@ -13,12 +13,13 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\AbstractClass\AbstractResource;
 use award\Resource\Cycle;
 
 /**
- * @table cyclelog
+ * @table award_cyclelog
  */
-class CycleLog extends award\AbstractResource
+class CycleLog extends AbstractResource
 {
 
     /**
@@ -41,18 +42,23 @@ class CycleLog extends award\AbstractResource
     /**
      * @var int
      */
-    private int $documentId = 0;
+    private ?int $documentId;
 
     /**
      * @var int
      */
-    private int $participantId = 0;
+    private ?int $participantId;
 
     /**
      * Timestamp for log entry
      * @var string
      */
     private string $stamped;
+
+    public function __construct()
+    {
+        parent::__construct('award_cyclelog');
+    }
 
     /**
      * @return string
@@ -81,22 +87,22 @@ class CycleLog extends award\AbstractResource
     /**
      * @return int
      */
-    public function getDocumentId(): int
+    public function getDocumentId()
     {
-        return $this->documentId;
+        return $this->documentId ?? null;
     }
 
     /**
      * @return int
      */
-    public function getParticipantId(): int
+    public function getParticipantId()
     {
-        return $this->participantId;
+        return $this->participantId ?? null;
     }
 
-    public function getStamped(): string
+    public function getStamped()
     {
-        return $this->stamped;
+        return $this->stamped ?? null;
     }
 
     /**
