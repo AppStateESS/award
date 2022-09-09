@@ -41,7 +41,7 @@ class AbstractView
             $awardTitle = $cycle->awardMonth . ' ' . $award->title;
         }
 
-        if (preg_match('/ award$/i', $awardTitle)) {
+        if (!preg_match('/ award$/i', $awardTitle)) {
             $awardTitle .= ' award';
         }
         return $awardTitle;
