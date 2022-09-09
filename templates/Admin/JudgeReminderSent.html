@@ -1,0 +1,9 @@
+<h2>Vote reminder sent</h2>
+
+<p>You reminder email has been sent to the judges below:</p>
+<ul>
+  <?php foreach ($judges as $judge):?>
+  <li><?=$judge['firstName']?> <?=$judge['lastName']?></li>
+  <?php endforeach;?>
+</ul>
+<p>You may send another email should they be unresponsive after two days.</p>
