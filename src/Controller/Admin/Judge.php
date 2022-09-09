@@ -19,10 +19,19 @@ use award\Factory\JudgeFactory;
 use award\Factory\CycleFactory;
 use award\Factory\ParticipantFactory;
 use award\Factory\EmailFactory;
+use award\Factory\CycleLogFactory;
 use Canopy\Request;
 
 class Judge extends AbstractController
 {
+
+    protected function listJson(Request $request)
+    {
+        $options = [];
+        $options['cycleId'] = $request->pullGetInteger('cycleId', true);
+        $options['includeParticipant'] = true;
+        return JudgeFactory::listing($options);
+    }
 
     protected function remindHtml(Request $request)
     {
@@ -47,17 +56,11 @@ class Judge extends AbstractController
         $content = $header . $extra;
         try {
             EmailFactory::remindJudges($cycleId, $content);
+            CycleLogFactory::stampJudgeRemind($cycle);
+            \Canopy\Server::forward("./award/Admin/Cycle/$cycleId/judgeReminderSent");
         } catch (\award\Exception\NoJudges $e) {
             return JudgeView::noJudges($cycle);
         }
-    }
-
-    protected function listJson(Request $request)
-    {
-        $options = [];
-        $options['cycleId'] = $request->pullGetInteger('cycleId', true);
-        $options['includeParticipant'] = true;
-        return JudgeFactory::listing($options);
     }
 
 }
