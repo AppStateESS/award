@@ -16,6 +16,7 @@ namespace award\View;
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
 use award\Factory\InvitationFactory;
+use award\Factory\JudgeFactory;
 use award\AbstractClass\AbstractView;
 use award\Resource\Award;
 use award\Resource\Cycle;
@@ -41,6 +42,7 @@ class CycleView extends AbstractView
         $values['cycle'] = $cycle;
         $values['startDate'] = $cycle->formatStartDate();
         $values['endDate'] = $cycle->formatEndDate();
+        $sendReminder = $cycle->endDate < time();
         if ($award->judgeMethod === 1) {
             $values['judges'] = self::scriptView('Judges', ['cycleId' => $cycle->id]);
         } else {
@@ -50,6 +52,11 @@ class CycleView extends AbstractView
         $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
 
         return self::getTemplate('Admin/CycleView', $values);
+    }
+
+    public static function complete()
+    {
+        return 'This cycle is complete';
     }
 
     public static function currentCycleWarning(\award\Resource\Award $award)
@@ -71,6 +78,13 @@ class CycleView extends AbstractView
         return self::getTemplate('Admin/AdminForm', $values);
     }
 
+    public static function judgeReminderSent(Cycle $cycle)
+    {
+        $values['judges'] = JudgeFactory::listing(['cycleId' => $cycle->id, 'includeParticipant' => true]);
+
+        return self::menu('cycle') . self::getTemplate('Admin/JudgeReminderSent', $values);
+    }
+
     /**
      * Returns a listing of cycles that need attention (vote approval, nomination ending)
      * Used by Dashboard view
@@ -83,12 +97,15 @@ class CycleView extends AbstractView
 
         $today = time();
         $format = '%b. %e, %Y - %l:%M %p';
+
         foreach ($cycleList as &$cycle) {
+            $cycle['voteReady'] = false;
             if ($cycle['startDate'] > $today) {
                 $cycle['label'] = 'Nominations start ' . stftime($format, $cycle['startDate']);
             } elseif ($cycle['endDate'] > $today) {
                 $cycle['label'] = 'Nominations deadline ' . strftime($format, $cycle['endDate']);
             } else {
+                $cycle['voteReady'] = true;
                 $cycle['label'] = 'Voting ready';
             }
         }
