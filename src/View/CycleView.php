@@ -17,6 +17,7 @@ use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
 use award\Factory\InvitationFactory;
 use award\Factory\JudgeFactory;
+use award\Factory\CycleLogFactory;
 use award\AbstractClass\AbstractView;
 use award\Resource\Award;
 use award\Resource\Cycle;
@@ -42,13 +43,12 @@ class CycleView extends AbstractView
         $values['cycle'] = $cycle;
         $values['startDate'] = $cycle->formatStartDate();
         $values['endDate'] = $cycle->formatEndDate();
-        $sendReminder = $cycle->endDate < time();
         if ($award->judgeMethod === 1) {
-            $values['judges'] = self::scriptView('Judges', ['cycleId' => $cycle->id]);
+            $values['judges'] = JudgeView::summary($cycle);
         } else {
             $values['judges'] = 'No judges, popular vote';
         }
-        // Uses cycleId from the Judges script
+        // Uses a global cycleId from the Judges script
         $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
 
         return self::getTemplate('Admin/CycleView', $values);
