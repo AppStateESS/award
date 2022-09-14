@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\Resource\Participant;
+use award\Resource\Cycle;
 use award\AbstractClass\AbstractFactory;
 use award\View\EmailView;
 use phpws2\Database;
@@ -23,6 +24,16 @@ class JudgeFactory extends AbstractFactory
 
     protected static string $resourceClassName = 'award\Resource\Judge';
     protected static string $table = 'award_judge';
+
+    public static function canSendJudgeReminder(Cycle $cycle)
+    {
+        $now = time();
+        $lastSent = CycleLogFactory::getLastJudgeRemind($cycle->id, true);
+        // A reminder has not been sent yet or it has passed the grace period
+        $canSend = $lastSent === false || $lastSent['stamped'] + (AWARD_JUDGE_REMINDER_GRACE * 86400) < $now;
+
+        return ($cycle->endDate < $now && $canSend);
+    }
 
     public static function create(int $cycleId, int $participantId)
     {
