@@ -81,6 +81,7 @@ class CycleView extends AbstractView
     public static function judgeReminderSent(Cycle $cycle)
     {
         $values['judges'] = JudgeFactory::listing(['cycleId' => $cycle->id, 'includeParticipant' => true]);
+        $values['days'] = AWARD_JUDGE_REMINDER_GRACE;
 
         return self::menu('cycle') . self::getTemplate('Admin/JudgeReminderSent', $values);
     }
