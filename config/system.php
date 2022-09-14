@@ -37,3 +37,6 @@ define('AWARD_INVITE_TYPE_REFERENCE', 2);
 define('AWARD_INVITE_TYPE_NOMINATED', 3);
 
 define('AWARD_HASH_DEFAULT_TIMER_HOURS', 2);
+
+// How many days between bulk reminders.
+define('AWARD_JUDGE_REMINDER_GRACE', 2);
