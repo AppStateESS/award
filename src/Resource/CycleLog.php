@@ -50,6 +50,12 @@ class CycleLog extends AbstractResource
     private ?int $participantId;
 
     /**
+     *
+     * @var string
+     */
+    private ?string $username;
+
+    /**
      * Timestamp for log entry
      * @var string
      */
@@ -105,12 +111,23 @@ class CycleLog extends AbstractResource
         return $this->stamped ?? null;
     }
 
+    public function getUsername()
+    {
+        return $this->username ?? null;
+    }
+
     /**
      * @param string $action
      */
     public function setAction(string $action): self
     {
         $this->action = $action;
+        return $this;
+    }
+
+    public function setAwardId(int $awardId)
+    {
+        $this->awardId = $awardId;
         return $this;
     }
 
@@ -122,6 +139,12 @@ class CycleLog extends AbstractResource
     {
         $this->awardId = $cycle->awardId;
         $this->cycleId = $cycle->id;
+    }
+
+    public function setCycleId(int $cycleId)
+    {
+        $this->cycleId = $cycleId;
+        return $this;
     }
 
     /**
@@ -145,6 +168,12 @@ class CycleLog extends AbstractResource
     public function setStamped(string $stamped)
     {
         $this->stamped = $stamped;
+        return $this;
+    }
+
+    public function setUsername(string $username)
+    {
+        $this->username = $username;
         return $this;
     }
 
