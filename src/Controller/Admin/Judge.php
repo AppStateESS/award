@@ -36,6 +36,9 @@ class Judge extends AbstractController
     protected function remindHtml(Request $request)
     {
         $cycle = CycleFactory::build($request->pullGetInteger('cycleId'));
+        if (!JudgeFactory::canSendJudgeReminder($cycle)) {
+            return JudgeView::cannotSendReminder($cycle);
+        }
         if (empty($cycle)) {
             throw new ResourceNotFound();
         }
@@ -56,7 +59,7 @@ class Judge extends AbstractController
         $content = $header . $extra;
         try {
             EmailFactory::remindJudges($cycleId, $content);
-            CycleLogFactory::stampJudgeRemind($cycle);
+            CycleLogFactory::stampJudgeRemind($cycle, \Current_User::getUsername());
             \Canopy\Server::forward("./award/Admin/Cycle/$cycleId/judgeReminderSent");
         } catch (\award\Exception\NoJudges $e) {
             return JudgeView::noJudges($cycle);
