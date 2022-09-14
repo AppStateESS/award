@@ -19,9 +19,46 @@ use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
 use award\Resource\Cycle;
 use award\Resource\Award;
+use award\Factory\CycleLogFactory;
 
 class JudgeView extends AbstractView
 {
+
+    public static function cannotSendReminder(Cycle $cycle)
+    {
+        $values = ['days' => AWARD_JUDGE_REMINDER_GRACE];
+        $menu = self::menu('cycle');
+        return $menu . self::getTemplate('Admin/Error/NoJudgeReminder', $values);
+    }
+
+    public static function summary(Cycle $cycle)
+    {
+        $lastReminder = CycleLogFactory::getLastJudgeRemind($cycle->id);
+        $now = time();
+        $sendReason = null;
+        if ($cycle->endDate > $now) {
+            $sendReason = 'early';
+            $canSend = false;
+        } elseif ($lastReminder === false) {
+            $canSend = true;
+        } else {
+            $stamped = strtotime($lastReminder['stamped']);
+
+            if ($stamped + (AWARD_JUDGE_REMINDER_GRACE * 86400) < $now) {
+                $canSend = true;
+            } else {
+                $canSend = false;
+                $sendReason = 'too_soon';
+            }
+        }
+
+        $js['canSend'] = $canSend;
+        $js['sendReason'] = $sendReason;
+        $js['lastSent'] = $lastReminder === false ? 'Never' : $lastReminder['stamped'];
+        $js['cycleId'] = $cycle->id;
+
+        return self::scriptView('Judges', $js);
+    }
 
     /**
      * Error page for an action that requires judges to proceed.
