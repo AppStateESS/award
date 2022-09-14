@@ -9,6 +9,38 @@ import Form from './Form'
 import {Message, MessageType} from '../../Share/Message'
 
 declare const cycleId: number
+declare const canSend: boolean
+declare const sendReason: string
+declare const lastSent: string
+
+const SendReminder = () => {
+  if (canSend) {
+    return (
+      <div>
+        <span className="badge badge-success float-right">
+          Last reminder vote sent {lastSent}
+        </span>
+        <a
+          className="btn btn-outline-dark btn-sm "
+          href={`./award/Admin/Judge/remind/?cycleId=${cycleId}`}>
+          Send reminder
+        </a>
+      </div>
+    )
+  } else if (sendReason === 'early') {
+    return <span></span>
+  } else if (sendReason === 'too_soon') {
+    return (
+      <div className="badge badge-danger">
+        Last vote reminder sent {lastSent}
+      </div>
+    )
+  } else {
+    return <span></span>
+  }
+}
+
+console.log(cycleId, canSend, sendReason, lastSent)
 
 const Judges = () => {
   const [judgeList, setJudgeList] = useState<ParticipantResource[]>([])
@@ -84,6 +116,9 @@ const Judges = () => {
           <h4 className="m-0">Judges</h4>
         </div>
         <div className="card-body">{content}</div>
+        <div className="card-footer">
+          <SendReminder />
+        </div>
       </div>
     </div>
   )
