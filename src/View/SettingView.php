@@ -17,10 +17,11 @@ use award\AbstractClass\AbstractView;
 
 class SettingView extends AbstractView
 {
+    #TODO add email contact settings
 
     public static function dashboard()
     {
-        $params['menu'] = self::menu('setting');
+        $params['menu'] = self::adminMenu('setting');
         $params['script'] = self::scriptView('Setting');
         return self::getTemplate('Admin/AdminForm', $params);
     }
