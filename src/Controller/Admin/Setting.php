@@ -30,6 +30,7 @@ class Setting extends AbstractController
     public function listJson()
     {
         $settings['authAvailable'] = AuthenticateFactory::getAuthtypeList();
+        $settings['useWarehouse'] = (bool) SettingFactory::useWarehouse();
         return $settings;
     }
 
@@ -42,6 +43,13 @@ class Setting extends AbstractController
         } else {
             SettingFactory::removeEnabledAuthenticators($filename);
         }
+        return ['success' => true];
+    }
+
+    public function warehouseTogglePost(Request $request)
+    {
+        $useWarehouse = $request->pullPostBoolean('useWarehouse');
+        SettingFactory::setUseWarehouse($useWarehouse);
         return ['success' => true];
     }
 
