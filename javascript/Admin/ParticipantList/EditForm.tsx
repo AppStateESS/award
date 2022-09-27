@@ -6,14 +6,11 @@ import {updateParticipant} from '../../Share/ParticipantXHR'
 import Input from '../../Share/Form/Elements/Input'
 
 type Props = {
-  currentParticipant: ParticipantResource | undefined
+  currentParticipant: ParticipantResource
   close: () => void
   load: () => void
 }
 const EditForm = ({currentParticipant, close, load}: Props) => {
-  if (currentParticipant === undefined) {
-    return <span>No participant</span>
-  }
   const [firstName, setFirstName] = useState(currentParticipant.firstName)
   const [lastName, setLastName] = useState(currentParticipant.lastName)
 
