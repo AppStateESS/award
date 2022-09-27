@@ -15,6 +15,7 @@ namespace award\View;
 
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
+use award\Factory\NominationFactory;
 use award\Factory\InvitationFactory;
 use award\Factory\JudgeFactory;
 use award\Factory\CycleLogFactory;
@@ -31,23 +32,26 @@ class CycleView extends AbstractView
      */
     public static function adminList(int $awardId = 0)
     {
-        $values['menu'] = self::menu('cycle');
+        $values['menu'] = self::adminMenu('cycle');
         $values['script'] = self::scriptView('CycleList', ['defaultAwardId' => $awardId]);
         return self::getTemplate('Admin/AdminForm', $values);
     }
 
     public static function adminView(Cycle $cycle, Award $award)
     {
-        $values['menu'] = self::menu('cycle');
+        $values['menu'] = self::adminMenu('cycle');
         $values['award'] = $award;
         $values['cycle'] = $cycle;
         $values['startDate'] = $cycle->formatStartDate();
         $values['endDate'] = $cycle->formatEndDate();
+
         if ($award->judgeMethod === 1) {
             $values['judges'] = JudgeView::summary($cycle);
         } else {
             $values['judges'] = 'No judges, popular vote';
         }
+
+        $values['nominations'] = self::scriptView('Nominations');
         // Uses a global cycleId from the Judges script
         $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
 
@@ -63,7 +67,7 @@ class CycleView extends AbstractView
     {
         $cycle = CycleFactory::build($award->getCycleId());
         $values = $cycle->getValues();
-        $values['menu'] = self::menu('cycle');
+        $values['menu'] = self::adminMenu('cycle');
 
         return self::getTemplate('Admin/CurrentCycleWarning', $values);
     }
@@ -73,7 +77,7 @@ class CycleView extends AbstractView
         $award = AwardFactory::build($cycle->getAwardId());
         $js['defaultCycle'] = $cycle->getValues();
         $js['awardTitle'] = $award->getTitle();
-        $values['menu'] = self::menu('cycle');
+        $values['menu'] = self::adminMenu('cycle');
         $values['script'] = self::scriptView('CycleForm', $js);
         return self::getTemplate('Admin/AdminForm', $values);
     }
@@ -83,7 +87,7 @@ class CycleView extends AbstractView
         $values['judges'] = JudgeFactory::listing(['cycleId' => $cycle->id, 'includeParticipant' => true]);
         $values['days'] = AWARD_JUDGE_REMINDER_GRACE;
 
-        return self::menu('cycle') . self::getTemplate('Admin/JudgeReminderSent', $values);
+        return self::adminMenu('cycle') . self::getTemplate('Admin/JudgeReminderSent', $values);
     }
 
     /**
@@ -92,7 +96,7 @@ class CycleView extends AbstractView
      */
     public static function upcoming(): string
     {
-        $options = ['incompleteOnly' => true, 'includeAward' => true];
+        $options = ['incompleteOnly' => true, 'includeAward' => true, 'nominationCount' => true];
 
         $cycleList = CycleFactory::list($options);
 
@@ -100,14 +104,18 @@ class CycleView extends AbstractView
         $format = '%b. %e, %Y - %l:%M %p';
 
         foreach ($cycleList as &$cycle) {
-            $cycle['voteReady'] = false;
+            $cycle['voteRemindReady'] = false;
             if ($cycle['startDate'] > $today) {
                 $cycle['label'] = 'Nominations start ' . stftime($format, $cycle['startDate']);
             } elseif ($cycle['endDate'] > $today) {
                 $cycle['label'] = 'Nominations deadline ' . strftime($format, $cycle['endDate']);
             } else {
-                $cycle['voteReady'] = true;
-                $cycle['label'] = 'Voting ready';
+                $cycle['voteRemindReady'] = JudgeFactory::canSendJudgeReminder($cycle['id']);
+                if ($cycle['nominations'] === 0) {
+                    $cycle['label'] = '<span class="text-danger">No nominations!</span>';
+                } else {
+                    $cycle['label'] = 'Voting ready';
+                }
             }
         }
         $values['cycleList'] = $cycleList;
