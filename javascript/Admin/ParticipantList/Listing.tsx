@@ -6,6 +6,7 @@ import ListOptions from './ListOptions'
 import BanForm from './BanForm'
 import EditForm from './EditForm'
 import DeleteForm from './DeleteForm'
+import TrustForm from './TrustForm'
 import Modal from '../../Share/Modal'
 
 interface ListingProps {
@@ -18,9 +19,9 @@ const Listing = ({participantList, load}: ListingProps) => {
   const [modalTitle, setModalTitle] = useState('')
   const [modalContentType, setModalContentType] = useState('')
   const [modalContent, setModalContent] = useState(<span></span>)
-  const [currentParticipant, setCurrentParticipant] = useState<
-    ParticipantResource | undefined
-  >()
+  const [currentParticipant, setCurrentParticipant] = useState(
+    {} as ParticipantResource
+  )
   const [modalKey, setModalKey] = useState(new Date().getMilliseconds())
 
   const loadParticipant = (key: number) => {
@@ -46,6 +47,10 @@ const Listing = ({participantList, load}: ListingProps) => {
           setModalTitle('Remove participant')
           setModalContent(<DeleteForm {...{currentParticipant, close}} />)
           break
+        case 'trust':
+          setModalTitle('Change participant trust')
+          setModalContent(<TrustForm {...{currentParticipant, close, load}} />)
+          break
       }
       setShow(true)
     }
@@ -67,6 +72,7 @@ const Listing = ({participantList, load}: ListingProps) => {
               setModalContentType,
               participantKey: key,
               loadParticipant,
+              trusted: value.trusted,
             }}
           />
         </td>
@@ -75,6 +81,13 @@ const Listing = ({participantList, load}: ListingProps) => {
         <td>{value.firstName || <em>Empty</em>}</td>
         <td>{value.created}</td>
         <td>{value.updated}</td>
+        <td>
+          {value.trusted === 1 ? (
+            <span className="text-success">Yes</span>
+          ) : (
+            <span className="text-danger">No</span>
+          )}
+        </td>
       </tr>
     )
   })
@@ -100,10 +113,15 @@ const Listing = ({participantList, load}: ListingProps) => {
             <th>First name</th>
             <th>Joined</th>
             <th>Updated</th>
+            <th>Trusted</th>
           </tr>
           {rows}
         </tbody>
       </table>
+      <hr />
+      <div className="text-center small">
+        Maximum 50 rows shown. Use search to narrow results.
+      </div>
       {emptyMessage}
     </div>
   )
