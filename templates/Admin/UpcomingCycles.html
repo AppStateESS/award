@@ -8,18 +8,20 @@
       <th></th>
       <th>Award</th>
       <th>Term</th>
+      <th>Nominations</th>
       <th>Note</th>
     </tr>
     <?php foreach ($cycleList as $cycle):?>
     <tr>
       <td>
         <a href="./award/Admin/Cycle/<?=$cycle['id']?>">View</a>
-        <?php if ($cycle['voteReady']):?>
+        <?php if ($cycle['voteRemindReady'] && $cycle['nominations'] > 0):?>
         | <a href="./award/Admin/Judge/remind/?cycleId=<?=$cycle['id']?>">Remind judges</a>
         <?php endif;?>
       </td>
       <td><?=$cycle['title']?></td>
       <td><?=$cycle['term']?></td>
+      <td><?=$cycle['nominations']?></td>
       <td><?=$cycle['label']?></td>
     </tr>
     <?php endforeach;?>
