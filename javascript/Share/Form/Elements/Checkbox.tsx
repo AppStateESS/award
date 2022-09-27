@@ -5,12 +5,12 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 interface Props {
   update: (value: boolean) => void
-  value: boolean
+  value: boolean | number
 }
 
 const Checkbox = ({update, value}: Props) => {
-  const textColorClass = value ? 'true-check' : 'false-check'
-  const icon = value ? 'check-square' : 'square'
+  const textColorClass = !!value ? 'true-check' : 'false-check'
+  const icon = !!value ? 'check-square' : 'square'
   return (
     <div
       className={`checkbox-container ${textColorClass}`}
