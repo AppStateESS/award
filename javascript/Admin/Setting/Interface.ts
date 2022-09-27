@@ -6,4 +6,5 @@ export interface AuthAvailable {
 
 export interface InterfaceSettings {
   authAvailable: AuthAvailable[]
+  useWarehouse: boolean
 }
