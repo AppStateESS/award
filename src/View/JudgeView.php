@@ -17,6 +17,7 @@ use award\AbstractClass\AbstractView;
 use award\Factory\JudgeFactory;
 use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
+use award\Factory\NominationFactory;
 use award\Resource\Cycle;
 use award\Resource\Award;
 use award\Factory\CycleLogFactory;
@@ -27,16 +28,21 @@ class JudgeView extends AbstractView
     public static function cannotSendReminder(Cycle $cycle)
     {
         $values = ['days' => AWARD_JUDGE_REMINDER_GRACE];
-        $menu = self::menu('cycle');
+        $menu = self::adminMenu('cycle');
         return $menu . self::getTemplate('Admin/Error/NoJudgeReminder', $values);
     }
 
     public static function summary(Cycle $cycle)
     {
+        $nominations = NominationFactory::getCycleCount($cycle->id);
         $lastReminder = CycleLogFactory::getLastJudgeRemind($cycle->id);
         $now = time();
+
         $sendReason = null;
-        if ($cycle->endDate > $now) {
+        if ($nominations === 0) {
+            $sendReason = 'no_noms';
+            $canSend = false;
+        } elseif ($cycle->endDate > $now) {
             $sendReason = 'early';
             $canSend = false;
         } elseif ($lastReminder === false) {
@@ -68,7 +74,7 @@ class JudgeView extends AbstractView
     {
         $award = AwardFactory::build($cycle->awardId);
         $values['awardTitle'] = self::getFullAwardTitle($award, $cycle);
-        $menu = self::menu('cycle');
+        $menu = self::adminMenu('cycle');
         return $menu . self::getTemplate('Admin/Error/NoJudges', $values);
     }
 
