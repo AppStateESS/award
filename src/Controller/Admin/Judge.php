@@ -35,12 +35,13 @@ class Judge extends AbstractController
 
     protected function remindHtml(Request $request)
     {
-        $cycle = CycleFactory::build($request->pullGetInteger('cycleId'));
-        if (!JudgeFactory::canSendJudgeReminder($cycle)) {
-            return JudgeView::cannotSendReminder($cycle);
-        }
+        $cycleId = $request->pullGetInteger('cycleId');
+        $cycle = CycleFactory::build($cycleId);
         if (empty($cycle)) {
             throw new ResourceNotFound();
+        }
+        if (!JudgeFactory::canSendJudgeReminder($cycleId)) {
+            return JudgeView::cannotSendReminder($cycle);
         }
         return JudgeView::remind($cycle);
     }
