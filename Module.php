@@ -98,7 +98,8 @@ class Module extends \Canopy\Module implements SettingDefaults
         $settings = array(
             'siteContactName' => 'Award Site',
             'siteContactEmail' => 'no-reply@appstate.edu',
-            'enabledAuthenticators' => ''
+            'enabledAuthenticators' => '',
+            'useWarehouse' => false
         );
         return $settings;
     }
