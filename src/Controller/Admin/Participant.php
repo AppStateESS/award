@@ -66,4 +66,13 @@ class Participant extends AbstractController
         return ['success' => true];
     }
 
+    protected function trustPatch(Request $request)
+    {
+        $participant = ParticipantFactory::build($this->id);
+        $participant->setTrusted($request->pullPatchBoolean('trust'));
+        ParticipantFactory::save($participant);
+
+        return ['success' => true];
+    }
+
 }
