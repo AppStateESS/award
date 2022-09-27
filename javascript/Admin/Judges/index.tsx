@@ -32,15 +32,13 @@ const SendReminder = () => {
   } else if (sendReason === 'too_soon') {
     return (
       <div className="badge badge-danger">
-        Last vote reminder sent {lastSent}
+        Last vote reminder sent: {lastSent}
       </div>
     )
   } else {
     return <span></span>
   }
 }
-
-console.log(cycleId, canSend, sendReason, lastSent)
 
 const Judges = () => {
   const [judgeList, setJudgeList] = useState<ParticipantResource[]>([])
