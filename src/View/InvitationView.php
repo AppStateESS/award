@@ -25,7 +25,7 @@ class InvitationView extends AbstractView
      */
     public static function adminList(int $awardId = 0)
     {
-        $tplValues['menu'] = self::menu('invitation');
+        $tplValues['menu'] = self::adminMenu('invitation');
         $tplValues['script'] = self::scriptView('InvitationList');
         return self::getTemplate('Admin/AdminForm', $tplValues);
     }
