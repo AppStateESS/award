@@ -53,6 +53,7 @@ class AbstractView
             $cssFile = "css/{$templateFile}.css";
             \Layout::addStyle('award', $cssFile);
         }
+        $values = array_merge(\award\Factory\SettingFactory::getSiteContact(), $values);
         $values['siteName'] = \Layout::getPageTitle(true);
         $values['sourceHttp'] = PHPWS_SOURCE_HTTP;
         $values['homeHttp'] = PHPWS_HOME_HTTP;
@@ -125,11 +126,19 @@ EOF;
         return $script;
     }
 
-    protected static function menu($active)
+    protected static function adminMenu($active)
     {
         $auth = \Current_User::getAuthorization();
         $params = ['active' => $active, 'logoutUrl' => $auth->logout_link];
         return self::getTemplate('Admin/Menu', $params);
+    }
+
+    protected static function participantMenu($active)
+    {
+        // TODO logout needs to use participant logout
+        $auth = \Current_User::getAuthorization();
+        $params = ['active' => $active, 'logoutUrl' => $auth->logout_link];
+        return self::getTemplate('Participant/Menu', $params);
     }
 
     private static function addScriptVars($vars)
