@@ -24,7 +24,7 @@ class ParticipantView extends AbstractView
 
     public static function adminList()
     {
-        $params['menu'] = self::menu('participant');
+        $params['menu'] = self::adminMenu('participant');
         $params['script'] = self::scriptView('ParticipantList');
         return self::getTemplate('Admin/AdminForm', $params);
     }
@@ -73,12 +73,6 @@ class ParticipantView extends AbstractView
      */
     public static function dashboard()
     {
-        $auth = \Current_User::getAuthorization();
-        /**
-         * @TODO this needs to use the authentication system
-         */
-        $values['logoutUrl'] = $auth->logout_link;
-
         $participant = ParticipantFactory::getCurrentParticipant();
         $values['participant'] = $participant;
 
@@ -86,6 +80,7 @@ class ParticipantView extends AbstractView
 
         $values['judged'] = CycleFactory::upcomingJudged($participant->id);
         $values['references'] = CycleFactory::upcomingReferences($participant->id);
+        $values['trusted'] = (bool) ParticipantFactory::isTrusted();
 
         $cycleOptions['upcoming'] = true;
         $cycleOptions['includeAward'] = true;
@@ -93,7 +88,7 @@ class ParticipantView extends AbstractView
         $upcomingCycles = CycleFactory::list($cycleOptions);
         $values['upcomingCycles'] = $upcomingCycles;
 
-        return self::getTemplate('Participant/Dashboard', $values);
+        return self::participantMenu('dashboard') . self::getTemplate('Participant/Dashboard', $values);
     }
 
     /**
