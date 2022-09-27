@@ -68,6 +68,7 @@ CREATE TABLE award_participant (
     firstName varchar(255),
     lastName varchar(255),
     password varchar(255) default null,
+    trusted smallint default 0,
     updated DateTime,
     UNIQUE KEY uemail (email)
 );
