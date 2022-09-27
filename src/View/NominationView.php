@@ -17,7 +17,10 @@ use award\AbstractClass\AbstractView;
 use award\Factory\NominationFactory;
 use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
+use award\Factory\SettingFactory;
+use award\Factory\ParticipantFactory;
 use award\Resource\Cycle;
+use award\Resource\Award;
 
 class NominationView extends AbstractView
 {
@@ -30,7 +33,16 @@ class NominationView extends AbstractView
     public static function nominate(Award $award, Cycle $cycle)
     {
         $ignoreAward = AwardFactory::participantIgnoreValues();
-        return self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getValues($ignoreAward)]);
+        $menu = self::participantMenu('nomination');
+        return $menu . self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getValues($ignoreAward), 'match' => SettingFactory::useWarehouse()]);
+    }
+
+    /**
+     * Gives participants a message that only certain accounts can nominate.
+     */
+    public static function onlyTrusted()
+    {
+        return self::getTemplate('Participant/OnlyTrusted');
     }
 
 }
