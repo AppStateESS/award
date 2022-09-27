@@ -1,5 +1,4 @@
 <h2>Welcome <?=$participant->firstName?>!</h2>
-<a href="<?=$logoutUrl?>"><i class="fas fa-sign-out-alt"></i></a>
 <div>
   <h4>Invitations</h4>
   <?=$participantInvitations?>
@@ -21,7 +20,9 @@
 <?php foreach ($upcomingCycles as $c):?>
 <div>
   <strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> nominations available until <?=$c['endDate']?>.
+  <?php if ($trusted):?>
   <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate!</a>
+  <?php endif;?>
 </div>
 <?php endforeach;?>
 <?php endif;?>
