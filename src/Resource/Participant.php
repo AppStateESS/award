@@ -62,6 +62,12 @@ class Participant extends AbstractResource
      */
     private string $password;
 
+    /**
+     * If true, the participant is trusted and can nominate.
+     * @var bool
+     */
+    private bool $trusted = false;
+
     public function __construct()
     {
         parent::__construct('award_participant');
@@ -131,6 +137,11 @@ class Participant extends AbstractResource
     public function getPassword(): string
     {
         return $this->password;
+    }
+
+    public function getTrusted(): bool
+    {
+        return $this->trusted;
     }
 
     /**
@@ -208,9 +219,15 @@ class Participant extends AbstractResource
      * @param string $passwordHash
      * @return self
      */
-    public function setPassword(string $passwordHash)
+    public function setPassword(string $passwordHash): self
     {
         $this->password = $passwordHash;
+        return $this;
+    }
+
+    public function setTrusted(bool $trusted): self
+    {
+        $this->trusted = $trusted;
         return $this;
     }
 
