@@ -25,8 +25,9 @@ class JudgeFactory extends AbstractFactory
     protected static string $resourceClassName = 'award\Resource\Judge';
     protected static string $table = 'award_judge';
 
-    public static function canSendJudgeReminder(Cycle $cycle)
+    public static function canSendJudgeReminder(int $cycleId)
     {
+        $cycle = CycleFactory::build($cycleId);
         $now = time();
         $lastSent = CycleLogFactory::getLastJudgeRemind($cycle->id, true);
         // A reminder has not been sent yet or it has passed the grace period
