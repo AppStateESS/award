@@ -28,6 +28,9 @@ class Nomination extends AbstractController
 
     protected function nominateHtml(Request $request)
     {
+        if (!ParticipantFactory::isTrusted()) {
+            return NominationView::onlyTrusted();
+        }
         $cycleId = $request->pullGetInteger('cycleId');
         $cycle = CycleFactory::build($cycleId);
 
@@ -38,7 +41,6 @@ class Nomination extends AbstractController
         if ($cycle->completed) {
             return CycleView::complete();
         }
-
 
         $award = AwardFactory::build($cycle->awardId);
         if ($cycle->endDate < time()) {
