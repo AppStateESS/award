@@ -157,6 +157,11 @@ class ParticipantFactory extends AbstractFactory
         return isset($_SESSION['AWARD_PARTICIPANT']);
     }
 
+    public static function isTrusted()
+    {
+        return self::getCurrentParticipant()->getTrusted();
+    }
+
     /**
      * Throws exceptions if participant is not usable.
      * @param Participant $participant
@@ -202,7 +207,10 @@ class ParticipantFactory extends AbstractFactory
             $table->addField('firstName');
             $table->addField('lastName');
             $table->addField('updated');
+            $table->addField('trusted');
         }
+        // TODO an option needs to exist for this in the case of reports.
+        $db->setLimit(50);
         return $db->select();
     }
 
