@@ -6,12 +6,16 @@ const ListOptions = ({
   setModalContentType,
   participantKey,
   loadParticipant,
+  trusted,
 }: {
   setModalContentType: Dispatch<SetStateAction<string>>
   participantKey: number
   loadParticipant: (key: number) => void
+  trusted: number | boolean
 }) => {
   const [option, setOption] = useState('default')
+
+  const trustLabel = trusted === 1 ? 'Untrust' : 'Trust'
 
   return (
     <select
@@ -23,6 +27,7 @@ const ListOptions = ({
       }}>
       <option value="default"></option>
       <option value="edit">Edit</option>
+      <option value="trust">{trustLabel}</option>
       <option value="ban">Ban</option>
       <option value="delete">Delete</option>
     </select>
