@@ -6,21 +6,21 @@ export interface AwardBasic {
 
 export interface AwardResource {
   id: number
-  active: boolean
-  approvalRequired: boolean
-  creditNominator: boolean
+  active: boolean | number
+  approvalRequired: boolean | number
+  creditNominator: boolean | number
   currentCycleId: number
   cycleTerm: string
   defaultVoteType: string
   description: string
   judgeMethod: number
-  nominationReasonRequired: boolean
+  nominationReasonRequired: boolean | number
   participantId: number
-  publicView: boolean
-  referenceReasonRequired: boolean
+  publicView: boolean | number
+  referenceReasonRequired: boolean | number
   referencesRequired: number
-  selfNominate: boolean
-  tipNominated: boolean
+  selfNominate: boolean | number
+  tipNominated: boolean | number
   title: string
   winnerAmount: number
 }
@@ -34,7 +34,7 @@ export interface CycleResource {
   judgeMethod?: number
   startDate: number
   term: string
-  voteAllowed: boolean
+  voteAllowed: boolean | number
   voteType: string
 }
 
@@ -50,11 +50,25 @@ export interface InvitationResource {
   awardTitle?: string
 }
 
+export interface NominationResource {
+  id: number
+  allowVote: boolean | number
+  approved: boolean | number
+  awardId: number
+  bannerId: number
+  completed: boolean | number
+  cycleId: number
+  email: string
+  firstName: string
+  lastName: string
+  participantId: number
+}
+
 export interface ParticipantResource {
   id: number
-  active: boolean
+  active: boolean | number
   authType: number
-  banned: boolean
+  banned: boolean | number
   email: string
   firstName: string
   hash: string
@@ -62,11 +76,12 @@ export interface ParticipantResource {
   password?: string
   created: number
   updated: number
+  trusted: boolean | number
 }
 
 export interface VoteTypes {
   title: string
   description: string
   className: string
-  allowParticipantVoting: boolean
+  allowParticipantVoting: boolean | number
 }
