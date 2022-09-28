@@ -60,7 +60,7 @@ const Untrust = ({participantId, close, load}: SubTrustParams) => {
       <button
         className="btn btn-success btn-block"
         onClick={() => toggleTrust(participantId, false, close, load)}>
-        Trust participant
+        Untrust participant
       </button>
       <button className="btn btn-danger btn-block" onClick={close}>
         Cancel
