@@ -16,6 +16,7 @@ namespace award\View;
 use award\Factory\ParticipantFactory;
 use award\Factory\AuthenticateFactory;
 use award\Factory\InvitationFactory;
+use award\Factory\JudgeFactory;
 use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractView;
 
@@ -78,13 +79,23 @@ class ParticipantView extends AbstractView
 
         $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
 
-        $values['judged'] = CycleFactory::upcomingJudged($participant->id);
+        // prevents nominate button from appearing for judges
+        $values['judgedCycles'] = [];
+        $judged = CycleFactory::upcomingJudged($participant->id);
+        if ($judged) {
+            foreach ($judged as $j) {
+                $values['judgedCycles'][] = $j['cycleId'];
+            }
+        }
+        $values['judged'] = $judged;
+
         $values['references'] = CycleFactory::upcomingReferences($participant->id);
         $values['trusted'] = (bool) ParticipantFactory::isTrusted();
 
         $cycleOptions['upcoming'] = true;
         $cycleOptions['includeAward'] = true;
         $cycleOptions['dateFormat'] = true;
+
         $upcomingCycles = CycleFactory::list($cycleOptions);
         $values['upcomingCycles'] = $upcomingCycles;
 
