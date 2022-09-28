@@ -38,7 +38,7 @@ const ParticipantList = () => {
   const [participantList, setParticipantList] = useState<ParticipantResource[]>(
     []
   )
-  const searchTimer = useRef()
+  const searchTimer = useRef<ReturnType<typeof setInterval>>()
   const [formKey, setFormKey] = useState(new Date().getTime())
   const [inviteModal, setInviteModal] = useState(false)
 
