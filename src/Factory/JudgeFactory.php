@@ -44,6 +44,14 @@ class JudgeFactory extends AbstractFactory
         JudgeFactory::save($judge);
     }
 
+    public static function isJudge(int $participantId, int $cycleId)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('participantId', $participantId);
+        $table->addFieldConditional('cycleId', $cycleId);
+        return (bool) $db->selectOneRow();
+    }
+
     public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
