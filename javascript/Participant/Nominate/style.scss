@@ -1,0 +1,23 @@
+.match-choice {
+  margin-top: 1em;
+  border: 1px solid #ced4da;
+  padding: 1em;
+  border-radius: 3px;
+}
+
+.select-row {
+  border: 1px solid #ced4da;
+  padding: 6px;
+  border-radius: 3px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &.selected {
+    background-color: #4c9dee;
+    color: white;
+  }
+}
