@@ -21,15 +21,16 @@ class AbstractView
     const directory = PHPWS_SOURCE_DIR . 'mod/award/';
     const http = PHPWS_SOURCE_HTTP . 'mod/award/';
 
-    public static function centerCard(string $title, string $content)
+    public static function centerCard(string $title, string $content, string $backgroundColor = 'primary')
     {
-        return self::getTemplate('CenterCard', ['title' => $title, 'content' => $content]);
+        return self::getTemplate('CenterCard', ['title' => $title, 'content' => $content, 'backgroundColor' => $backgroundColor]);
     }
 
     public static function errorPage()
     {
         $siteContactEmail = \phpws2\Settings::get('award', 'siteContactEmail');
-        return self::getTemplate('User/Error', ['contactEmail' => $siteContactEmail]);
+        return self::centerCard('Drat!',
+                self::getTemplate('User/Error', ['contactEmail' => $siteContactEmail]), 'danger');
     }
 
     public static function getFullAwardTitle(\award\Resource\Award $award, \award\Resource\Cycle $cycle)
