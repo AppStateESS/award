@@ -30,11 +30,22 @@ class NominationView extends AbstractView
         return 'The deadline for this cycle has passed. No more nominations are accepted';
     }
 
+    /**
+     * Error screen for judges trying to nominate.
+     * @return string
+     */
+    public static function noJudges($award, $cycle)
+    {
+        $title = self::getFullAwardTitle($award, $cycle);
+        return self::participantMenu('nomination') . self::centerCard("Nomination not allowed", self::getTemplate('Participant/NoJudges', ['awardTitle' => $title]), 'danger');
+    }
+
     public static function nominate(Award $award, Cycle $cycle)
     {
         $ignoreAward = AwardFactory::participantIgnoreValues();
         $menu = self::participantMenu('nomination');
-        return $menu . self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getValues($ignoreAward), 'match' => SettingFactory::useWarehouse()]);
+        $content = self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getValues($ignoreAward)]);
+        return $menu . $content;
     }
 
     /**
