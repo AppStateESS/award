@@ -90,7 +90,7 @@ class ParticipantView extends AbstractView
         $values['judged'] = $judged;
 
         $values['references'] = CycleFactory::upcomingReferences($participant->id);
-        $values['trusted'] = (bool) ParticipantFactory::isTrusted();
+        $values['trusted'] = (bool) ParticipantFactory::currentIsTrusted();
 
         $cycleOptions['upcoming'] = true;
         $cycleOptions['includeAward'] = true;
