@@ -31,6 +31,15 @@ class Participant extends AbstractController
         return ParticipantView::dashboard();
     }
 
+    protected function searchJson(Request $request)
+    {
+        if (!ParticipantFactory::currentIsTrusted()) {
+            return ['error' => 'untrusted'];
+        }
+        $options['search'] = $request->pullGetString('search');
+        return ParticipantFactory::listing($options);
+    }
+
     protected function signoutHtml()
     {
         $participant = ParticipantFactory::getCurrentParticipant();
