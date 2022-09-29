@@ -1,12 +1,13 @@
 'use strict'
 import React, {useState} from 'react'
 import {createRoot} from 'react-dom/client'
-import {fullAwardTitle} from '../../Share/Cycle'
 import {AwardResource, CycleResource} from '../../ResourceTypes'
+import {fullAwardTitle} from '../../Share/Cycle'
+
+import Matches from './Matches'
 
 declare const cycle: CycleResource
 declare const award: AwardResource
-declare const match: boolean
 
 const Nominate = () => {
   const [email, setEmail] = useState('')
@@ -16,64 +17,61 @@ const Nominate = () => {
   const preventPost =
     email.length === 0 || firstName.length === 0 || lastName.length === 0
 
-  const updateEmail = (arg: string) => {
-    setEmail(arg)
+  const nominateParticipant = (participantId: number) => {
+    if (participantId > 0) {
+      location.href =
+        './award/Participant/Nomination/nominateParticipant?' +
+        `participantId=${participantId}` +
+        `&cycleId=${cycle.id}`
+    }
   }
 
   return (
     <div>
+      <h2>{fullAwardTitle(award, cycle)} nomination</h2>
+      <hr />
       <div className="row">
-        <div className="col-sm-8 col-md-6 mx-auto">
-          <div className="card">
-            <div className="card-header">
-              <h2 className="m-0">{fullAwardTitle(award, cycle)} nomination</h2>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-6">
-                  <div className="form-group">
-                    <label htmlFor="firstName">First/Chosen name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="col-6">
-                  <div className="form-group">
-                    <label htmlFor="lastName">Last name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Email address</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  name="email"
-                  value={email}
-                  onChange={(e) => updateEmail(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="card-footer text-muted">
-              <button
-                className="btn btn-success btn-block"
-                disabled={preventPost}>
-                Nominate!
-              </button>
-            </div>
+        <div className="col-6">
+          <h3>Enter nominee information</h3>
+          <div className="form-group">
+            <label htmlFor="firstName">First/Chosen name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
           </div>
+
+          <div className="form-group">
+            <label htmlFor="lastName">Last name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              type="text"
+              className="form-control"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-success btn-block" disabled={preventPost}>
+            Nominate!
+          </button>
+        </div>
+        <div className="col-6">
+          <h3>Matching participants</h3>
+          <Matches nominateParticipant={nominateParticipant} />
         </div>
       </div>
     </div>
