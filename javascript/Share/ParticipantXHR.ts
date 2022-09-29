@@ -95,10 +95,17 @@ const signInPost = async (email: string, password: string) => {
   })
 }
 
+const search = async (search: string) => {
+  const params = {search}
+  const url = 'award/Participant/Participant/search'
+  return axios.get(url, {params, headers})
+}
+
 export {
   canInviteGeneral,
   resetPassword,
   saveNewParticipant,
+  search,
   sendInvitation,
   signInPost,
   updateParticipant,
