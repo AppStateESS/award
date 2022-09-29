@@ -16,6 +16,7 @@ namespace award\Factory;
 use award\Resource\Participant;
 use award\AbstractClass\AbstractFactory;
 use award\Factory\ParticipantHashFactory;
+use award\Factory\JudgeFactory;
 use award\View\EmailView;
 use phpws2\Database;
 use award\Exception\BannedParticipant;
@@ -97,6 +98,21 @@ class ParticipantFactory extends AbstractFactory
     }
 
     /**
+     * Checks if current logged participant is a cycle judge.
+     * @param int $cycleId
+     * @return bool
+     */
+    public static function currentIsJudge(int $cycleId)
+    {
+        return JudgeFactory::isJudge(self::getCurrentParticipant()->id, $cycleId);
+    }
+
+    public static function currentIsTrusted()
+    {
+        return self::getCurrentParticipant()->getTrusted();
+    }
+
+    /**
      * Returns a Participant object if exists, FALSE bool otherwise.
      *
      * @param string $email
@@ -157,11 +173,6 @@ class ParticipantFactory extends AbstractFactory
         return isset($_SESSION['AWARD_PARTICIPANT']);
     }
 
-    public static function isTrusted()
-    {
-        return self::getCurrentParticipant()->getTrusted();
-    }
-
     /**
      * Throws exceptions if participant is not usable.
      * @param Participant $participant
@@ -177,12 +188,23 @@ class ParticipantFactory extends AbstractFactory
         }
     }
 
+    /**
+     * Options:
+     * - search        (string): search email plus first and last name for string
+     * - asSelect      (bool): return results with only id and participant full name.
+     * - allowBanned   (bool): if true, include banned participants in results.
+     * - allowInactive (bool): if true, include inactive participants in results.
+     * 
+     * @param array $options
+     * @return array
+     */
     public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
 
         if (!empty($options['search'])) {
-            $search = preg_replace('/[\W]/', '', $options['search']);
+            //$search = preg_replace('/[\W]/', '', $options['search']);
+            $search = $options['search'];
             $firstCond = new Database\Conditional($db, $table->getField('firstName'), "%$search%", 'like');
             $lastCond = new Database\Conditional($db, $table->getField('lastName'), "%$search%", 'like');
             $emailCond = new Database\Conditional($db, $table->getField('email'), "%$search%", 'like');
@@ -208,6 +230,14 @@ class ParticipantFactory extends AbstractFactory
             $table->addField('lastName');
             $table->addField('updated');
             $table->addField('trusted');
+        }
+
+        if (empty($options['allowBanned'])) {
+            $table->addFieldConditional('banned', 0);
+        }
+
+        if (empty($options['allowInactive'])) {
+            $table->addFieldConditional('active', 1);
         }
         // TODO an option needs to exist for this in the case of reports.
         $db->setLimit(50);
