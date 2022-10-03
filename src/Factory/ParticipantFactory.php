@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\Resource\Participant;
+use award\Resource\Cycle;
 use award\AbstractClass\AbstractFactory;
 use award\Factory\ParticipantHashFactory;
 use award\Factory\JudgeFactory;
+use award\Factory\CycleFactory;
 use award\View\EmailView;
 use phpws2\Database;
 use award\Exception\BannedParticipant;
@@ -71,6 +73,38 @@ class ParticipantFactory extends AbstractFactory
         } else {
             return false;
         }
+    }
+
+    /**
+     * Throws an exception if a participant cannot be nominated for an award cycle.
+     * Checks:
+     * - participant is active and not banned
+     * - cycle is still accepting nominations
+     * - participant is not a judge
+     * - particpant is nominating themself and is a cycle judge
+     * @param Participant $participant
+     * @param Cycle $cycle
+     * @param Award $award
+     * @throws \Exception
+     * @return bool True if all is well.
+     */
+    public static function canBeNominated(Participant $participant, Cycle $cycle, Award $award)
+    {
+        // check if participant is active and not banned
+        ParticipantFactory::isViable($participant);
+
+        // check if nominations are allowed for this cycle
+        CycleFactory::nominationAllowed($cycle);
+
+        // Make sure participant is not a judge
+        if (JudgeFactory::isJudge($participant->id, $cycle->id)) {
+            throw \award\Exception\NominationNotAllowed;
+        }
+
+        if (!$award->getSelfNominate() && ParticipantFactory::getCurrentParticipant()->id == $participant->id) {
+            throw \award\Exception\NominationNotAllowed;
+        }
+        return true;
     }
 
     /**
@@ -194,7 +228,7 @@ class ParticipantFactory extends AbstractFactory
      * - asSelect      (bool): return results with only id and participant full name.
      * - allowBanned   (bool): if true, include banned participants in results.
      * - allowInactive (bool): if true, include inactive participants in results.
-     * 
+     *
      * @param array $options
      * @return array
      */
@@ -203,7 +237,6 @@ class ParticipantFactory extends AbstractFactory
         extract(self::getDBWithTable());
 
         if (!empty($options['search'])) {
-            //$search = preg_replace('/[\W]/', '', $options['search']);
             $search = $options['search'];
             $firstCond = new Database\Conditional($db, $table->getField('firstName'), "%$search%", 'like');
             $lastCond = new Database\Conditional($db, $table->getField('lastName'), "%$search%", 'like');
@@ -286,7 +319,7 @@ class ParticipantFactory extends AbstractFactory
             return;
         }
         $hash = ParticipantHashFactory::create($participant->id);
-        // if the participant is not active, allow them to activate their account
+// if the participant is not active, allow them to activate their account
         if (!$participant->active) {
             EmailFactory::sendActivationReminder($participant, $hash);
         } else {
