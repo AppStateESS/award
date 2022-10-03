@@ -17,6 +17,7 @@ use award\AbstractClass\AbstractFactory;
 use award\Resource\Cycle;
 use award\Factory\AwardFactory;
 use phpws2\Database;
+use award\Exception\NominationExpired;
 use Canopy\Request;
 
 class CycleFactory extends AbstractFactory
@@ -109,14 +110,7 @@ class CycleFactory extends AbstractFactory
         $table->addField('term');
 
         if (!empty($options['dateFormat'])) {
-            $format = '%l:%i %p, %b %e, %Y';
-            if (is_string($options['dateFormat'])) {
-                $format = is_string($options['dateFormat']);
-            }
-            $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "' . $format . '")', 'startDate');
-            $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "' . $format . '")', 'endDate');
-            $table->addField($startDateExpression);
-            $table->addField($endDateExpression);
+            self::formatDates($db, $table, $options['dateFormat']);
         } else {
             $table->addField('startDate');
             $table->addField('endDate');
@@ -127,9 +121,9 @@ class CycleFactory extends AbstractFactory
             $judgeTable->addFieldConditional('participantId', (int) $options['judgeId']);
             $db->joinResources($table, $judgeTable, new Database\Conditional($db, $table->getField('id'), $judgeTable->getField('cycleId'), '=', 'left'));
         } elseif (!empty($options['referenceId'])) {
-            $judgeTable = $db->addTable('award_judge');
-            $judgeTable->addFieldConditional('participantId', (int) $options['referenceId']);
-            $db->joinResources($table, $judgeTable, new Database\Conditional($db, $table->getField('id'), $judgeTable->getField('cycleId'), '='), 'left');
+            $referenceTable = $db->addTable('award_reference');
+            $referenceTable->addFieldConditional('participantId', (int) $options['referenceId']);
+            $db->joinResources($table, $referenceTable, new Database\Conditional($db, $table->getField('id'), $referenceTable->getField('cycleId'), '='), 'left');
         }
 
         if (!empty($options['awardId'])) {
@@ -141,20 +135,7 @@ class CycleFactory extends AbstractFactory
         }
 
         if (!empty($options['nominationCount'])) {
-            $nominationTable = $db->addTable('award_nomination');
-            $nominationId = $nominationTable->getField('id');
-            $count = "count($nominationId)";
-
-            $expression = new Database\Expression($count, 'nominations');
-            $nominationTable->addField($expression, 'nominations');
-            $db->joinResources(
-                $table,
-                $nominationTable,
-                new Database\Conditional(
-                    $db,
-                    $table->getField('id'),
-                    $nominationTable->getField('cycleId')
-                    , '='), 'left');
+            self::addNominationCount($db, $table);
         }
 
         if (!empty($options['includeAward'])) {
@@ -176,6 +157,13 @@ class CycleFactory extends AbstractFactory
 
         $table->addOrderBy('startDate', 'desc');
         return $db->select();
+    }
+
+    public static function nominationAllowed(Cycle $cycle)
+    {
+        if ($cycle->getEndDate() < time() || $cycle->getDeleted() || $cycle->getStartDate() > time() || $cycle->getCompleted()) {
+            throw new NominationNotAllowed();
+        }
     }
 
     /**
@@ -240,6 +228,50 @@ class CycleFactory extends AbstractFactory
         $options['referenceId'] = $participantId;
         $options['dateFormat'] = true;
         return self::list($options);
+    }
+
+    /**
+     * Adds the nomination count to the list query
+     *
+     * @param phpws2\Database\DB $db
+     * @param phpws2\Database\Table $table
+     */
+    private static function addNominationCount($db, $table)
+    {
+        $nominationTable = $db->addTable('award_nomination');
+        $nominationId = $nominationTable->getField('id');
+        $count = "count($nominationId)";
+
+        $expression = new Database\Expression($count, 'nominations');
+        $nominationTable->addField($expression, 'nominations');
+        $db->joinResources(
+            $table,
+            $nominationTable,
+            new Database\Conditional(
+                $db,
+                $table->getField('id'),
+                $nominationTable->getField('cycleId')
+                , '='), 'left');
+    }
+
+    /**
+     * Formats the date in the listing query.
+     * @param phpws2\Database\DB $db
+     * @param phpws2\Database\Table $table
+     * @param string $format
+     */
+    private static function formatDates($db, $table, $format = null)
+    {
+        if (is_string($format)) {
+            $format = is_string($options['dateFormat']);
+        } else {
+            $format = '%l:%i %p, %b %e, %Y';
+        }
+
+        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "' . $format . '")', 'startDate');
+        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "' . $format . '")', 'endDate');
+        $table->addField($startDateExpression);
+        $table->addField($endDateExpression);
     }
 
 }
