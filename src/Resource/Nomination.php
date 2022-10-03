@@ -39,13 +39,6 @@ class Nomination extends award\AbstractResource
     private int $awardId;
 
     /**
-     * Banner ID of student only. May be left blank for non-student
-     * or disabled.
-     * @var int
-     */
-    private int $bannerId = 0;
-
-    /**
      * @var bool
      */
     private bool $completed;
@@ -56,28 +49,16 @@ class Nomination extends award\AbstractResource
     private int $cycleId;
 
     /**
-     * @var string
-     */
-    private string $email;
-
-    /**
-     * If chosen/preferred name exists in data point, it will
-     * be used instead of given first name.
-     * @var string
-     */
-    private string $firstName;
-
-    /**
-     * @var string
-     */
-    private string $lastName;
-
-    /**
-     * Index of participant id. Named nominator to prevent
-     * confusion with person nominated.
+     * Participant id of nominator.
      * @var int
      */
     private int $nominatorId;
+
+    /**
+     * Id of participant nominated.
+     * @var int
+     */
+    private int $participantId;
 
     public function getAllowVote(): bool
     {
@@ -98,14 +79,6 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @return int
-     */
-    public function getBannerId(): int
-    {
-        return $this->bannerId;
-    }
-
-    /**
      * @return bool
      */
     public function getCompleted(): bool
@@ -122,35 +95,16 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @return string
-     */
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    /**
      * @return int
      */
     public function getNominatorId(): int
     {
         return $this->nominatorId;
+    }
+
+    public function getParticipantId(): int
+    {
+        return $this->participantId;
     }
 
     /**
@@ -185,15 +139,6 @@ class Nomination extends award\AbstractResource
     }
 
     /**
-     * @param int $bannerId
-     */
-    public function setBannerId(int $bannerId): self
-    {
-        $this->bannerId = $bannerId;
-        return $this;
-    }
-
-    /**
      * @param bool $completed
      */
     public function setCompleted(bool $completed): self
@@ -211,35 +156,14 @@ class Nomination extends award\AbstractResource
         return $this;
     }
 
-    /**
-     * @param string $email
-     */
-    public function setEmail(string $email): self
+    public function setNominatorId(int $nominatorId): self
     {
-        $this->email = $email;
+        $this->nominatorId = $nominatorId;
         return $this;
     }
 
     /**
-     * @param string $firstName
-     */
-    public function setFirstName(string $firstName): self
-    {
-        $this->firstName = $firstName;
-        return $this;
-    }
-
-    /**
-     * @param string $lastName
-     */
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
-        return $this;
-    }
-
-    /**
-     * @param int $nominatorId
+     * @param int $participantId
      */
     public function setParticipantId(int $participantId): self
     {
