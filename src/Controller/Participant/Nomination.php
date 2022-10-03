@@ -16,15 +16,23 @@ namespace award\Controller\Participant;
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\NominationView;
+use award\View\ParticipantView;
 use award\Exception\ResourceNotFound;
 use award\Factory\ParticipantFactory;
 use award\Factory\InvitationFactory;
 use award\Factory\EmailFactory;
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
+use award\Factory\NominationFactory;
 
 class Nomination extends AbstractController
 {
+
+    // TODO finish
+    protected function listHtml()
+    {
+        return NominationView::participantView();
+    }
 
     protected function nominateHtml(Request $request)
     {
@@ -56,6 +64,47 @@ class Nomination extends AbstractController
             throw new ResourceNotFound;
         }
         return NominationView::nominate($award, $cycle);
+    }
+
+    protected function nominateParticipantHtml(Request $request)
+    {
+        $participantId = $request->pullGetInteger('participantId');
+        $cycleId = $request->pullGetInteger('cycleId');
+        if (!ParticipantFactory::currentIsTrusted()) {
+            return NominationView::onlyTrusted();
+        }
+
+        $cycle = CycleFactory::build($cycleId);
+        $award = AwardFactory::build($cycle->awardId);
+        $participant = ParticipantFactory::build($participantId);
+
+        if (ParticipantFactory::currentIsJudge($cycleId)) {
+            return NominationView::noJudges($award, $cycle);
+        }
+        if ($participant->getBanned() || !$participant->getActive()) {
+            return ParticipantView::participantMenu('nomination') . ParticipantView::inaccessible();
+        }
+
+        return NominationView::nominateParticipant($participant, $award, $cycle);
+    }
+
+    protected function textPost(Request $request)
+    {
+        $participantId = $request->pullPostInteger('participantId');
+        $cycleId = $request->pullPostInteger('cycleId');
+        $reasonText = $request->pullPostString('reasonText');
+        NominationFactory::nominateParticipantText($participantId, $cycleId, $reasonText);
+    }
+
+    protected function uploadPost(Request $request)
+    {
+        if (empty($_FILES['nominationUpload'])) {
+            throw new \Exception('nomination document not found');
+        }
+
+        $document = DocumentFactory::build();
+
+        exit;
     }
 
 }
