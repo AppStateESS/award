@@ -43,4 +43,21 @@ class NominationFactory extends AbstractFactory
         return $db->select();
     }
 
+    public static function nominateParticipantText(int $participantId, int $cycleId, $reasonText)
+    {
+        $nomination = self::build();
+        $participant = ParticipantFactory::build($participantId);
+        $cycle = CycleFactory::build($cycleId);
+        $award = AwardFactory::build($cycle->id);
+
+        ParticipantFactory::canBeNominated($participant, $cycle, $award);
+
+        $nomination->setParticipantId($participant->id)->
+            setAwardId($award->id)->
+            setCycleId($cycle->id)->
+            setApproved(!$award->approvalRequired);
+
+        self::save($nomination);
+    }
+
 }
