@@ -127,14 +127,14 @@ EOF;
         return $script;
     }
 
-    protected static function adminMenu($active)
+    public static function adminMenu($active)
     {
         $auth = \Current_User::getAuthorization();
         $params = ['active' => $active, 'logoutUrl' => $auth->logout_link];
         return self::getTemplate('Admin/Menu', $params);
     }
 
-    protected static function participantMenu($active)
+    public static function participantMenu($active)
     {
         // TODO logout needs to use participant logout
         $auth = \Current_User::getAuthorization();
