@@ -158,6 +158,17 @@ class Cycle extends AbstractResource
     }
 
     /**
+     * Returns the resource's values without some administrative data.
+     */
+    public function getParticipantValues()
+    {
+        $ignore = [
+            'deleted', 'voteAllowed', 'voteType', 'completed'
+        ];
+        return $this->getValues($ignore);
+    }
+
+    /**
      * Returns the cycle's period as a string based on the term.
      * If the term is not a time frame, returns null.
      * @return string|null
