@@ -132,6 +132,17 @@ class Participant extends AbstractResource
     }
 
     /**
+     * Returns the resource's values without some administrative data.
+     */
+    public function getParticipantValues()
+    {
+        $ignore = [
+            'active', 'authType', 'banned', 'password', 'created', 'updated', 'trusted'
+        ];
+        return $this->getValues($ignore);
+    }
+
+    /**
      * @return string
      */
     public function getPassword(): string
