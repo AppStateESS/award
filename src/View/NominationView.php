@@ -21,6 +21,7 @@ use award\Factory\SettingFactory;
 use award\Factory\ParticipantFactory;
 use award\Resource\Cycle;
 use award\Resource\Award;
+use award\Resource\Participant;
 
 class NominationView extends AbstractView
 {
@@ -42,10 +43,27 @@ class NominationView extends AbstractView
 
     public static function nominate(Award $award, Cycle $cycle)
     {
-        $ignoreAward = AwardFactory::participantIgnoreValues();
         $menu = self::participantMenu('nomination');
-        $content = self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getValues($ignoreAward)]);
+        $content = self::scriptView('Nominate', ['cycle' => $cycle->getValues(), 'award' => $award->getParticipantValues()]);
         return $menu . $content;
+    }
+
+    public static function nominateParticipant(Participant $participant, Award $award, Cycle $cycle)
+    {
+        $menu = self::participantMenu('nomination');
+        $maxsize = \award\Factory\DocumentFactory::maximumUploadSize();
+        $content = self::scriptView('NominationCompletion', ['maxsize' => $maxsize, 'award' => $award->getParticipantValues(), 'cycle' => $cycle->getParticipantValues(), 'participant' => $participant->getParticipantValues()]);
+        return $menu . $content;
+    }
+
+    /**
+     * #TODO
+     * @return type
+     */
+    public static function participantView()
+    {
+        $menu = self::participantMenu('nominations');
+        return $menu . '<p>List of all people participant has nominated.</p>';
     }
 
     /**
