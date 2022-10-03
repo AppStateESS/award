@@ -203,6 +203,19 @@ class Award extends AbstractResource
     }
 
     /**
+     * Returns the resource's values without some administrative data.
+     */
+    public function getParticipantValues()
+    {
+        $ignore = [
+            'active', 'approvalRequired', 'creditNominator',
+            'deleted', 'judgeMethod', 'tipNominate', 'winnerAmount',
+            'defaultVoteType'
+        ];
+        return $this->getValues($ignore);
+    }
+
+    /**
      * @return bool
      */
     public function getPublicView(): bool
