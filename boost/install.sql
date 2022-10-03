@@ -86,16 +86,16 @@ CREATE TABLE award_nomination (
     allowVote bool default 1,
     approved bool default 0,
     awardId int,
-    bannerId int,
     completed bool default 0,
     cycleId int,
-    email varchar(255),
-    firstName varchar(255),
-    lastName varchar(255),
-    participantId int,
+    nominatorId int default 0,
+    participantId int default 0,
+    reasonText text default '',
+    UNIQUE KEY part_cyc (participantId, cycleId),
     FOREIGN KEY(awardId) REFERENCES award_award(id),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
-    FOREIGN KEY(participantId) REFERENCES award_participant(id)
+    FOREIGN KEY(nominatorId) REFERENCES award_participant(id),
+    FOREIGN KEY(participantId) REFERENCES award_participant(id),
 );
 
 CREATE TABLE award_document (
