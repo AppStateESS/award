@@ -26,6 +26,8 @@ const userScripts = {
 const participantScripts = {
   Name: exports.APP_DIR + '/Participant/Name/index.tsx',
   Nominate: exports.APP_DIR + '/Participant/Nominate/index.tsx',
+  NominationCompletion:
+    exports.APP_DIR + '/Participant/NominationCompletion/index.tsx',
   ParticipantInvitations:
     exports.APP_DIR + '/Participant/ParticipantInvitations/index.tsx',
 }
