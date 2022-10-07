@@ -95,9 +95,9 @@ const signInPost = async (email: string, password: string) => {
   })
 }
 
-const search = async (search: string) => {
-  const params = {search}
-  const url = 'award/Participant/Participant/search'
+const searchNominees = async (search: string, cycleId: number) => {
+  const params = {search, cycleId}
+  const url = 'award/Participant/Participant/searchNominees'
   return axios.get(url, {params, headers})
 }
 
@@ -105,7 +105,7 @@ export {
   canInviteGeneral,
   resetPassword,
   saveNewParticipant,
-  search,
+  searchNominees,
   sendInvitation,
   signInPost,
   updateParticipant,
