@@ -71,7 +71,10 @@ const Nominate = () => {
         </div>
         <div className="col-6">
           <h3>Matching participants</h3>
-          <Matches nominateParticipant={nominateParticipant} />
+          <Matches
+            nominateParticipant={nominateParticipant}
+            cycleId={cycle.id}
+          />
         </div>
       </div>
     </div>
