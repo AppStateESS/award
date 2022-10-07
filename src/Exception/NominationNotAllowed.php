@@ -18,7 +18,7 @@ class NominationNotAllowed extends \Exception
 
     public function __construct()
     {
-        parent::__construct('nomination attempted after cycle deadline');
+        parent::__construct('nomination of this participant is not permitted');
     }
 
 }
