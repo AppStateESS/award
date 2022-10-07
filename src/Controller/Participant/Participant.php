@@ -31,12 +31,14 @@ class Participant extends AbstractController
         return ParticipantView::dashboard();
     }
 
-    protected function searchJson(Request $request)
+    protected function searchNomineesJson(Request $request)
     {
         if (!ParticipantFactory::currentIsTrusted()) {
             return ['error' => 'untrusted'];
         }
         $options['search'] = $request->pullGetString('search');
+        $options['cycleId'] = $request->pullGetInteger('cycleId');
+
         return ParticipantFactory::listing($options);
     }
 
