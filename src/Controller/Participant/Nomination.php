@@ -47,7 +47,7 @@ class Nomination extends AbstractController
         }
 
         if ($cycle->completed) {
-            return CycleView::complete();
+            return ParticipantView::participantMenu('nomination') . CycleView::complete();
         }
 
         $award = AwardFactory::build($cycle->awardId);
@@ -63,29 +63,30 @@ class Nomination extends AbstractController
         if (empty($award)) {
             throw new ResourceNotFound;
         }
-        return NominationView::nominate($award, $cycle);
+        return ParticipantView::participantMenu('nomination') . NominationView::nominate($award, $cycle);
     }
 
     protected function nominateParticipantHtml(Request $request)
     {
-        $participantId = $request->pullGetInteger('participantId');
-        $cycleId = $request->pullGetInteger('cycleId');
         if (!ParticipantFactory::currentIsTrusted()) {
             return NominationView::onlyTrusted();
         }
+        $participantId = $request->pullGetInteger('participantId');
+        $cycleId = $request->pullGetInteger('cycleId');
 
+        $nominator = ParticipantFactory::getCurrentParticipant();
+        $participant = ParticipantFactory::build($participantId);
         $cycle = CycleFactory::build($cycleId);
         $award = AwardFactory::build($cycle->awardId);
-        $participant = ParticipantFactory::build($participantId);
 
         if (ParticipantFactory::currentIsJudge($cycleId)) {
-            return NominationView::noJudges($award, $cycle);
+            return ParticipantView::participantMenu('nomination') . NominationView::noJudges($award, $cycle);
         }
         if ($participant->getBanned() || !$participant->getActive()) {
             return ParticipantView::participantMenu('nomination') . ParticipantView::inaccessible();
         }
 
-        return NominationView::nominateParticipant($participant, $award, $cycle);
+        return NominationView::nominateParticipant($nominator, $participant, $award, $cycle);
     }
 
     protected function textPost(Request $request)
@@ -94,6 +95,7 @@ class Nomination extends AbstractController
         $cycleId = $request->pullPostInteger('cycleId');
         $reasonText = $request->pullPostString('reasonText');
         NominationFactory::nominateParticipantText($participantId, $cycleId, $reasonText);
+        return ['success' => true];
     }
 
     protected function uploadPost(Request $request)
