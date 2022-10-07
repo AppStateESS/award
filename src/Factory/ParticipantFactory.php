@@ -15,6 +15,7 @@ namespace award\Factory;
 
 use award\Resource\Participant;
 use award\Resource\Cycle;
+use award\Resource\Award;
 use award\AbstractClass\AbstractFactory;
 use award\Factory\ParticipantHashFactory;
 use award\Factory\JudgeFactory;
@@ -98,11 +99,11 @@ class ParticipantFactory extends AbstractFactory
 
         // Make sure participant is not a judge
         if (JudgeFactory::isJudge($participant->id, $cycle->id)) {
-            throw \award\Exception\NominationNotAllowed;
+            throw new \award\Exception\NominationNotAllowed;
         }
 
         if (!$award->getSelfNominate() && ParticipantFactory::getCurrentParticipant()->id == $participant->id) {
-            throw \award\Exception\NominationNotAllowed;
+            throw new \award\Exception\NominationNotAllowed;
         }
         return true;
     }
@@ -225,6 +226,7 @@ class ParticipantFactory extends AbstractFactory
     /**
      * Options:
      * - search        (string): search email plus first and last name for string
+     * - cycleId       (integer): only return participants available for nomination
      * - asSelect      (bool): return results with only id and participant full name.
      * - allowBanned   (bool): if true, include banned participants in results.
      * - allowInactive (bool): if true, include inactive participants in results.
@@ -263,6 +265,14 @@ class ParticipantFactory extends AbstractFactory
             $table->addField('lastName');
             $table->addField('updated');
             $table->addField('trusted');
+        }
+
+        if (!empty($options['cycleId'])) {
+            $judgeIds = JudgeFactory::listing(['cycleId' => $options['cycleId'], 'participantIdOnly' => true]);
+
+            if (!empty($judgeIds)) {
+                $table->addFieldConditional('id', $judgeIds, 'not in');
+            }
         }
 
         if (empty($options['allowBanned'])) {
