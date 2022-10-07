@@ -9,7 +9,7 @@ declare const participant: ParticipantResource
 
 type Props = {firstName: string; maxsize: number}
 
-const NominationReason = ({firstName, maxsize}: Props) => {
+const ReasonForm = ({firstName, maxsize}: Props) => {
   const [reasonText, setReasonText] = useState('')
   const [reasonFile, setReasonFile] = useState<File | null>(null)
   const [fileSelected, setFileSelected] = useState(false)
@@ -146,5 +146,5 @@ const NominationReason = ({firstName, maxsize}: Props) => {
   )
 }
 
-NominationReason.propTypes = {firstName: PropTypes.string}
-export default NominationReason
+ReasonForm.propTypes = {firstName: PropTypes.string}
+export default ReasonForm

@@ -1,13 +1,12 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
 import {createRoot} from 'react-dom/client'
 import {
   AwardResource,
   CycleResource,
   ParticipantResource,
 } from '../../ResourceTypes'
-import NominationReason from './NominationReason'
+import ReasonForm from './ReasonForm'
 import {fullAwardTitle} from '../../Share/Cycle'
 
 declare const participant: ParticipantResource
@@ -15,7 +14,7 @@ declare const award: AwardResource
 declare const cycle: CycleResource
 declare const maxsize: number
 
-const NominationCompletion = () => {
+const NominationReason = () => {
   const fullName = (
     <span>
       {participant.firstName} {participant.lastName}
@@ -28,12 +27,12 @@ const NominationCompletion = () => {
       </h3>
       <hr />
       {award.nominationReasonRequired && (
-        <NominationReason firstName={participant.firstName} maxsize={maxsize} />
+        <ReasonForm firstName={participant.firstName} maxsize={maxsize} />
       )}
     </div>
   )
 }
 
-const container = document.getElementById('NominationCompletion') as HTMLElement
+const container = document.getElementById('NominationReason') as HTMLElement
 const root = createRoot(container)
-root.render(<NominationCompletion />)
+root.render(<NominationReason />)
