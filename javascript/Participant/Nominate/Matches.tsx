@@ -1,15 +1,16 @@
 'use strict'
 import React, {useState, useEffect, useRef} from 'react'
 import PropTypes from 'prop-types'
-import {search} from '../../Share/ParticipantXHR'
+import {searchNominees} from '../../Share/ParticipantXHR'
 import './style.css'
 import {ParticipantResource} from '../../ResourceTypes'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 
 type Props = {
   nominateParticipant: (participantId: number) => void
+  cycleId: number
 }
-const Matches = ({nominateParticipant}: Props) => {
+const Matches = ({nominateParticipant, cycleId}: Props) => {
   const [matchedParticipants, setMatchedParticipants] = useState<
     ParticipantResource[]
   >([])
@@ -42,15 +43,19 @@ const Matches = ({nominateParticipant}: Props) => {
 
   useEffect(() => {
     if (match.length > 3) {
+      setSearchIcon(true)
       clearTimeout(matchTimer.current)
       matchTimer.current = setTimeout(() => {
-        setSearchIcon(true)
-        search(match).then((response) => {
+        searchNominees(match, cycleId).then((response) => {
           setMatchedParticipants(response.data)
           setSearchIcon(false)
           clearTimeout(matchTimer.current)
         })
       }, 1000)
+    } else {
+      setSearchIcon(false)
+      clearTimeout(matchTimer.current)
+      setMatchedParticipants([])
     }
   }, [match])
 
@@ -87,7 +92,7 @@ const Matches = ({nominateParticipant}: Props) => {
 
   return (
     <div className="match-choice">
-      <div className="input-group">
+      <div className="input-group m-2">
         <input
           type="text"
           className="form-control"
@@ -102,6 +107,7 @@ const Matches = ({nominateParticipant}: Props) => {
           </button>
         </div>
       </div>
+      <div className="small">Can&apos;t find participant?</div>
       {searchIcon && (
         <div className="text-secondary m-1 text-center">
           <FontAwesomeIcon icon={['fas', 'spinner']} size="lg" spin />
