@@ -106,11 +106,13 @@ class Award extends AbstractResource
     private int $referencesRequired = 0;
 
     /**
+     * If true, someone can nominate themselves for an award.
      * @var bool
      */
     private bool $selfNominate = false;
 
     /**
+     * If true, the nominated participant is allowed to know about the nomination.
      * @var bool
      */
     private bool $tipNominated = false;
