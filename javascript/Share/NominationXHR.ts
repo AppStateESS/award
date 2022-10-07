@@ -6,12 +6,9 @@ const nominateText = async (
   cycleId: number,
   reasonText: string
 ) => {
-  const params = {participantId, cycleId, reasonText}
-  return axios.post('./award/Participant/Nomination/text', , {
-    headers: {
-      params,
-      'Content-Type': 'multipart/form-data',
-    },
+  const data = {participantId, cycleId, reasonText}
+  return axios.post('./award/Participant/Nomination/text', data, {
+    headers,
   })
 }
 
@@ -27,9 +24,7 @@ const nominateDocument = async (
   formData.append('participantId', participantId.toString())
 
   return axios.post('./award/Participant/Nomination/upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+    headers,
   })
 }
 
