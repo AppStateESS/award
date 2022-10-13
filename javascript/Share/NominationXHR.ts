@@ -1,15 +1,15 @@
 import axios from 'axios'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
-const nominateText = async (
-  participantId: number,
-  cycleId: number,
-  reasonText: string
-) => {
-  const data = {participantId, cycleId, reasonText}
-  return axios.post('./award/Participant/Nomination/text', data, {
-    headers,
-  })
+const nominateText = async (nominationId: number, reasonText: string) => {
+  const data = {nominationId, reasonText}
+  return axios.put(
+    `./award/Participant/Nomination/${nominationId}/text`,
+    data,
+    {
+      headers,
+    }
+  )
 }
 
 const nominateDocument = async (
