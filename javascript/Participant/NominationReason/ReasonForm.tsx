@@ -2,15 +2,23 @@
 import React, {useState, FormEvent, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {nominateText, nominateDocument} from '../../Share/NominationXHR'
-import {CycleResource, ParticipantResource} from '../../ResourceTypes'
+import {
+  CycleResource,
+  ParticipantResource,
+  NominationResource,
+} from '../../ResourceTypes'
 
 declare const cycle: CycleResource
 declare const participant: ParticipantResource
 
-type Props = {firstName: string; maxsize: number}
+interface Props {
+  firstName: string
+  maxsize: number
+  nomination: NominationResource
+}
 
-const ReasonForm = ({firstName, maxsize}: Props) => {
-  const [reasonText, setReasonText] = useState('')
+const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
+  const [reasonText, setReasonText] = useState(nomination.reasonText)
   const [reasonFile, setReasonFile] = useState<File | null>(null)
   const [fileSelected, setFileSelected] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -47,8 +55,10 @@ const ReasonForm = ({firstName, maxsize}: Props) => {
   const fileTooBig = reasonFile === null ? false : reasonFile.size > maxsize
 
   const submitTextNomination = () => {
-    nominateText(participant.id, cycle.id, reasonText).then((response) => {
-      console.log(response)
+    nominateText(nomination.id, reasonText).then((response) => {
+      if (response.data.success) {
+        location.href = `./award/Participant/Nomination/${nomination.id}/nominate`
+      }
     })
   }
 
