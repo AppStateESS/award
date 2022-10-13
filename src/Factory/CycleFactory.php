@@ -14,11 +14,15 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\AbstractClass\AbstractFactory;
-use award\Resource\Cycle;
-use award\Factory\AwardFactory;
-use phpws2\Database;
+use award\Exception\CycleComplete;
+use award\Exception\CycleEndDatePassed;
+use award\Exception\CycleNotStarted;
 use award\Exception\NominationExpired;
+use award\Exception\ResourceNotFound;
+use award\Factory\AwardFactory;
+use award\Resource\Cycle;
 use Canopy\Request;
+use phpws2\Database;
 
 class CycleFactory extends AbstractFactory
 {
@@ -161,9 +165,19 @@ class CycleFactory extends AbstractFactory
 
     public static function nominationAllowed(Cycle $cycle)
     {
-        if ($cycle->getEndDate() < time() || $cycle->getDeleted() || $cycle->getStartDate() > time() || $cycle->getCompleted()) {
-            throw new NominationNotAllowed();
+        if ($cycle->getEndDate() < time()) {
+            throw new CycleEndDatePassed($cycle->id);
         }
+        if ($cycle->getDeleted()) {
+            throw new ResourceNotFound();
+        }
+        if ($cycle->getStartDate() > time()) {
+            throw new CycleNotStarted($cycle->id);
+        }
+        if ($cycle->getCompleted()) {
+            throw new CycleComplete($cycle->id);
+        }
+        return true;
     }
 
     /**
