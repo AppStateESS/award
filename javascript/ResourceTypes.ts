@@ -55,13 +55,14 @@ export interface NominationResource {
   allowVote: boolean | number
   approved: boolean | number
   awardId: number
-  bannerId: number
   completed: boolean | number
   cycleId: number
-  email: string
-  firstName: string
-  lastName: string
   participantId: number
+  reasonText: string
+  reasonComplete: boolean | number
+  reasonDocument: number
+  referenceReasonComplete: boolean | number
+  referencesSelected: boolean | number
 }
 
 export interface ParticipantResource {
