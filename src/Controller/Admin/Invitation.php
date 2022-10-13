@@ -50,7 +50,7 @@ class Invitation extends AbstractController
         $cycleId = $request->pullPostInteger('cycleId');
         $invitedId = $request->pullPostInteger('invitedId');
         $invited = ParticipantFactory::build($invitedId);
-        $result = self::testParticipant($invited, $cycleId);
+        $result = $this->testParticipant($invited, $cycleId);
         if (is_array($result)) {
             return $result;
         }
