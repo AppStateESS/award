@@ -14,12 +14,17 @@ declare(strict_types=1);
 namespace award\Factory;
 
 use award\AbstractClass\AbstractFactory;
+use award\Exception\CannotNominateJudge;
+use award\Exception\CycleComplete;
+use award\Exception\CycleEndDatePassed;
+use award\Exception\ParticipantPrivilegeMissing;
+use award\Exception\ResourceNotFound;
 use award\Resource\Award;
 use award\Resource\Cycle;
 use award\Resource\Nomination;
-use phpws2\Database;
+use award\Resource\Participant;
 use Canopy\Request;
-use award\Exception\ResourceNotFound;
+use phpws2\Database;
 
 class NominationFactory extends AbstractFactory
 {
@@ -35,6 +40,7 @@ class NominationFactory extends AbstractFactory
 
     public static function create(int $nominatorId, int $participantId, int $awardId, int $cycleId)
     {
+
         $nomination = self::build();
         $nomination->setAwardId($awardId)->
             setCycleId($cycleId)->
@@ -44,18 +50,33 @@ class NominationFactory extends AbstractFactory
         return $nomination;
     }
 
+    public static function errorCheckNomination(Participant $nominator, Nomination $nomination)
+    {
+        //$participant = ParticipantFactory::build($nomination->participantId);
+        $cycle = CycleFactory::build($nomination->cycleId);
+        CycleFactory::nominationAllowed($cycle);
+
+        if (ParticipantFactory::currentIsJudge($cycle->id)) {
+            throw new CannotNominateJudge;
+        }
+
+        if ($nomination->nominatorId !== $nominator->id) {
+            throw new ParticipantPrivilegeMissing;
+        }
+    }
+
+    /**
+     * Returns a nomination resource object if the nomination exists, false otherwise.
+     * @param int $nominatorId
+     * @param int $cycleId
+     * @return boolean | award\Resource\Nomination
+     */
     public static function getByNominator(int $nominatorId, int $cycleId)
     {
         extract(self::getDBWithTable());
         $table->addFieldConditional('nominatorId', $nominatorId);
         $table->addFieldConditional('cycleId', $cycleId);
-        $row = $db->selectOneRow();
-        if ($row == false) {
-            return false;
-        }
-        $nomination = NominationFactory::build();
-        $nomination->setValues($row);
-        return $nomination;
+        return self::convertRowToResource($db->selectOneRow());
     }
 
     public static function getCycleCount(int $cycleId)
@@ -68,38 +89,41 @@ class NominationFactory extends AbstractFactory
         return $db->selectColumn();
     }
 
-    public static function listing(array $options = [])
+    public static function getByParticipant(int $participantId, int $cycleId)
     {
         extract(self::getDBWithTable());
-        return $db->select();
+        $table->addFieldConditional('participantId', $participantId);
+        $table->addFieldConditional('cycleId', $cycleId);
+        return self::convertRowToResource($db->selectOneRow());
     }
 
     /**
-     * TODO Rename this
-     * @param int $participantId
-     * @param int $cycleId
-     * @param string $reasonText
-     * @throws \Exception
+     * Options:
+     * - cycleId            integer Only returns nomination from a cycle.
+     * - includeNominated   boolean If true, add participant info to nomination.
      */
-    public static function nominateParticipantText(int $participantId, int $cycleId, string $reasonText)
+    public static function listing(array $options = [])
     {
-        if (empty($reasonText)) {
-            throw new \Exception('missing reason text');
+        extract(self::getDBWithTable());
+
+        if (!empty($options['cycleId'])) {
+            $table->addFieldConditional('cycleId', $options['cycleId']);
         }
-        $nomination = self::build();
-        $participant = ParticipantFactory::build($participantId);
-        $cycle = CycleFactory::build($cycleId);
-        $award = AwardFactory::build($cycle->awardId);
 
-        ParticipantFactory::canBeNominated($participant, $cycle, $award);
+        if (!empty($options['includeNominated'])) {
+            self::includeNominated($db, $table);
+        }
+        return $db->select();
+    }
 
-        $nomination->setParticipantId($participant->id)->
-            setAwardId($award->id)->
-            setCycleId($cycle->id)->
-            setReasonText($reasonText)->
-            setReasonComplete(true);
+    private static function includeNominated($db, $table)
+    {
+        $participantTable = $db->addTable('award_participant');
+        $participantTable->addField('firstName');
+        $participantTable->addField('lastName');
+        $participantTable->addField('email');
 
-        self::save($nomination);
+        $db->joinResources($table, $participantTable, new Database\Conditional($db, $table->getField('participantId'), $participantTable->getField('id'), '=', 'left'));
     }
 
 }
