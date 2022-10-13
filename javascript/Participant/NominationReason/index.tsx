@@ -5,12 +5,14 @@ import {
   AwardResource,
   CycleResource,
   ParticipantResource,
+  NominationResource,
 } from '../../ResourceTypes'
 import ReasonForm from './ReasonForm'
 import {fullAwardTitle} from '../../Share/Cycle'
 
 declare const participant: ParticipantResource
 declare const award: AwardResource
+declare const nomination: NominationResource
 declare const cycle: CycleResource
 declare const maxsize: number
 
@@ -27,7 +29,11 @@ const NominationReason = () => {
       </h3>
       <hr />
       {award.nominationReasonRequired && (
-        <ReasonForm firstName={participant.firstName} maxsize={maxsize} />
+        <ReasonForm
+          firstName={participant.firstName}
+          maxsize={maxsize}
+          nomination={nomination}
+        />
       )}
     </div>
   )
