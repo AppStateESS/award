@@ -58,9 +58,9 @@ class CycleView extends AbstractView
         return self::getTemplate('Admin/CycleView', $values);
     }
 
-    public static function complete()
+    public static function complete(string $awardTitle)
     {
-        return 'This cycle is complete';
+        return self::getTemplate('Error/CycleComplete', ['awardTitle' => $awardTitle]);
     }
 
     public static function currentCycleWarning(\award\Resource\Award $award)
