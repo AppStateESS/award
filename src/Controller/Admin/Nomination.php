@@ -22,7 +22,7 @@ class Nomination extends AbstractController
 
     protected function listJson(Request $request)
     {
-        return NominationFactory::listing(['cycleId' => $request->pullGetInteger('cycleId')]);
+        return NominationFactory::listing(['cycleId' => $request->pullGetInteger('cycleId'), 'includeNominated' => true]);
     }
 
 }
