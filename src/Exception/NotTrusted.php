@@ -16,7 +16,7 @@ namespace award\Exception;
 class NotTrusted extends \Exception
 {
 
-    public function __construct(string $className, string $propertyType)
+    public function __construct()
     {
         parent::__construct("participant attempted a trusted action");
     }

@@ -16,7 +16,7 @@ namespace award\Exception;
 class NoJudges extends \Exception
 {
 
-    public function __construct($className = null)
+    public function __construct()
     {
         parent::__construct('cycle does not have any judges');
     }
