@@ -31,14 +31,14 @@ class AbstractFactory
      * @param int $id
      * @return AbstractResource | boolean
      */
-    public static function build(int $id = 0)
+    public static function build(int $id = 0, $allowDeleted = false)
     {
         if (static::$resourceClassName === '') {
             return false;
         }
         $resource = new static::$resourceClassName;
         if ($id > 0) {
-            return self::load($resource, $id);
+            return self::load($resource, $id, $allowDeleted);
         } else {
             return $resource;
         }
@@ -105,6 +105,38 @@ class AbstractFactory
         return get_defined_vars();
     }
 
+    public static function save(AbstractResource $resource)
+    {
+        $id = $resource->getId();
+        if ($id) {
+            if (method_exists($resource, 'stampUpdated')) {
+                $resource->stampUpdated();
+            }
+        } else {
+            if (method_exists($resource, 'stampCreated')) {
+                $resource->stampCreated();
+                $resource->stampUpdated();
+            }
+        }
+        $values = $resource->getValues();
+        unset($values['id']);
+        $db = Database::getDB();
+        $db->begin();
+        $table = $db->addTable($resource->getTableName());
+        $table->addValueArray($values);
+        if ($id) {
+            $table->addFieldConditional('id', $id);
+            $db->update();
+            $db->commit();
+        } else {
+            $db->insert();
+            $last_id = (int) $table->getLastId();
+            $resource->setId($last_id);
+            $db->commit();
+        }
+        return $resource;
+    }
+
     /**
      * Adds field conditionals to the database table object. Values not set if empty (0, null, false, etc.)
      * @param \phpws2\Database\Table $table
@@ -155,6 +187,21 @@ class AbstractFactory
     }
 
     /**
+     * Returns a nomination object if row is populated, false otherwise
+     * @param array $row
+     * @return boolean | AbstractResource
+     */
+    protected static function convertRowToResource(array $row)
+    {
+        if ($row == false) {
+            return false;
+        }
+        $resource = self::build();
+        $resource->setValues($row);
+        return $resource;
+    }
+
+    /**
      * Loads a resource from the table name set in the object by the id parameter.
      * If allowedDeleted is true, a previously deleted object may be returned.
      * @param AbstractResource $resource
@@ -180,38 +227,6 @@ class AbstractFactory
             $resource->setValues($result);
             return $resource;
         }
-    }
-
-    public static function save(AbstractResource $resource)
-    {
-        $id = $resource->getId();
-        if ($id) {
-            if (method_exists($resource, 'stampUpdated')) {
-                $resource->stampUpdated();
-            }
-        } else {
-            if (method_exists($resource, 'stampCreated')) {
-                $resource->stampCreated();
-                $resource->stampUpdated();
-            }
-        }
-        $values = $resource->getValues();
-        unset($values['id']);
-        $db = Database::getDB();
-        $db->begin();
-        $table = $db->addTable($resource->getTableName());
-        $table->addValueArray($values);
-        if ($id) {
-            $table->addFieldConditional('id', $id);
-            $db->update();
-            $db->commit();
-        } else {
-            $db->insert();
-            $last_id = (int) $table->getLastId();
-            $resource->setId($last_id);
-            $db->commit();
-        }
-        return $resource;
     }
 
 }
