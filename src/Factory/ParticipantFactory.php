@@ -24,6 +24,9 @@ use award\View\EmailView;
 use phpws2\Database;
 use award\Exception\BannedParticipant;
 use award\Exception\InactiveParticipant;
+use award\Exception\JudgeMayNotNominate;
+use award\Exception\ParticipantAlreadyNominated;
+use award\Exception\NotTrusted;
 
 class ParticipantFactory extends AbstractFactory
 {
@@ -76,36 +79,22 @@ class ParticipantFactory extends AbstractFactory
         }
     }
 
-    /**
-     * Throws an exception if a participant cannot be nominated for an award cycle.
-     * Checks:
-     * - participant is active and not banned
-     * - cycle is still accepting nominations
-     * - participant is not a judge
-     * - particpant is nominating themself and is a cycle judge
-     * @param Participant $participant
-     * @param Cycle $cycle
-     * @param Award $award
-     * @throws \Exception
-     * @return bool True if all is well.
-     */
-    public static function canBeNominated(Participant $participant, Cycle $cycle, Award $award)
+    public static function canNominate(Participant $nominator, Participant $participant, $cycleId)
     {
-        // check if participant is active and not banned
-        ParticipantFactory::isViable($participant);
-
-        // check if nominations are allowed for this cycle
-        CycleFactory::nominationAllowed($cycle);
-
-        // Make sure participant is not a judge
-        if (JudgeFactory::isJudge($participant->id, $cycle->id)) {
-            throw new \award\Exception\NominationNotAllowed;
+        if (!$nominator->getTrusted()) {
+            throw new NotTrusted;
         }
 
-        if (!$award->getSelfNominate() && ParticipantFactory::getCurrentParticipant()->id == $participant->id) {
-            throw new \award\Exception\NominationNotAllowed;
+        if (JudgeFactory::isJudge($nominator->id, $cycleId)) {
+            throw new JudgeMayNotNominate;
         }
-        return true;
+
+        self::isViable($participant);
+
+        $nomination = NominationFactory::getByParticipant($participant->id, $cycleId);
+        if ($nomination->nominatorId !== $nominator->id) {
+            throw new ParticipantAlreadyNominated;
+        }
     }
 
     /**
