@@ -7,7 +7,13 @@ import {NominationResource} from '../../ResourceTypes'
 
 declare const cycleId: number
 
-const NominationList = ({nominations}: {nominations: NominationResource[]}) => {
+interface NominationWithName extends NominationResource {
+  firstName: string
+  lastName: string
+  email: string
+}
+
+const NominationList = ({nominations}: {nominations: NominationWithName[]}) => {
   return (
     <Fragment>
       {nominations.map((value) => {
@@ -24,7 +30,7 @@ const NominationList = ({nominations}: {nominations: NominationResource[]}) => {
 NominationList.propTypes = {nominations: PropTypes.array}
 
 const Nominations = () => {
-  const [nominations, setNominations] = useState<NominationResource[]>()
+  const [nominations, setNominations] = useState<NominationWithName[]>()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -38,7 +44,7 @@ const Nominations = () => {
     const params = {
       url: './award/Admin/Nomination/?cycleId=' + cycleId,
       signal,
-      handleSuccess: (data: NominationResource[]) => {
+      handleSuccess: (data: NominationWithName[]) => {
         setNominations(data)
       },
     }
