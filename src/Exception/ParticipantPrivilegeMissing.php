@@ -15,7 +15,7 @@ namespace award\Exception;
 class ParticipantPrivilegeMissing extends \Exception
 {
 
-    protected $defaultMessage = 'You do not have permissions for this action';
+    protected $defaultMessage = 'you do not have permissions for this action';
 
     public function __construct($className = null)
     {
