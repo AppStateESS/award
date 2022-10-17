@@ -117,33 +117,6 @@ class NominationView extends AbstractView
     }
 
     /**
-     * Determines the proper view for the nomination process based on its current status.
-     * @param Participant $nominator The person nominating someone for an award
-     * @param Nomination $nomination The current nomination object.
-     * @return string
-     */
-    public static function nominationStatus(Participant $nominator, Nomination $nomination)
-    {
-        $participant = ParticipantFactory::build($nomination->participantId);
-        $award = AwardFactory::build($nomination->awardId);
-        $cycle = CycleFactory::build($nomination->cycleId);
-        $tpl['approvalRequired'] = (bool) $award->approvalRequired;
-        $tpl['reasonRequired'] = (bool) $award->nominationReasonRequired;
-        $tpl['reasonComplete'] = (bool) $nomination->reasonComplete;
-        $tpl['referencesRequired'] = $award->referencesRequired;
-        $tpl['referencesSelected'] = (bool) $nomination->referencesSelected;
-        $tpl['nominationComplete'] = (bool) $nomination->completed;
-        $tpl['firstName'] = $participant->firstName;
-        $tpl['lastName'] = $participant->lastName;
-        $tpl['awardTitle'] = self::getFullAwardTitle($award, $cycle);
-        $tpl['nominationId'] = $nomination->id;
-
-        $tpl['canComplete'] = NominationFactory::canComplete($award, $nomination);
-
-        return self::getTemplate('Participant/NominationStatus', $tpl);
-    }
-
-    /**
      * #TODO
      * @return type
      */
@@ -173,6 +146,33 @@ class NominationView extends AbstractView
     public static function onlyTrusted()
     {
         return self::getTemplate('Participant/OnlyTrusted');
+    }
+
+    /**
+     * Determines the proper view for the nomination process based on its current status.
+     * @param Participant $nominator The person nominating someone for an award
+     * @param Nomination $nomination The current nomination object.
+     * @return string
+     */
+    public static function view(Participant $nominator, Nomination $nomination)
+    {
+        $participant = ParticipantFactory::build($nomination->participantId);
+        $award = AwardFactory::build($nomination->awardId);
+        $cycle = CycleFactory::build($nomination->cycleId);
+        $tpl['approvalRequired'] = (bool) $award->approvalRequired;
+        $tpl['reasonRequired'] = (bool) $award->nominationReasonRequired;
+        $tpl['reasonComplete'] = (bool) $nomination->reasonComplete;
+        $tpl['referencesRequired'] = $award->referencesRequired;
+        $tpl['referencesSelected'] = (bool) $nomination->referencesSelected;
+        $tpl['nominationComplete'] = (bool) $nomination->completed;
+        $tpl['firstName'] = $participant->firstName;
+        $tpl['lastName'] = $participant->lastName;
+        $tpl['awardTitle'] = self::getFullAwardTitle($award, $cycle);
+        $tpl['nominationId'] = $nomination->id;
+
+        $tpl['canComplete'] = NominationFactory::canComplete($award, $nomination);
+
+        return self::getTemplate('Participant/NominationStatus', $tpl);
     }
 
 }
