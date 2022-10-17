@@ -57,7 +57,7 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
   const submitTextNomination = () => {
     nominateText(nomination.id, reasonText).then((response) => {
       if (response.data.success) {
-        location.href = `./award/Participant/Nomination/${nomination.id}/nominate`
+        location.href = `./award/Participant/Nomination/${nomination.id}`
       }
     })
   }
@@ -78,15 +78,16 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
     <div>
       <h4>Nomination Reason</h4>
       <p>
-        Please type your reason for nominating{' '}
-        <strong className="text-primary">{firstName}</strong> below.
+        This award requires you to supply your reason for selecting{' '}
+        {participant.firstName} {participant.lastName} for nomination.
       </p>
+      <p>Please type your reason below.</p>
       <textarea
         className="form-control mb-3"
         value={reasonText}
         onChange={(e) => setReasonText(e.target.value)}
       />
-      <div className="text-center">
+      <div className="text-center mb-5">
         <button
           disabled={reasonText.length == 0 || reasonFile != null}
           className="btn btn-success"
@@ -94,20 +95,12 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
           Submit reason above
         </button>
       </div>
-      <div className="row my-3">
-        <div className="col-sm-5">
-          <hr />
-        </div>
-        <div className="col-sm-2 text-center">or</div>
-        <div className="col-sm-5">
-          <hr />
-        </div>
-      </div>
+
       <div className="row mb-4">
         <div className="col-6">
           <p>
-            You may upload a PDF file (less than {maxSizeString} in size)
-            instead.
+            Alternatively, you may upload a PDF file (less than {maxSizeString}{' '}
+            in size) containing your reasoning.
           </p>
           <input type="file" name="file" onChange={upload} ref={fileInput} />
         </div>
