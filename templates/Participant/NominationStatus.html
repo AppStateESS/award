@@ -30,9 +30,19 @@ $tpl['nominationComplete'] = (bool) $nomination->completed;
 </style>
 
 <div class="nomination">
-  <h2>Nominate!</h2>
+  <h2>Complete your nomination</h2>
   <p>You are nominating <?=$firstName?> <?=$lastName?> for the <?=$awardTitle?>.</p>
-  <?php if ($reasonRequired || $referencesRequired):?>
+  <?php if ($canComplete):?>
+  <p>It looks like you are ready to complete your nomination! Click the Submit my nomination button below.</p>
+  <?php if ($approvalRequired):?>
+  <p>Your nomination will require approval after completion.</p>
+  <?php else:?>
+  <p>Your nomination will be pre-approved upon completion!</p>
+  <?php endif;?>
+  <button class="btn btn-outline-dark">Submit my nomination</button>
+  <?php else:?>
+  <p>Your nomination needs a little work. Click on the links in the red boxes to complete the conditional requirements.</p>
+  <?php endif;?>
   <?php if ($reasonRequired):?>
   <?php if (!$reasonComplete):?>
   <div class="status incomplete"><a href="./award/Participant/Nomination/<?=$nominationId?>/reason/"><i class="fas fa-times"></i> Missing nomination reason.</a></div>
@@ -57,17 +67,5 @@ $tpl['nominationComplete'] = (bool) $nomination->completed;
   </div>
   <?php endif;?>
   <?php endif;?>
-  <?php endif;?>
 
-  <?php if ($canComplete):?>
-  <p>It looks like you are ready to complete your nomination! Click the Submit my nomination button below.</p>
-  <?php if ($approvalRequired):?>
-  <p>Your nomination will require approval after completion.</p>
-  <?php else:?>
-  <p>Your nomination will be pre-approved upon completion!</p>
-  <?php endif;?>
-  <button class="btn btn-outline-dark">Submit my nomination</button>
-  <?php else:?>
-  <p>Your nomination needs a little work. Click on the links in the red boxes to complete the conditional requirements.</p>
-  <?php endif;?>
 </div>
