@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace award\View;
 
-use award\Factory\ParticipantFactory;
 use award\Factory\AuthenticateFactory;
+use award\Factory\CycleFactory;
 use award\Factory\InvitationFactory;
 use award\Factory\JudgeFactory;
-use award\Factory\CycleFactory;
+use award\Factory\NominationFactory;
+use award\Factory\ParticipantFactory;
 use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
@@ -101,8 +102,13 @@ class ParticipantView extends AbstractView
         $cycleOptions['includeAward'] = true;
         $cycleOptions['dateFormat'] = true;
 
-        $upcomingCycles = CycleFactory::list($cycleOptions);
-        $values['upcomingCycles'] = $upcomingCycles;
+        $nominations = NominationFactory::listing(['nominatorId' => $participant->id, 'includeCompleted' => false, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
+        $values['nominations'] = [];
+        if (!empty($nominations)) {
+            $values['nominations'] = $nominations;
+        }
+
+        $values['upcomingCycles'] = CycleFactory::list($cycleOptions);
 
         return self::participantMenu('dashboard') . self::getTemplate('Participant/Dashboard', $values);
     }
