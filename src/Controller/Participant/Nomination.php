@@ -34,15 +34,37 @@ class Nomination extends AbstractController
         return NominationView::participantView();
     }
 
+    protected function viewHtml(Request $request)
+    {
+        $nominator = ParticipantFactory::getCurrentParticipant();
+        $nomination = NominationFactory::build($this->id);
+        $nominated = ParticipantFactory::build($nomination->participantId);
+
+        $cycle = CycleFactory::build($nomination->cycleId);
+        $award = AwardFactory::build($nomination->awardId);
+
+        try {
+            CycleFactory::nominationAllowed($cycle);
+            ParticipantFactory::canNominate($nominator, $nominated, $cycle->id);
+        } catch (\Exception $ex) {
+            return ParticipantView::participantMenu('nomination') .
+                NominationView::errorByException($ex, $award, $cycle);
+        }
+        return NominationView::participantMenu('nomination') . NominationView::view($nominator, $nomination);
+    }
+
     /**
      * View for the selection or creation of a participant.
      * @param Request $request
-     * @return type
+     * @return string
      * @throws ResourceNotFound
      */
     protected function nominateHtml(Request $request)
     {
+        $nominator = ParticipantFactory::getCurrentParticipant();
+
         $cycleId = $request->pullGetInteger('cycleId');
+
         if (empty($cycle = CycleFactory::build($cycleId))) {
             throw new ResourceNotFound;
         }
@@ -50,84 +72,31 @@ class Nomination extends AbstractController
             throw new ResourceNotFound;
         }
 
-        $nominator = ParticipantFactory::getCurrentParticipant();
-        $nomination = NominationFactory::getByNominator($nominator->id, $cycleId);
-
-        /**
-         * If the nomination for this cycle is already started, send them to the
-         * status page.
-         */
-        if ($nomination) {
-            // Although the nomination was started, we don't allow them to continue
-            // if the cycle status changes.
-            $nominated = ParticipantFactory::build($nomination->participantId);
-            try {
-                CycleFactory::nominationAllowed($cycle);
-                ParticipantFactory::canNominate($nominator, $nominated, $cycle->id);
-            } catch (\Exception $ex) {
-                return ParticipantView::participantMenu('nomination') .
-                    NominationView::errorByException($ex, $award, $cycle);
-            }
-            return NominationView::nominationStatus($nominator, $nomination);
-        }
-
-
-
-
-
-        /**
-         * If nominator has already started a nomination, continue with it.
-         */
-        if ($nomination) {
-            $participant = ParticipantFactory::build($nomination->participantId);
-            return ParticipantView::participantMenu('nomination') . NominationView::nominateParticipant($nominator, $nomination, $participant, $award, $cycle);
-        } else {
-            return ParticipantView::participantMenu('nomination') . NominationView::nominate($award, $cycle);
-        }
+        return ParticipantView::participantMenu('nomination') . NominationView::nominate($award, $cycle);
     }
 
-    protected function nominateStatus()
+    /**
+     * Posts a new nomination. Skips the save if the nomination already exists.
+     * @param Request $request
+     * @return type
+     */
+    protected function post(Request $request)
     {
-
-    }
-
-    protected function nominateParticipantHtml(Request $request)
-    {
-        if (!ParticipantFactory::currentIsTrusted()) {
-            return NominationView::onlyTrusted();
-        }
-        if ($this->id) {
-            $nomination = NominationFactory::build($this->id);
-            $participantId = $nomination->participantId;
-            $cycleId = $nomination->cycleId;
-        } else {
-            $participantId = $request->pullGetInteger('participantId');
-            $cycleId = $request->pullGetInteger('cycleId');
-        }
-
         $nominator = ParticipantFactory::getCurrentParticipant();
-        $participant = ParticipantFactory::build($participantId);
-        $cycle = CycleFactory::build($cycleId);
-        $award = AwardFactory::build($cycle->awardId);
+        $participantId = $request->pullPostInteger('participantId');
+        $cycle = CycleFactory::build($request->pullPostInteger('cycleId'));
 
-        $nomination = NominationFactory::getByNominator($nominator->id, $cycle->id);
-        if ($nomination === false) {
-            if ($participant->getBanned() || !$participant->getActive()) {
-                return ParticipantView::participantMenu('nomination') . ParticipantView::inaccessible();
-            }
-            // If there is not an existing nomination, create one if the participant
-            $nomination = \award\Factory\NominationFactory::create($nominator, $participant->id, $award->id, $cycle->id);
+        if (empty($nomination = NominationFactory::getByNominator($nominator->id, $participantId, $cycle->id))) {
+            $nomination = NominationFactory::create($nominator->id, $participantId, $cycle->awardId, $cycle->id);
         }
 
         try {
-            NominationFactory::errorCheckNomination($cycle, $award, $nominator, $nomination);
-        } catch (\Exception $ex) {
-            return ParticipantView::participantMenu('nomination') .
-                NominationView::errorByException($ex, $award, $cycle);
+            CycleFactory::nominationAllowed($cycle);
+            NominationFactory::nominationAllowed($nominator, $nomination);
+            return ['success' => true, 'id' => $nomination->id];
+        } catch (Exception $ex) {
+            return ['success' => false, 'message' => $ex->getMessage()];
         }
-
-
-        return NominationView::nominateParticipant($nominator, $nomination, $participant, $award, $cycle);
     }
 
     protected function reasonHtml(Request $request)
