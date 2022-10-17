@@ -5,15 +5,13 @@
 </div>
 <hr />
 
-<h4>Upcoming deadlines</h4>
 <?php if (!empty($judged)):?>
+<h4>Upcoming judge deadlines</h4>
 <?php foreach ($judged as $j):?>
 <div><span class="badge badge-info mr-2 text-white">Judge</span>Voting starts for <strong><a href="./award/User/Award/<?=$j['id']?>"><?=$j['title']?></a></strong> on <?=$j['endDate']?>.</div>
 <?php endforeach;?>
-<?php endif;?>
-
-
 <hr />
+<?php endif;?>
 
 <h4>Current awards</h4>
 <?php if (!empty($upcomingCycles)):?>
@@ -21,8 +19,47 @@
 <div>
   <strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> nominations available until <?=$c['endDate']?>.
   <?php if ($trusted && !in_array($c['id'], $judgedCycles)):?>
-  <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate!</a>
+  <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate someone!</a>
   <?php endif;?>
 </div>
 <?php endforeach;?>
+<?php endif;?>
+<hr />
+<h4>Nominations</h4>
+<?php if (!empty($nominations)):?>
+<table class="table table-striped" aria-label="Nomination listing">
+  <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th>Award</th>
+      <th>Term</th>
+      <th>Nominated</th>
+      <th>Nomination deadline</th>
+      <th class="text-center">Completed</th>
+      <th class="text-center">Approved</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach ($nominations as $n):
+    ?>
+    <tr>
+      <td>
+        <?php if (!$n['completed'] && $n['endDate'] > time()):?>
+        <a class="btn btn-success btn-sm" href="./award/Participant/Nomination/<?=$n['id']?>">Finish</a>
+        <?php endif;?>
+      </td>
+      <td><?=$n['awardTitle']?></td>
+      <td><?=$n['term'] === 'yearly' ? $n['awardYear'] : "{$n['awardMonth']}, {$n['awardYear']}"?></td>
+      <td><?=$n['firstName'], ' ', $n['lastName']?></td>
+      <td><?=strftime('%b %e - %l:%M %p', $n['endDate'])?></td>
+      <td class="text-center"><?=$n['completed'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
+      <td class="text-center"><?=$n['approved'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
+
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
+<?php else:?>
+<p><em>No nominations.</em></p>
 <?php endif;?>
