@@ -50,13 +50,10 @@ class NominationFactory extends AbstractFactory
         return $nomination;
     }
 
-    public static function errorCheckNomination(Participant $nominator, Nomination $nomination)
+    public static function nominationAllowed(Participant $nominator, Nomination $nomination)
     {
         //$participant = ParticipantFactory::build($nomination->participantId);
-        $cycle = CycleFactory::build($nomination->cycleId);
-        CycleFactory::nominationAllowed($cycle);
-
-        if (ParticipantFactory::currentIsJudge($cycle->id)) {
+        if (ParticipantFactory::currentIsJudge($nomination->cycleId)) {
             throw new CannotNominateJudge;
         }
 
@@ -68,13 +65,15 @@ class NominationFactory extends AbstractFactory
     /**
      * Returns a nomination resource object if the nomination exists, false otherwise.
      * @param int $nominatorId
+     * @param int $participantId
      * @param int $cycleId
      * @return boolean | award\Resource\Nomination
      */
-    public static function getByNominator(int $nominatorId, int $cycleId)
+    public static function getByNominator(int $nominatorId, int $participantId, int $cycleId)
     {
         extract(self::getDBWithTable());
         $table->addFieldConditional('nominatorId', $nominatorId);
+        $table->addFieldConditional('participantId', $participantId);
         $table->addFieldConditional('cycleId', $cycleId);
         return self::convertRowToResource($db->selectOneRow());
     }
@@ -100,7 +99,12 @@ class NominationFactory extends AbstractFactory
     /**
      * Options:
      * - cycleId            integer Only returns nomination from a cycle.
+     * - nominatorId        integer Only returns nominations created by Participant by
+     *                              nominatorId
+     * - includeCompleted   boolean Return completed nominations. Default to not do so.
      * - includeNominated   boolean If true, add participant info to nomination.
+     * - includeAward       boolean If true, include award title.
+     * - includeCycle       boolean If true, include cycle information.
      */
     public static function listing(array $options = [])
     {
@@ -110,10 +114,45 @@ class NominationFactory extends AbstractFactory
             $table->addFieldConditional('cycleId', $options['cycleId']);
         }
 
+        if (!empty($options['nominatorId'])) {
+            $table->addFieldConditional('nominatorId', $options['nominatorId']);
+        }
+
+        if (empty($options['includeCompleted'])) {
+            $table->addFieldConditional('completed', 0);
+        }
+
         if (!empty($options['includeNominated'])) {
             self::includeNominated($db, $table);
         }
+
+        if (!empty($options['includeAward'])) {
+            self::includeAward($db, $table);
+        }
+        if (!empty($options['includeCycle'])) {
+            self::includeCycle($db, $table);
+        }
         return $db->select();
+    }
+
+    private static function includeAward($db, $table)
+    {
+        $awardTable = $db->addTable('award_award');
+        $awardTable->addField('title', 'awardTitle');
+
+        $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '=', 'left'));
+    }
+
+    private static function includeCycle($db, $table)
+    {
+        $cycleTable = $db->addTable('award_cycle');
+        $cycleTable->addField('awardMonth');
+        $cycleTable->addField('awardYear');
+        $cycleTable->addField('endDate');
+        $cycleTable->addField('term');
+        $cycleTable->addField('completed');
+
+        $db->joinResources($table, $cycleTable, new Database\Conditional($db, $table->getField('cycleId'), $cycleTable->getField('id'), '=', 'left'));
     }
 
     private static function includeNominated($db, $table)
