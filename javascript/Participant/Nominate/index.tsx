@@ -2,6 +2,7 @@
 import React, {useState} from 'react'
 import {createRoot} from 'react-dom/client'
 import {AwardResource, CycleResource} from '../../ResourceTypes'
+import {postNomination} from '../../Share/NominationXHR'
 import {fullAwardTitle} from '../../Share/Cycle'
 
 import Matches from './Matches'
@@ -19,10 +20,14 @@ const Nominate = () => {
 
   const nominateParticipant = (participantId: number) => {
     if (participantId > 0) {
-      location.href =
-        './award/Participant/Nomination/nominateParticipant?' +
-        `participantId=${participantId}` +
-        `&cycleId=${cycle.id}`
+      postNomination(participantId, cycle.id).then((response) => {
+        if (response.data.success) {
+          const nominationId = response.data.id
+          location.href = `./award/Participant/Nomination/${nominationId}`
+        } else {
+          console.error(response.data)
+        }
+      })
     }
   }
 
