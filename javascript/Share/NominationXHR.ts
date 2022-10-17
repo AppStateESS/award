@@ -28,4 +28,17 @@ const nominateDocument = async (
   })
 }
 
-export {nominateDocument, nominateText}
+const postNomination = async (participantId: number, cycleId: number) => {
+  const url = 'award/Participant/Nomination'
+  const data = {participantId, cycleId}
+
+  return axios({
+    method: 'post',
+    url,
+    data,
+    timeout: 3000,
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
+  })
+}
+
+export {nominateDocument, nominateText, postNomination}
