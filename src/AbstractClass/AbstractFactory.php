@@ -191,7 +191,7 @@ class AbstractFactory
      * @param array $row
      * @return boolean | AbstractResource
      */
-    protected static function convertRowToResource(array $row)
+    protected static function convertRowToResource($row)
     {
         if ($row == false) {
             return false;
