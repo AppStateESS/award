@@ -24,6 +24,8 @@ use award\Factory\EmailFactory;
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
 use award\Factory\NominationFactory;
+use award\Resource\Cycle;
+use award\Resource\Participant;
 
 class Nomination extends AbstractController
 {
@@ -42,13 +44,11 @@ class Nomination extends AbstractController
 
         $cycle = CycleFactory::build($nomination->cycleId);
         $award = AwardFactory::build($nomination->awardId);
+        #TODO there needs to be a post-complete nomination view.
 
-        try {
-            CycleFactory::nominationAllowed($cycle);
-            ParticipantFactory::canNominate($nominator, $nominated, $cycle->id);
-        } catch (\Exception $ex) {
-            return ParticipantView::participantMenu('nomination') .
-                NominationView::errorByException($ex, $award, $cycle);
+        $result = $this->validateHtml($cycle, $nominator, $nominated);
+        if ($result !== true) {
+            return $result;
         }
         return NominationView::participantMenu('nomination') . NominationView::view($nominator, $nomination);
     }
@@ -110,7 +110,7 @@ class Nomination extends AbstractController
         $award = AwardFactory::build($nomination->awardId);
         $cycle = CycleFactory::build($nomination->cycleId);
         $nominee = ParticipantFactory::build($nomination->participantId);
-        return NominationView::reasonForm($award, $cycle, $nomination, $nominee);
+        return ParticipantView::participantMenu('nomination') . NominationView::reasonForm($award, $cycle, $nomination, $nominee);
     }
 
     /**
@@ -119,7 +119,18 @@ class Nomination extends AbstractController
      */
     protected function referenceHtml(Request $request)
     {
+        $nominator = ParticipantFactory::getCurrentParticipant();
         $nomination = NominationFactory::build($this->id);
+        $nominated = ParticipantFactory::build($nomination->participantId);
+        $cycle = CycleFactory::build($nomination->cycleId);
+        $award = AwardFactory::build($nomination->awardId);
+
+        $result = $this->validateHtml($cycle, $nominator, $nominated);
+        if ($result !== true) {
+            return $result;
+        }
+
+        return ParticipantView::participantMenu('nomination') . NominationView::selectReferences($nomination, $nominated, $award, $cycle);
     }
 
     protected function textPut(Request $request)
@@ -144,6 +155,27 @@ class Nomination extends AbstractController
         $document = DocumentFactory::build();
 
         exit;
+    }
+
+    /**
+     * Tests whether a nomination can proceed. If not allowed, an error page string is returned.
+     * If all is well, a boolean TRUE is returned.
+     *
+     * @param Cycle $cycle
+     * @param Participant $nominator
+     * @param Participant $nominated
+     * @return boolean | string
+     */
+    protected function validateHtml(Cycle $cycle, Participant $nominator, Participant $nominated)
+    {
+        try {
+            CycleFactory::nominationAllowed($cycle);
+            ParticipantFactory::canNominate($nominator, $nominated, $cycle->id);
+            return true;
+        } catch (\Exception $ex) {
+            return ParticipantView::participantMenu('nomination') .
+                NominationView::errorByException($ex, $award, $cycle, $nomination);
+        }
     }
 
 }
