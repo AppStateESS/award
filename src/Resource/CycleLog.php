@@ -23,6 +23,9 @@ class CycleLog extends AbstractResource
 {
 
     /**
+     * A short description of type of log
+     * - judge_reminder
+     * - reference_reminder
      * @var string
      */
     private string $action;
@@ -125,7 +128,7 @@ class CycleLog extends AbstractResource
         return $this;
     }
 
-    public function setAwardId(int $awardId)
+    public function setAwardId(int $awardId): self
     {
         $this->awardId = $awardId;
         return $this;
@@ -141,7 +144,7 @@ class CycleLog extends AbstractResource
         $this->cycleId = $cycle->id;
     }
 
-    public function setCycleId(int $cycleId)
+    public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
         return $this;
