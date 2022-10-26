@@ -219,6 +219,7 @@ class ParticipantFactory extends AbstractFactory
      * - asSelect      (bool): return results with only id and participant full name.
      * - allowBanned   (bool): if true, include banned participants in results.
      * - allowInactive (bool): if true, include inactive participants in results.
+     * - notIn (array) Array of ids to not include.
      *
      * @param array $options
      * @return array
@@ -256,6 +257,7 @@ class ParticipantFactory extends AbstractFactory
             $table->addField('trusted');
         }
 
+
         if (!empty($options['cycleId'])) {
             $judgeIds = JudgeFactory::listing(['cycleId' => $options['cycleId'], 'participantIdOnly' => true]);
 
@@ -264,10 +266,17 @@ class ParticipantFactory extends AbstractFactory
             }
         }
 
+        if (!empty($options['notIn'])) {
+            $table->addFieldConditional('id', $options['notIn'], 'not in');
+        }
+
         if (empty($options['allowBanned'])) {
             $table->addFieldConditional('banned', 0);
         }
 
+        /**
+         * If false or not set, only return active participants
+         */
         if (empty($options['allowInactive'])) {
             $table->addFieldConditional('active', 1);
         }
