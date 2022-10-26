@@ -74,6 +74,10 @@ class Invitation extends AbstractResource
 
     /**
      * The invitation type
+     * AWARD_INVITE_TYPE_NEW
+     * AWARD_INVITE_TYPE_JUDGE
+     * AWARD_INVITE_TYPE_REFERENCE
+     * AWARD_INVITE_TYPE_NOMINATED
      * @var int
      */
     private int $inviteType = AWARD_INVITE_TYPE_NEW;
