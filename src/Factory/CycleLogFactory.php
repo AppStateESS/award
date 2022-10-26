@@ -35,6 +35,7 @@ class CycleLogFactory extends AbstractFactory
     {
         extract(self::getDBWithTable());
         $table->addFieldConditional('cycleId', $cycleId);
+        $table->addFieldConditional('action', 'judge_reminder');
         $table->addField('username');
         $table->addField('stamped');
         $table->addOrderBy('stamped', 'desc');
@@ -46,11 +47,36 @@ class CycleLogFactory extends AbstractFactory
         return $row;
     }
 
-    public static function stampJudgeRemind(Cycle $cycle, string $username)
+    public static function getLastReferenceRemind(int $cycleId, bool $toUnixTime = false)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('cycleId', $cycleId);
+        $table->addFieldConditional('action', 'reference_reminder');
+        $table->addField('username');
+        $table->addField('stamped');
+        $table->addOrderBy('stamped', 'desc');
+        $db->setLimit('1');
+        $row = $db->selectOneRow();
+        if ($toUnixTime && is_array($row)) {
+            $row['stamped'] = strtotime($row['stamped']);
+        }
+        return $row;
+    }
+
+    public static function stampJudgeReminder(Cycle $cycle, string $username)
     {
         $log = self::build();
         $log->setCycle($cycle);
-        $log->setAction('judge_remind');
+        $log->setAction('judge_reminder');
+        $log->setUsername($username);
+        self::save($log);
+    }
+
+    public static function stampReferenceReminder(Cycle $cycle, string $username)
+    {
+        $log = self::build();
+        $log->setCycle($cycle);
+        $log->setAction('reference_reminder');
         $log->setUsername($username);
         self::save($log);
     }
