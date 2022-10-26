@@ -27,6 +27,7 @@ CREATE TABLE award_cycle (
     completed smallint DEFAULT 0,
     deleted smallint DEFAULT 0,
     endDate int default 0,
+    lastEndDate int default 0,
     startDate int default 0,
     term varchar(20) default 'yearly',
     voteAllowed bool DEFAULT 0,
