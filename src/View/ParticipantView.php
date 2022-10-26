@@ -102,7 +102,7 @@ class ParticipantView extends AbstractView
         $cycleOptions['includeAward'] = true;
         $cycleOptions['dateFormat'] = true;
 
-        $nominations = NominationFactory::listing(['nominatorId' => $participant->id, 'includeCompleted' => false, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
+        $nominations = NominationFactory::listing(['nominatorId' => $participant->id, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
         $values['nominations'] = [];
         if (!empty($nominations)) {
             $values['nominations'] = $nominations;
