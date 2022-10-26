@@ -5,3 +5,4 @@
 **/assets.json
 **/node_modules/
 /nbproject/
+**/.*/
