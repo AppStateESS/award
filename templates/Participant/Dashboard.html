@@ -1,3 +1,16 @@
+<?php
+$now = time();
+?>
+<script>
+  window.addEventListener('load', () => {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+<style>
+  .cannot-finish {
+    color: red;
+  }
+</style>
 <h2>Welcome <?=$participant->firstName?>!</h2>
 <div>
   <h4>Invitations</h4>
@@ -40,14 +53,16 @@
     </tr>
   </thead>
   <tbody>
-    <?php
-    foreach ($nominations as $n):
-    ?>
-    <tr>
+    <?php foreach ($nominations as $n):?>
+    <tr class="<?=!$n['completed'] && $n['endDate'] < $now ? 'cannot-finish' : ''?>">
       <td>
-        <?php if (!$n['completed'] && $n['endDate'] > time()):?>
+        <?php if(!$n['completed']):
+        if ($n['endDate'] < $now):
+        ?>
+        <div data-toggle="tooltip" data-placement="top" title="Nomination not completed before deadline"><i class="fas fa-exclamation-triangle"></i></div>
+        <?php else:?>
         <a class="btn btn-success btn-sm" href="./award/Participant/Nomination/<?=$n['id']?>">Finish</a>
-        <?php endif;?>
+        <?php endif;endif;?>
       </td>
       <td><?=$n['awardTitle']?></td>
       <td><?=$n['term'] === 'yearly' ? $n['awardYear'] : "{$n['awardMonth']}, {$n['awardYear']}"?></td>
