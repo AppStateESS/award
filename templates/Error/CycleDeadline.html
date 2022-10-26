@@ -1,1 +1,20 @@
-<p>The <?=$awardTitle?> cycle deadline has passed. No more nominations will accepted.</p>
+<p>The <?=$awardTitle?> cycle deadline has passed and your nomination was incomplete.</p>
+
+<h3>What happened?</h3>
+<ul>
+  <?php if ($award->getNominationReasonRequired()):?>
+  <?php if (!$nomination->getReasonComplete()):?>
+  <li>You did not include the required nomination reason.</li>
+  <?php endif;?>
+  <?php endif;?>
+  <?php if ($award->getReferencesRequired()):?>
+  <?php if (!$nomination->getReferencesSelected()):?>
+  <li>You did not select required references or those references did not confirm their participation.</li>
+  <?php elseif (!$nomination->getReferenceReasonComplete()):?>
+  <li>One or more of the references did not supply a reason for supporting your nominee.</li>
+  <?php endif;?>
+  <?php endif;?>
+</ul>
+<?php if (!$award->getNominationReasonRequired() && !$award->getReferencesRequired()):?>
+<p>You should not be seeing this error. Please <a href="mailto:<?=$contactEmail?>">contact us</a> so we can take a look.</p>
+<?php endif;?>
