@@ -195,6 +195,8 @@ class CycleFactory extends AbstractFactory
         $cycle->setAwardMonth($request->pullPostInteger('awardMonth'));
         $cycle->setAwardYear($request->pullPostInteger('awardYear'));
         $cycle->setEndDate($request->pullPostInteger('endDate'));
+        // New cycle, sync last end date with current setting.
+        $cycle->setLastEndDate($cycle->getEndDate());
         $cycle->setStartDate($request->pullPostInteger('startDate'));
         $cycle->setTerm($request->pullPostString('term'));
         $cycle->setVoteType($request->pullPostString('voteType'));
@@ -209,7 +211,7 @@ class CycleFactory extends AbstractFactory
     public static function put(int $cycleId, Request $request)
     {
         $cycle = self::build($cycleId);
-
+        $cycle->stampLastEndDate();
         $cycle->setEndDate($request->pullPutInteger('endDate'));
         $cycle->setStartDate($request->pullPutInteger('startDate'));
         $cycle->setVoteType($request->pullPutString('voteType'));
