@@ -15,8 +15,9 @@ namespace award\View;
 
 use award\AbstractClass\AbstractView;
 use award\Factory\NominationFactory;
-use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
+use award\Factory\CycleFactory;
+use award\Factory\CycleLogFactory;
 use award\Factory\SettingFactory;
 use award\Factory\ParticipantFactory;
 use award\Resource\Cycle;
@@ -32,16 +33,17 @@ class NominationView extends AbstractView
         return self::getTemplate('Error/CannotNominateParticipant');
     }
 
-    public static function deadlinePassed(string $awardTitle)
+    public static function deadlinePassed($award, $cycle, $nomination)
     {
-        return self::getTemplate('Error/CycleDeadline', ['awardTitle' => $awardTitle]);
+        $awardTitle = self::getFullAwardTitle($award, $cycle);
+        return self::getTemplate('Error/CycleDeadline', ['awardTitle' => $awardTitle, 'award' => $award, 'cycle' => $cycle, 'nomination' => $nomination]);
     }
 
     /**
      * Returns an error page view determined by the exception type.
      * @param \Exception $exception
      */
-    public static function errorByException(\Exception $exception, $award, $cycle)
+    public static function errorByException(\Exception $exception, $award, $cycle, $nomination)
     {
         $awardTitle = CycleView::getFullAwardTitle($award, $cycle);
         switch (get_class($exception)) {
@@ -52,7 +54,7 @@ class NominationView extends AbstractView
 
             case 'award\Exception\CycleEndDatePassed':
                 $title = 'Cycle deadline has passed';
-                $content = NominationView::deadlinePassed($awardTitle);
+                $content = NominationView::deadlinePassed($award, $cycle, $nomination);
                 break;
 
             case 'award\Exception\CannotNominateJudge':
@@ -140,6 +142,21 @@ class NominationView extends AbstractView
         return self::scriptView('NominationReason', $js);
     }
 
+    public static function selectReferences(Nomination $nomination, Participant $nominated, Award $award, Cycle $cycle)
+    {
+        $values['awardTitle'] = self::getFullAwardTitle($award, $cycle);
+        $values['nominated'] = $nominated;
+
+        $referencesRequired = $award->getReferencesRequired();
+        if ($referencesRequired === 0) {
+            return ReferenceView::referencesNotRequired();
+        }
+        $values['referencesRequired'] = $referencesRequired;
+        $values['chooseReference'] = self::chooseReferenceScript($cycle, $nomination->id, $referencesRequired);
+
+        return self::getTemplate('Participant/SelectReferences', $values);
+    }
+
     /**
      * Gives participants a message that only certain accounts can nominate.
      */
@@ -173,6 +190,34 @@ class NominationView extends AbstractView
         $tpl['canComplete'] = NominationFactory::canComplete($award, $nomination);
 
         return self::getTemplate('Participant/NominationStatus', $tpl);
+    }
+
+    private static function chooseReferenceScript(Cycle $cycle, int $nominationId, int $referencesRequired)
+    {
+
+        $lastReminder = CycleLogFactory::getLastReferenceRemind($cycle->id);
+        $now = time();
+        $sendReason = null;
+        if ($lastReminder === false) {
+            $canSend = true;
+        } else {
+            $stamped = strtotime($lastReminder['stamped']);
+
+            if ($stamped + (AWARD_JUDGE_REMINDER_GRACE * 86400) < $now) {
+                $canSend = true;
+            } else {
+                $canSend = false;
+                $sendReason = 'too_soon';
+            }
+        }
+
+        $js['canSend'] = $canSend;
+        $js['sendReason'] = $sendReason;
+        $js['lastSent'] = $lastReminder === false ? 'Never' : $lastReminder['stamped'];
+        $js['cycleId'] = $cycle->id;
+        $js['nominationId'] = $nominationId;
+        $js['referencesRequired'] = $referencesRequired;
+        return self::scriptView('ChooseReference', $js);
     }
 
 }
