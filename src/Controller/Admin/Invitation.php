@@ -50,13 +50,28 @@ class Invitation extends AbstractController
         $cycleId = $request->pullPostInteger('cycleId');
         $invitedId = $request->pullPostInteger('invitedId');
         $invited = ParticipantFactory::build($invitedId);
-        $result = $this->testParticipant($invited, $cycleId);
+        $result = $this->testParticipant($invited, $cycleId, AWARD_INVITE_TYPE_JUDGE);
         if (is_array($result)) {
             return $result;
         }
 
         $invitation = InvitationFactory::createJudgeInvitation($invited, $cycleId);
         EmailFactory::sendParticipantJudgeInvitation($invitation);
+        return ['success' => true];
+    }
+
+    protected function participantReferencePost(Request $request)
+    {
+        $cycleId = $request->pullPostInteger('cycleId');
+        $invitedId = $request->pullPostInteger('invitedId');
+        $invited = ParticipantFactory::build($invitedId);
+        $result = $this->testParticipant($invited, $cycleId, AWARD_INVITE_TYPE_REFERENCE);
+        if (is_array($result)) {
+            return $result;
+        }
+
+        $invitation = InvitationFactory::createReferenceInvitation($invited, $cycleId);
+        EmailFactory::sendParticipantReferenceInvitation($invitation);
         return ['success' => true];
     }
 
@@ -96,7 +111,15 @@ class Invitation extends AbstractController
         }
     }
 
-    private function testParticipant(Participant $participant, int $cycleId)
+    /**
+     * Determines if a participant should be sent an invitation.
+     * If the participant is not viable or has been previously invited, an array with success status
+     * and a message are returned for a JSON response.
+     * @param Participant $participant
+     * @param int $cycleId
+     * @return array
+     */
+    private function testParticipant(Participant $participant, int $cycleId, $inviteType)
     {
         if (!$participant) {
             return ['success' => false, 'message' => 'Cannot create invitation because the invited participant was not found.'];
@@ -108,7 +131,7 @@ class Invitation extends AbstractController
             return ['success' => false, 'message' => 'Cannot create invitation because ' . $e->getMessage()];
         }
 
-        $previousInvite = InvitationFactory::getPreviousInvite($participant->email, AWARD_INVITE_TYPE_JUDGE, $cycleId);
+        $previousInvite = InvitationFactory::getPreviousInvite($participant->email, $inviteType, $cycleId);
         if ($previousInvite) {
             return ['success' => false, 'message' => 'Cannot create invitation because ' . InvitationFactory::confirmReason($previousInvite->confirm)];
         }
