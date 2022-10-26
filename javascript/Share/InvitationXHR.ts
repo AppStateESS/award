@@ -22,6 +22,7 @@ const refuseInvitation = async (invitationId: number) => {
     headers,
   })
 }
+
 const sendParticipantJudgeInvitation = async (
   invitedId: number,
   cycleId: number
@@ -37,9 +38,25 @@ const sendParticipantJudgeInvitation = async (
   })
 }
 
+const sendParticipantReferenceInvitation = async (
+  invitedId: number,
+  cycleId: number
+) => {
+  const url = 'award/Participant/Invitation/participantReference'
+
+  return axios({
+    method: 'post',
+    url,
+    data: {invitedId, cycleId},
+    timeout: 3000,
+    headers,
+  })
+}
+
 export {
   acceptInvitation,
   getCycleInvitations,
   refuseInvitation,
   sendParticipantJudgeInvitation,
+  sendParticipantReferenceInvitation,
 }
