@@ -60,7 +60,7 @@ class Judge extends AbstractController
         $content = $header . $extra;
         try {
             EmailFactory::remindJudges($cycleId, $content);
-            CycleLogFactory::stampJudgeRemind($cycle, \Current_User::getUsername());
+            CycleLogFactory::stampJudgeReminder($cycle, \Current_User::getUsername());
             \Canopy\Server::forward("./award/Admin/Cycle/$cycleId/judgeReminderSent");
         } catch (\award\Exception\NoJudges $e) {
             return JudgeView::noJudges($cycle);
