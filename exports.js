@@ -24,6 +24,7 @@ const userScripts = {
 }
 
 const participantScripts = {
+  ChooseReference: exports.APP_DIR + '/Participant/ChooseReference/index.tsx',
   Name: exports.APP_DIR + '/Participant/Name/index.tsx',
   Nominate: exports.APP_DIR + '/Participant/Nominate/index.tsx',
   NominationReason: exports.APP_DIR + '/Participant/NominationReason/index.tsx',
