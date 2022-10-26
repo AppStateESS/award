@@ -18,11 +18,11 @@ const Form = ({inviteSent, cycleId}: Props) => {
 
   const trackParticipant = useRef(0)
 
-  const getOptions = (identity: string) => {
+  const getOptions = (search: string) => {
     const hold = () => {
       return new Promise<void>((resolve) => {
         clearTimeout(trackParticipant.current)
-        if (identity.length > 3) {
+        if (search.length > 3) {
           trackParticipant.current = window.setTimeout(() => {
             resolve()
           }, 1000)
@@ -32,9 +32,9 @@ const Form = ({inviteSent, cycleId}: Props) => {
 
     return hold().then(() => {
       return axios
-        .get('award/Admin/Participant', {
+        .get('award/Admin/Participant/judgeAvailable', {
           headers: {'X-Requested-With': 'XMLHttpRequest'},
-          params: {asSelect: true, search: identity},
+          params: {search, cycleId},
         })
         .then((resource) => {
           clearTimeout(trackParticipant.current)
