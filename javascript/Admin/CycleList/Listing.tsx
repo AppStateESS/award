@@ -75,7 +75,9 @@ const Listing = ({
           {startDate.toLocaleTimeString()}, {startDate.toLocaleDateString()}
         </td>
         <td>
-          {endDate.toLocaleTimeString()}, {endDate.toLocaleDateString()}
+          <span className={endDate.getTime() < Date.now() ? 'text-danger' : ''}>
+            {endDate.toLocaleTimeString()}, {endDate.toLocaleDateString()}
+          </span>
         </td>
       </tr>
     )
