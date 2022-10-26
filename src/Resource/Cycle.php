@@ -59,6 +59,12 @@ class Cycle extends AbstractResource
     private int $endDate = 0;
 
     /**
+     * The last date that the endDate was updated.
+     * @var int
+     */
+    private int $lastEndDate = 0;
+
+    /**
      * Start time for allowing nominations.
      * @var int
      */
@@ -155,6 +161,11 @@ class Cycle extends AbstractResource
     public function getEndDate(): int
     {
         return $this->endDate;
+    }
+
+    public function getLastEndDate(): int
+    {
+        return $this->lastEndDate;
     }
 
     /**
@@ -279,6 +290,12 @@ class Cycle extends AbstractResource
         return $this;
     }
 
+    public function setLastEndDate(int $lastEndDate): self
+    {
+        $this->lastEndDate = $lastEndDate;
+        return $this;
+    }
+
     /**
      * @param int $startDate
      */
@@ -310,6 +327,11 @@ class Cycle extends AbstractResource
     {
         $this->voteType = $voteType;
         return $this;
+    }
+
+    public function stampLastEndDate()
+    {
+        $this->lastEndDate = $this->endDate;
     }
 
 }
