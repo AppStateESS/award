@@ -16,8 +16,10 @@ namespace award\Controller\Admin;
 use award\AbstractClass\AbstractController;
 use award\View\DashboardView;
 use award\View\ParticipantView;
-use award\Factory\ParticipantFactory;
 use award\Factory\InvitationFactory;
+use award\Factory\JudgeFactory;
+use award\Factory\NominationFactory;
+use award\Factory\ParticipantFactory;
 use Canopy\Request;
 
 class Participant extends AbstractController
@@ -37,6 +39,34 @@ class Participant extends AbstractController
         $refused = InvitationFactory::checkNoContact($email);
 
         return ['exists' => $exists, 'refused' => $refused];
+    }
+
+    /**
+     * Returns an array of participants who may be selected as judges.
+     * @param Request $request
+     * @return array
+     */
+    protected function judgeAvailableJson(Request $request)
+    {
+        $cycleId = $request->pullGetInteger('cycleId');
+        /**
+         * Do not return judges already assigned to this cycle.
+         */
+        $judgeIds = JudgeFactory::listing(['cycleId' => $cycleId, 'participantIdOnly' => true]);
+        /**
+         * Do not return judges who are currently nominated for this cycle.
+         */
+        $nominatedIds = NominationFactory::listing(['cycleId' => $cycleId, 'participantIdOnly' => true]);
+
+        /**
+         * Do not return judges who are nominated someone for this cycle.
+         */
+        $nominatorIds = NominationFactory::listing(['cycleId' => $cycleId, 'nominatorIdOnly' => true]);
+
+        $options['notIn'] = array_merge($judgeIds, $nominatedIds, $nominatorIds);
+        $options['asSelect'] = true;
+        $options['search'] = $request->pullGetString('search', true);
+        return ParticipantFactory::listing($options);
     }
 
     protected function listHtml()
