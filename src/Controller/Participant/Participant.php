@@ -19,9 +19,12 @@ namespace award\Controller\Participant;
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\ParticipantView;
-use award\Factory\ParticipantFactory;
-use award\Factory\EmailFactory;
 use award\Factory\Authenticate;
+use award\Factory\EmailFactory;
+use award\Factory\JudgeFactory;
+use award\Factory\NominationFactory;
+use award\Factory\ParticipantFactory;
+use award\Factory\ReferenceFactory;
 
 class Participant extends AbstractController
 {
@@ -29,6 +32,46 @@ class Participant extends AbstractController
     protected function dashboardHtml()
     {
         return ParticipantView::dashboard();
+    }
+
+    /**
+     * Returns an array of available references. Current references, judges from the cycle, and the
+     * current participant are not allowed.
+     * @param Request $request
+     * @return type
+     */
+    protected function referenceAvailableJson(Request $request)
+    {
+        $participant = ParticipantFactory::getCurrentParticipant();
+
+        $nominationId = $request->pullGetInteger('nominationId');
+        $cycleId = $request->pullGetInteger('cycleId');
+
+        $nomination = NominationFactory::build($nominationId);
+
+        /**
+         * Do not return references that are already a reference for this nomination.
+         */
+        $references = ReferenceFactory::listing(['nominationId' => $nominationId, 'participantIdOnly' => true]);
+        /**
+         * Do not return judges who are assigned to this cycle.
+         */
+        $judges = JudgeFactory::listing(['cycleId' => $cycleId, 'participantIdOnly' => true]);
+
+        $notIn = array_merge($references, $judges);
+        /**
+         * Do not return the current participant looking for references
+         */
+        $notIn[] = $participant->id;
+        /**
+         * Do not return the participant nominated as a possible reference.
+         */
+        $notIn[] = $nomination->participantId;
+
+        $options['notIn'] = $notIn;
+        $options['asSelect'] = true;
+        $options['search'] = $request->pullGetString('search');
+        return ParticipantFactory::listing($options);
     }
 
     protected function searchNomineesJson(Request $request)
