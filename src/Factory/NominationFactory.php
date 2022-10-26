@@ -101,10 +101,11 @@ class NominationFactory extends AbstractFactory
      * - cycleId            integer Only returns nomination from a cycle.
      * - nominatorId        integer Only returns nominations created by Participant by
      *                              nominatorId
-     * - includeCompleted   boolean Return completed nominations. Default to not do so.
      * - includeNominated   boolean If true, add participant info to nomination.
      * - includeAward       boolean If true, include award title.
      * - includeCycle       boolean If true, include cycle information.
+     * - participantIdOnly  boolean If true, only return ids of participants (nominated).
+     * - nominatorIdOnly    boolean If true, only return ids of nominators.
      */
     public static function listing(array $options = [])
     {
@@ -118,19 +119,36 @@ class NominationFactory extends AbstractFactory
             $table->addFieldConditional('nominatorId', $options['nominatorId']);
         }
 
-        if (empty($options['includeCompleted'])) {
-            $table->addFieldConditional('completed', 0);
-        }
 
-        if (!empty($options['includeNominated'])) {
-            self::includeNominated($db, $table);
-        }
 
-        if (!empty($options['includeAward'])) {
-            self::includeAward($db, $table);
-        }
-        if (!empty($options['includeCycle'])) {
-            self::includeCycle($db, $table);
+
+        if (!empty($options['participantIdOnly'])) {
+            if (!empty($options['nominatorIdOnly'])) {
+                throw new \Exception('Only one ID option may be selected.');
+            }
+            $table->addField('participantId');
+            $ids = [];
+            while ($row = $db->selectColumn()) {
+                $ids[] = $row;
+            }
+            return $ids;
+        } elseif (!empty($options['nominatorIdOnly'])) {
+            $table->addField('nominatorId');
+            $ids = [];
+            while ($row = $db->selectColumn()) {
+                $ids[] = $row;
+            }
+            return $ids;
+        } else {
+            if (!empty($options['includeNominated'])) {
+                self::includeNominated($db, $table);
+            }
+            if (!empty($options['includeAward'])) {
+                self::includeAward($db, $table);
+            }
+            if (!empty($options['includeCycle'])) {
+                self::includeCycle($db, $table);
+            }
         }
         return $db->select();
     }
