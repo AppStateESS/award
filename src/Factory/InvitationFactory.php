@@ -59,6 +59,11 @@ class InvitationFactory extends AbstractFactory
         InvitationFactory::save($invitation);
     }
 
+    /**
+     * Returns a refusal string based on the define.
+     * @param int $confirm
+     * @return string
+     */
     public static function confirmReason(int $confirm)
     {
         switch ($confirm) {
@@ -85,6 +90,25 @@ class InvitationFactory extends AbstractFactory
         $invitation->cycleId = $cycleId;
         $invitation->invitedId = $invited->id;
         $invitation->inviteType = AWARD_INVITE_TYPE_JUDGE;
+        $invitation->awardId = CycleFactory::getAwardId($cycleId);
+        self::save($invitation);
+        return $invitation;
+    }
+
+    /**
+     * Creates an invitation for a reference request. Must be a participant.
+     *
+     * @param int $cycleId
+     * @param int $invitedId
+     * @throws ResourceNotFound
+     */
+    public static function createReferenceInvitation(Participant $invited, int $cycleId)
+    {
+        $invitation = self::build();
+        $invitation->email = $invited->email;
+        $invitation->cycleId = $cycleId;
+        $invitation->invitedId = $invited->id;
+        $invitation->inviteType = AWARD_INVITE_TYPE_REFERENCE;
         $invitation->awardId = CycleFactory::getAwardId($cycleId);
         self::save($invitation);
         return $invitation;
