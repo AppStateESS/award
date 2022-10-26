@@ -55,7 +55,7 @@ class JudgeFactory extends AbstractFactory
     /**
      * Options
      * - cycleId (integer) Return only judges associated with this cycle.
-     * - particpantIdOnly (boolean) Return only judge ids.
+     * - participantIdOnly (boolean) Return only participant ids.
      * - includeParticipant (boolean) Add participant's email plus first and last name.
      *
      *
@@ -71,6 +71,7 @@ class JudgeFactory extends AbstractFactory
 
         if (!empty($options['participantIdOnly'])) {
             $table->addField('participantId');
+            $ids = [];
             while ($row = $db->selectColumn()) {
                 $ids[] = $row;
             }
