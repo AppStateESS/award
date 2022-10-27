@@ -36,23 +36,6 @@ class Nomination extends AbstractController
         return NominationView::participantView();
     }
 
-    protected function viewHtml(Request $request)
-    {
-        $nominator = ParticipantFactory::getCurrentParticipant();
-        $nomination = NominationFactory::build($this->id);
-        $nominated = ParticipantFactory::build($nomination->participantId);
-
-        $cycle = CycleFactory::build($nomination->cycleId);
-        $award = AwardFactory::build($nomination->awardId);
-        #TODO there needs to be a post-complete nomination view.
-
-        $result = $this->validateHtml($cycle, $nominator, $nominated);
-        if ($result !== true) {
-            return $result;
-        }
-        return NominationView::participantMenu('nomination') . NominationView::view($nominator, $nomination);
-    }
-
     /**
      * View for the selection or creation of a participant.
      * @param Request $request
@@ -176,6 +159,23 @@ class Nomination extends AbstractController
             return ParticipantView::participantMenu('nomination') .
                 NominationView::errorByException($ex, $award, $cycle, $nomination);
         }
+    }
+
+    protected function viewHtml(Request $request)
+    {
+        $nominator = ParticipantFactory::getCurrentParticipant();
+        $nomination = NominationFactory::build($this->id);
+        $nominated = ParticipantFactory::build($nomination->participantId);
+
+        $cycle = CycleFactory::build($nomination->cycleId);
+        $award = AwardFactory::build($nomination->awardId);
+        #TODO there needs to be a post-complete nomination view.
+
+        $result = $this->validateHtml($cycle, $nominator, $nominated);
+        if ($result !== true) {
+            return $result;
+        }
+        return NominationView::participantMenu('nomination') . NominationView::view($nominator, $nomination);
     }
 
 }
