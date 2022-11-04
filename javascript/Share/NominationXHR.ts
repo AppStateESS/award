@@ -1,6 +1,19 @@
 import axios from 'axios'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
+const approveNomination = async (nominationId: number) => {
+  const url = 'module/Role/Controller/Command'
+  const data = {param1: value}
+
+  return axios({
+    method: 'post',
+    url,
+    data,
+    timeout: 3000,
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
+  })
+}
+
 const nominateText = async (nominationId: number, reasonText: string) => {
   const data = {nominationId, reasonText}
   return axios.put(
@@ -28,6 +41,14 @@ const nominateDocument = async (
   })
 }
 
+const nominationApprovalList = async () => {
+  const url = './award/Admin/Nomination/needsApproval'
+
+  return axios.get(url, {
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
+  })
+}
+
 const postNomination = async (participantId: number, cycleId: number) => {
   const url = 'award/Participant/Nomination'
   const data = {participantId, cycleId}
@@ -41,4 +62,4 @@ const postNomination = async (participantId: number, cycleId: number) => {
   })
 }
 
-export {nominateDocument, nominateText, postNomination}
+export {nominationApprovalList, nominateDocument, nominateText, postNomination}
