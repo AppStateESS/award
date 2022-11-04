@@ -4,17 +4,19 @@ import {Input} from '../../Share/Form/Form'
 import AsyncSelect from 'react-select/async'
 import {sendParticipantReferenceInvitation} from '../../Share/InvitationXHR'
 import axios from 'axios'
-import {MessageType} from '../../Share/Message'
 import PropTypes from 'prop-types'
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faCircleQuestion} from '@fortawesome/free-solid-svg-icons'
+import ReactTooltip from 'react-tooltip'
 
 type Props = {
   cycleId: number
   nominationId: number
-  inviteSent: ({message, type}: MessageType) => void
+  inviteSent: (message: string, messageType: string) => void
 }
 
 const Form = ({inviteSent, cycleId, nominationId}: Props) => {
-  const [participantId, setParticipantId] = useState(0)
+  const [nominatedId, setNominatedId] = useState(0)
   const [email, setEmail] = useState('')
 
   const trackParticipant = useRef(0)
@@ -45,22 +47,21 @@ const Form = ({inviteSent, cycleId, nominationId}: Props) => {
   }
 
   const setParticipant = (value: any) => {
-    setParticipantId(value.value)
+    setNominatedId(value.value)
   }
 
   const inviteParticipant = () => {
-    sendParticipantReferenceInvitation(participantId, cycleId).then(
-      (response) => {
+    sendParticipantReferenceInvitation(nominatedId, cycleId, nominationId)
+      .then((response) => {
         if (response.data.success) {
-          inviteSent({
-            message: 'Reference invitation sent. Refreshing...',
-            type: 'success',
-          })
+          inviteSent('Reference invitation sent. Refreshing...', 'success')
         } else {
-          inviteSent({message: response.data.message, type: 'danger'})
+          inviteSent(response.data.message, 'danger')
         }
-      }
-    )
+      })
+      .catch(() => {
+        inviteSent('Unknown error. Could not send invitation.', 'danger')
+      })
   }
 
   return (
@@ -79,10 +80,25 @@ const Form = ({inviteSent, cycleId, nominationId}: Props) => {
             noOptionsMessage={() => 'No matching participants found.'}
             loadOptions={getOptions}
           />
+          <div className="small text-primary mt-2">
+            <FontAwesomeIcon icon={faCircleQuestion} />
+            &nbsp;
+            <a data-tip data-for="participant-info" style={{cursor: 'pointer'}}>
+              Why can&apos;t I find a known participant?
+            </a>
+            <ReactTooltip
+              id="participant-info"
+              type="dark"
+              place="right"
+              effect="solid">
+              Inactive participants, previously invited references, and judges
+              are not selectable.
+            </ReactTooltip>
+          </div>
         </div>
         <div className="col-sm-4">
           <button
-            disabled={participantId === 0}
+            disabled={nominatedId === 0}
             className="btn btn-primary"
             onClick={inviteParticipant}>
             Invite reference participant
