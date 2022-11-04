@@ -1,12 +1,13 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
-import {ParticipantResource} from '../../ResourceTypes'
+import {ParticipantResource, ReferenceInvitation} from '../../ResourceTypes'
 import Modal from '../../Share/Modal'
 import {getList} from '../../Share/XHR'
 import Current from './Current'
 import Form from './Form'
-import {Message, MessageType} from '../../Share/Message'
+import Invitation from './Invitation'
+import Message from '../../Share/Message'
 
 declare const cycleId: number
 declare const nominationId: number
@@ -49,17 +50,23 @@ const SendReminder = () => {
 
 const ChooseReference = () => {
   const [referenceList, setReferenceList] = useState<ParticipantResource[]>([])
+  const [invitationList, setInvitationList] = useState<ReferenceInvitation[]>(
+    []
+  )
   const [inviteModal, setInviteModal] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [referencesLoading, setReferencesLoading] = useState(true)
+  const [invitationLoading, setInvitationLoading] = useState(true)
   const [formKey, setFormKey] = useState(0)
-  const [message, setMessage] = useState<MessageType>({
-    message: '',
-    type: '',
-  })
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('danger')
 
   useEffect(() => {
-    const controller = loadReferences()
-    return () => controller.abort()
+    const controller1 = loadReferences()
+    const controller2 = loadInvitations()
+    return () => {
+      controller1.abort()
+      controller2.abort()
+    }
   }, [])
 
   useEffect(() => {
@@ -73,36 +80,65 @@ const ChooseReference = () => {
     const params = {nominationId}
     const handleSuccess = (rows: ParticipantResource[]) => {
       setReferenceList(rows)
-      setLoading(false)
+      setReferencesLoading(false)
     }
     getList({url, params, handleSuccess, signal})
     return controller
   }
 
-  let content
-  if (loading) {
-    content = <div>Loading references</div>
+  const loadInvitations = () => {
+    const controller = new AbortController()
+    const {signal} = controller
+    const url = './award/Participant/Invitation/reference'
+    const params = {nominationId}
+    const handleSuccess = (rows: ReferenceInvitation[]) => {
+      setInvitationList(rows)
+      setInvitationLoading(false)
+    }
+    getList({url, params, handleSuccess, signal})
+    return controller
+  }
+
+  let currentInvites
+  let currentReferences
+
+  if (referencesLoading) {
+    currentReferences = <div>Loading references</div>
   } else if (referenceList.length === 0) {
-    content = (
+    currentReferences = (
       <div className="text-secondary">
         <em>No references assigned. Click the + button to add a reference.</em>
       </div>
     )
   } else {
-    content = <Current {...{referenceList}} />
+    currentReferences = <Current {...{referenceList}} />
+  }
+
+  if (invitationLoading) {
+    currentInvites = <div>Loading invitations</div>
+  } else if (invitationList.length === 0) {
+    currentInvites = (
+      <div className="text-secondary">
+        <em>No invitations sent.</em>
+      </div>
+    )
+  } else {
+    currentInvites = <Invitation {...{invitationList}} />
   }
 
   const invite = () => {
     setInviteModal(true)
   }
 
-  const inviteSent = (inviteMessage: MessageType) => {
-    setMessage(inviteMessage)
+  const inviteSent = (message: string, messageType: string) => {
+    setMessage(message)
+    setMessageType(messageType)
     setTimeout(() => {
       window.location.reload()
     }, 3000)
     setInviteModal(false)
   }
+
   return (
     <div>
       <Modal
@@ -117,7 +153,7 @@ const ChooseReference = () => {
           nominationId={nominationId}
         />
       </Modal>
-      <Message message={message} />
+      <Message message={message} type={messageType} />
       <div className="card">
         <div className="card-header p-2">
           <button
@@ -128,10 +164,17 @@ const ChooseReference = () => {
           </button>
           <h4 className="m-0">References - Required {referencesRequired}</h4>
         </div>
-        <div className="card-body">{content}</div>
+        <div className="card-body">{currentReferences}</div>
         <div className="card-footer">
           <SendReminder />
         </div>
+      </div>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="m-0">Invited</h2>
+        </div>
+        <div className="card-body">{currentInvites}</div>
+        <div className="card-footer text-muted">Bottom text</div>
       </div>
     </div>
   )
