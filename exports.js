@@ -11,6 +11,7 @@ const adminScripts = {
     exports.APP_DIR + '/Admin/CycleInvitationStatus/index.tsx',
   InvitationList: exports.APP_DIR + '/Admin/InvitationList/index.tsx',
   Judges: exports.APP_DIR + '/Admin/Judges/index.tsx',
+  NominationApproval: exports.APP_DIR + '/Admin/NominationApproval/index.tsx',
   Nominations: exports.APP_DIR + '/Admin/Nominations/index.tsx',
   ParticipantList: exports.APP_DIR + '/Admin/ParticipantList/index.tsx',
   Setting: exports.APP_DIR + '/Admin/Setting/index.tsx',
