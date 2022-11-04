@@ -5,7 +5,7 @@ const fullAwardTitle = (award: AwardResource, cycle: CycleResource) => {
   if (cycle.term === 'yearly') {
     awardTitle = `${cycle.awardYear} ${award.title}`
   } else {
-    awardTitle = `${cycle.awardMonth} ${award.title}`
+    awardTitle = `${awardMonth(cycle.awardMonth)} ${award.title}`
   }
 
   if (awardTitle.match(/ award$/i) === null) {
@@ -14,4 +14,8 @@ const fullAwardTitle = (award: AwardResource, cycle: CycleResource) => {
   return awardTitle
 }
 
-export {fullAwardTitle}
+const awardMonth = (intMonth: number) => {
+  return new Date(1, intMonth).toLocaleString('default', {month: 'long'})
+}
+
+export {awardMonth, fullAwardTitle}
