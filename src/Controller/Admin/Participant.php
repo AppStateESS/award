@@ -56,7 +56,7 @@ class Participant extends AbstractController
         /**
          * Do not return judges who are currently nominated for this cycle.
          */
-        $nominatedIds = NominationFactory::listing(['cycleId' => $cycleId, 'participantIdOnly' => true]);
+        $nominatedIds = NominationFactory::listing(['cycleId' => $cycleId, 'nominatedIdOnly' => true]);
 
         /**
          * Do not return judges who are nominated someone for this cycle.

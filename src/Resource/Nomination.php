@@ -60,7 +60,7 @@ class Nomination extends AbstractResource
      * Id of participant nominated.
      * @var int
      */
-    private int $participantId = 0;
+    private int $nominatedId = 0;
 
     /**
      * Nominator completed the reason for the nomination.
@@ -143,9 +143,9 @@ class Nomination extends AbstractResource
         return $this->nominatorId;
     }
 
-    public function getParticipantId(): int
+    public function getNominatedId(): int
     {
-        return $this->participantId;
+        return $this->nominatedId;
     }
 
     public function getReasonComplete(): bool
@@ -237,9 +237,9 @@ class Nomination extends AbstractResource
     /**
      * @param int $participantId
      */
-    public function setParticipantId(int $participantId): self
+    public function setNominatedId(int $participantId): self
     {
-        $this->participantId = $participantId;
+        $this->nominatedId = $participantId;
         return $this;
     }
 

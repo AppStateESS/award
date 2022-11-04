@@ -66,7 +66,7 @@ class Participant extends AbstractController
         /**
          * Do not return the participant nominated as a possible reference.
          */
-        $notIn[] = $nomination->participantId;
+        $notIn[] = $nomination->nominatedId;
 
         $options['notIn'] = $notIn;
         $options['asSelect'] = true;

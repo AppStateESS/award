@@ -92,7 +92,7 @@ class Nomination extends AbstractController
         $nomination = NominationFactory::build($this->id);
         $award = AwardFactory::build($nomination->awardId);
         $cycle = CycleFactory::build($nomination->cycleId);
-        $nominee = ParticipantFactory::build($nomination->participantId);
+        $nominee = ParticipantFactory::build($nomination->nominatedId);
         return ParticipantView::participantMenu('nomination') . NominationView::reasonForm($award, $cycle, $nomination, $nominee);
     }
 
@@ -104,7 +104,7 @@ class Nomination extends AbstractController
     {
         $nominator = ParticipantFactory::getCurrentParticipant();
         $nomination = NominationFactory::build($this->id);
-        $nominated = ParticipantFactory::build($nomination->participantId);
+        $nominated = ParticipantFactory::build($nomination->nominatedId);
         $cycle = CycleFactory::build($nomination->cycleId);
         $award = AwardFactory::build($nomination->awardId);
 
@@ -165,7 +165,7 @@ class Nomination extends AbstractController
     {
         $nominator = ParticipantFactory::getCurrentParticipant();
         $nomination = NominationFactory::build($this->id);
-        $nominated = ParticipantFactory::build($nomination->participantId);
+        $nominated = ParticipantFactory::build($nomination->nominatedId);
 
         $cycle = CycleFactory::build($nomination->cycleId);
         $award = AwardFactory::build($nomination->awardId);
