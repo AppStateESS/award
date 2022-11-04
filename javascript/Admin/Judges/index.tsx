@@ -6,7 +6,7 @@ import Modal from '../../Share/Modal'
 import {getList} from '../../Share/XHR'
 import Current from './Current'
 import Form from './Form'
-import {Message, MessageType} from '../../Share/Message'
+import Message from '../../Share/Message'
 
 declare const cycleId: number
 declare const canSend: boolean
@@ -45,10 +45,8 @@ const Judges = () => {
   const [inviteModal, setInviteModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [formKey, setFormKey] = useState(0)
-  const [message, setMessage] = useState<MessageType>({
-    message: '',
-    type: '',
-  })
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('danger')
 
   useEffect(() => {
     const controller = loadJudges()
@@ -85,8 +83,9 @@ const Judges = () => {
     setInviteModal(true)
   }
 
-  const inviteSent = (inviteMessage: MessageType) => {
-    setMessage(inviteMessage)
+  const inviteSent = (message: string, messageType: string) => {
+    setMessage(message)
+    setMessageType(messageType)
     setTimeout(() => {
       window.location.reload()
     }, 3000)
@@ -102,7 +101,7 @@ const Judges = () => {
         close={() => setInviteModal(false)}>
         <Form key={formKey} inviteSent={inviteSent} cycleId={cycleId} />
       </Modal>
-      <Message message={message} />
+      <Message message={message} type={messageType} />
       <div className="card">
         <div className="card-header p-2">
           <button
