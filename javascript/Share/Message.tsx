@@ -2,29 +2,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export interface MessageType {
+type Props = {
   message: string
   type: string
 }
-
-const emptyMessage = {
-  message: '',
-  type: '',
-}
-
-type Props = {
-  message: MessageType
-}
-const Message = ({message}: Props) => {
-  if (message.message.length > 0) {
-    return (
-      <div className={`alert alert-${message.type}`}>{message.message}</div>
-    )
+const Message = ({message, type}: Props) => {
+  if (message.length > 0) {
+    return <div className={`alert alert-${type}`}>{message}</div>
   } else {
     return <span></span>
   }
 }
 
-Message.propTypes = {message: PropTypes.object}
+Message.propTypes = {message: PropTypes.string, type: PropTypes.string}
+Message.defaultProps = {type: 'danger'}
 
-export {Message, emptyMessage}
+export default Message
