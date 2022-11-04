@@ -85,7 +85,7 @@ const ChooseReference = () => {
   } else if (referenceList.length === 0) {
     content = (
       <div className="text-secondary">
-        N<em>o references assigned. Click the + button to add a reference.</em>
+        <em>No references assigned. Click the + button to add a reference.</em>
       </div>
     )
   } else {
