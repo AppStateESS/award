@@ -87,7 +87,7 @@ class AbstractView
         $react = implode("\n", $script);
         \Layout::addJSHeader($react);
         $content = <<<EOF
-<div id="$view_name"><p>Loading. Please wait.</p></div>
+<div id="$view_name"><div class="border rounded p-5"></div></div>
 EOF;
         return $content;
     }
