@@ -40,14 +40,15 @@ const sendParticipantJudgeInvitation = async (
 
 const sendParticipantReferenceInvitation = async (
   invitedId: number,
-  cycleId: number
+  cycleId: number,
+  nominationId: number
 ) => {
   const url = 'award/Participant/Invitation/participantReference'
 
   return axios({
     method: 'post',
     url,
-    data: {invitedId, cycleId},
+    data: {invitedId, cycleId, nominationId},
     timeout: 3000,
     headers,
   })
