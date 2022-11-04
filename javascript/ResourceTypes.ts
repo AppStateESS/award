@@ -80,6 +80,11 @@ export interface ParticipantResource {
   trusted: boolean | number
 }
 
+export interface ReferenceInvitation extends InvitationResource {
+  firstName: string
+  lastName: string
+}
+
 export interface VoteTypes {
   title: string
   description: string
