@@ -4,12 +4,11 @@ import {Input} from '../../Share/Form/Form'
 import AsyncSelect from 'react-select/async'
 import {sendParticipantJudgeInvitation} from '../../Share/InvitationXHR'
 import axios from 'axios'
-import {MessageType} from '../../Share/Message'
 import PropTypes from 'prop-types'
 
 type Props = {
   cycleId: number
-  inviteSent: ({message, type}: MessageType) => void
+  inviteSent: (message: string, messageType: string) => void
 }
 
 const Form = ({inviteSent, cycleId}: Props) => {
@@ -48,16 +47,17 @@ const Form = ({inviteSent, cycleId}: Props) => {
   }
 
   const inviteParticipant = () => {
-    sendParticipantJudgeInvitation(participantId, cycleId).then((response) => {
-      if (response.data.success) {
-        inviteSent({
-          message: 'Judge invitiation sent. Refreshing...',
-          type: 'success',
-        })
-      } else {
-        inviteSent({message: response.data.message, type: 'danger'})
-      }
-    })
+    sendParticipantJudgeInvitation(participantId, cycleId)
+      .then((response) => {
+        if (response.data.success) {
+          inviteSent('Judge invitiation sent. Refreshing...', 'success')
+        } else {
+          inviteSent(response.data.message, 'danger')
+        }
+      })
+      .catch(() => {
+        inviteSent('Server error: unabled to invite judge', 'danger')
+      })
   }
 
   return (
