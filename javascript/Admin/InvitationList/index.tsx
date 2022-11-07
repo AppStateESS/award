@@ -7,6 +7,7 @@ import NewInvites from './NewInvites'
 import Select from 'react-select'
 import {getSelectList} from '../../Share/AwardXHR'
 import ParticipantInvites from './ParticipantInvites'
+import {InvitationResource} from '../../ResourceTypes'
 
 type CurrentAward = {
   value: number
@@ -15,7 +16,7 @@ type CurrentAward = {
 
 const InvitationList = () => {
   const [loading, setLoading] = useState(false)
-  const [listing, setListing] = useState<Array<any | null>>([])
+  const [listing, setListing] = useState<InvitationResource[]>([])
   const [currentAward, setCurrentAward] = useState<CurrentAward | null>()
   const [awardList, setAwardList] = useState([])
   const [inviteType, setInviteType] = useState(0)
@@ -59,9 +60,7 @@ const InvitationList = () => {
 
   if (loading) {
     content = <Loading things="invitations" />
-  }
-
-  if (listing.length === 0) {
+  } else if (listing.length === 0) {
     content = (
       <div>
         <p>No invitations found.</p>
