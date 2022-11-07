@@ -19,6 +19,7 @@ use award\AbstractClass\AbstractView;
 use award\Resource\Invitation;
 use award\Resource\Cycle;
 use award\Resource\Award;
+use award\Resource\Nomination;
 use award\Factory\CycleFactory;
 use award\Factory\AwardFactory;
 use award\Factory\ParticipantFactory;
@@ -73,6 +74,12 @@ class EmailView extends AbstractView
         return self::getTemplate('Admin/Email/JudgeInvitation', $values);
     }
 
+    public static function participantReferenceInvitation(Invitation $invitation)
+    {
+        $values = array_merge(self::getInvitationObjects($invitation), self::defaultEmailValues());
+        return self::getTemplate('Participant/Email/ReferenceInvitation', $values);
+    }
+
     public static function sendActivationReminder($participant, $hash)
     {
 
@@ -122,8 +129,12 @@ class EmailView extends AbstractView
     {
         $values = [];
         if ($invitation->cycleId) {
-            $values['cycle'] = CycleFactory::build($invitation->cycleId);
-            $values['award'] = AwardFactory::build($invitation->awardId);
+            $cycle = CycleFactory::build($invitation->cycleId);
+            $award = AwardFactory::build($invitation->awardId);
+            $values['cycle'] = $cycle;
+            $values['award'] = $award;
+            $values['awardTitle'] = CycleView::getFullAwardTitle($award, $cycle);
+            $values['deadline'] = $cycle->formatEndDate();
         }
 
         if ($invitation->invitedId) {
@@ -132,6 +143,10 @@ class EmailView extends AbstractView
 
         if ($invitation->senderId) {
             $values['nominator'] = ParticipantFactory::build($invitation->senderId);
+        }
+
+        if ($invitation->nominatedId) {
+            $values['nominated'] = ParticipantFactory::build($invitation->nominatedId);
         }
         return $values;
     }
