@@ -25,6 +25,22 @@ class ReferenceFactory extends AbstractFactory
     protected static string $table = 'award_reference';
 
     /**
+     * Creates a new reference.
+     * @param int $cycleId
+     * @param int $nominationId
+     * @param int $participantId
+     * @return award\Resource\Reference
+     */
+    public static function create(int $cycleId, int $nominationId, int $participantId)
+    {
+        $reference = self::build();
+        $reference->setCycleId($cycleId);
+        $reference->setNominationId($nominationId);
+        $reference->setParticipantId($participantId);
+        return self::save($reference);
+    }
+
+    /**
      * Options
      * - cycleId (integer) Return only references associated with this cycle.
      * - nominationId (integer) Return only references associated with this nomination.
