@@ -21,6 +21,7 @@ use award\AbstractClass\AbstractController;
 use award\View\ParticipantView;
 use award\Factory\Authenticate;
 use award\Factory\EmailFactory;
+use award\Factory\InvitationFactory;
 use award\Factory\JudgeFactory;
 use award\Factory\NominationFactory;
 use award\Factory\ParticipantFactory;
@@ -58,7 +59,9 @@ class Participant extends AbstractController
          */
         $judges = JudgeFactory::listing(['cycleId' => $cycleId, 'participantIdOnly' => true]);
 
-        $notIn = array_merge($references, $judges);
+        $invitedIds = InvitationFactory::listing(['cycleId' => $cycleId, 'senderId' => $participant->id, 'invitedIdOnly' => true]);
+
+        $notIn = array_merge($references, $judges, $invitedIds);
         /**
          * Do not return the current participant looking for references
          */
