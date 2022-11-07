@@ -2,7 +2,7 @@
 import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
 import {getList} from '../../Share/XHR'
-import {Message as WarningMessage, emptyMessage} from '../../Share/Message'
+import Message from '../../Share/Message'
 import {InvitationResource} from '../../ResourceTypes'
 import Loading from '../../Share/Loading'
 import {getInviteType} from '../../Share/Invitation'
@@ -11,17 +11,14 @@ import Accept from './Accept'
 import Refuse from './Refuse'
 import {acceptInvitation, refuseInvitation} from '../../Share/InvitationXHR'
 
-declare const templateValue: string
-
 const ParticipantInvitations = () => {
   const [loading, setLoading] = useState(true)
   const [invitationList, setInvitationList] = useState<InvitationResource[]>([])
-  const [message, setMessage] = useState(emptyMessage)
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState('danger')
   const [acceptModal, setAcceptModal] = useState(false)
   const [refuseModal, setRefuseModal] = useState(false)
-  const [currentInvite, setCurrentInvite] = useState<
-    InvitationResource | undefined
-  >()
+  const [currentInvite, setCurrentInvite] = useState<InvitationResource>()
 
   useEffect(() => {
     loadInvitations()
@@ -40,7 +37,9 @@ const ParticipantInvitations = () => {
           location.reload()
         })
         .catch(() => {
-          setMessage({message: 'Server error', type: 'danger'})
+          setAcceptModal(false)
+          setMessage('Server error')
+          setMessageType('danger')
         })
     }
   }
@@ -53,7 +52,8 @@ const ParticipantInvitations = () => {
           location.reload()
         })
         .catch(() => {
-          setMessage({message: 'Server error', type: 'danger'})
+          setMessage('Server error')
+          setMessageType('danger')
         })
     }
   }
@@ -73,7 +73,8 @@ const ParticipantInvitations = () => {
       setLoading(false)
     }
     const handleError = () => {
-      setMessage({message: 'Could not access server', type: 'danger'})
+      setMessage('Could not access server')
+      setMessageType('danger')
     }
     getList({url, handleSuccess, handleError, signal})
   }
@@ -91,8 +92,17 @@ const ParticipantInvitations = () => {
             {invitationList.map((value, key) => {
               return (
                 <tr key={`invite-${value.id}`}>
-                  <td>{value.awardTitle}</td>
-                  <td>{getInviteType(value.inviteType)}</td>
+                  <td>
+                    <a href={`./award/Award/${value.awardId}`}>
+                      {value.awardTitle}
+                    </a>
+                  </td>
+                  <td>
+                    {getInviteType(value.inviteType)}
+                    {value.inviteType === 2
+                      ? ` for ${value.nominatedFirstName} ${value.nominatedLastName}`
+                      : ''}
+                  </td>
                   <td>
                     <button
                       className="px-1 py-0 mr-1 btn btn-sm btn-success"
@@ -123,7 +133,7 @@ const ParticipantInvitations = () => {
 
   return (
     <div>
-      <WarningMessage message={message} />
+      <Message message={message} type={messageType} />
       {currentInvite && (
         <Modal
           {...{
