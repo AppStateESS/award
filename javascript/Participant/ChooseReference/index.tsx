@@ -106,8 +106,12 @@ const ChooseReference = () => {
     currentReferences = <div>Loading references</div>
   } else if (referenceList.length === 0) {
     currentReferences = (
-      <div className="text-secondary">
-        <em>No references assigned. Click the + button to add a reference.</em>
+      <div>
+        <em>
+          No references assigned. Please invite a participant below. Your
+          nomination must have at least {referencesRequired} reference
+          {referencesRequired > 1 ? 's' : ''}.
+        </em>
       </div>
     )
   } else {
@@ -130,12 +134,14 @@ const ChooseReference = () => {
     setInviteModal(true)
   }
 
-  const inviteSent = (message: string, messageType: string) => {
+  const inviteSent = (message: string, messageType: string, refresh = true) => {
     setMessage(message)
     setMessageType(messageType)
-    setTimeout(() => {
-      window.location.reload()
-    }, 3000)
+    if (refresh) {
+      setTimeout(() => {
+        window.location.reload()
+      }, 3000)
+    }
     setInviteModal(false)
   }
 
@@ -154,27 +160,26 @@ const ChooseReference = () => {
         />
       </Modal>
       <Message message={message} type={messageType} />
+      <div className="card mb-5">
+        <div className="card-header">
+          <h4 className="m-0">References</h4>
+        </div>
+        <div className="card-body">{currentReferences}</div>
+      </div>
       <div className="card">
-        <div className="card-header p-2">
+        <div className="card-header bg-info">
           <button
             title="Invite reference"
             onClick={invite}
-            className="btn btn-sm btn-outline-primary float-right">
+            className="btn btn-sm btn-light float-right">
             +
           </button>
-          <h4 className="m-0">References - Required {referencesRequired}</h4>
+          <h4 className="m-0">Invited</h4>
         </div>
-        <div className="card-body">{currentReferences}</div>
+        <div className="card-body">{currentInvites}</div>
         <div className="card-footer">
           <SendReminder />
         </div>
-      </div>
-      <div className="card">
-        <div className="card-header">
-          <h2 className="m-0">Invited</h2>
-        </div>
-        <div className="card-body">{currentInvites}</div>
-        <div className="card-footer text-muted">Bottom text</div>
       </div>
     </div>
   )
