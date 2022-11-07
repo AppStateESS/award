@@ -1,19 +1,6 @@
 import axios from 'axios'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
-const approveNomination = async (nominationId: number) => {
-  const url = 'module/Role/Controller/Command'
-  const data = {param1: value}
-
-  return axios({
-    method: 'post',
-    url,
-    data,
-    timeout: 3000,
-    headers: {'X-Requested-With': 'XMLHttpRequest'},
-  })
-}
-
 const nominateText = async (nominationId: number, reasonText: string) => {
   const data = {nominationId, reasonText}
   return axios.put(
