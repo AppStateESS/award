@@ -38,13 +38,13 @@ class NominationFactory extends AbstractFactory
             (!$award->referencesRequired || ($award->referencesRequired && $nomination->referencesSelected));
     }
 
-    public static function create(int $nominatorId, int $participantId, int $awardId, int $cycleId)
+    public static function create(int $nominatorId, int $nominatedId, int $awardId, int $cycleId)
     {
 
         $nomination = self::build();
         $nomination->setAwardId($awardId)->
             setCycleId($cycleId)->
-            setParticipantId($participantId)->
+            setNominatedId($nominatedId)->
             setNominatorId($nominatorId);
         self::save($nomination);
         return $nomination;
@@ -52,7 +52,7 @@ class NominationFactory extends AbstractFactory
 
     public static function nominationAllowed(Participant $nominator, Nomination $nomination)
     {
-        //$participant = ParticipantFactory::build($nomination->participantId);
+        //$participant = ParticipantFactory::build($nomination->nominatedId);
         if (ParticipantFactory::currentIsJudge($nomination->cycleId)) {
             throw new CannotNominateJudge;
         }
@@ -65,15 +65,15 @@ class NominationFactory extends AbstractFactory
     /**
      * Returns a nomination resource object if the nomination exists, false otherwise.
      * @param int $nominatorId
-     * @param int $participantId
+     * @param int $nominatedId
      * @param int $cycleId
      * @return boolean | award\Resource\Nomination
      */
-    public static function getByNominator(int $nominatorId, int $participantId, int $cycleId)
+    public static function getByNominator(int $nominatorId, int $nominatedId, int $cycleId)
     {
         extract(self::getDBWithTable());
         $table->addFieldConditional('nominatorId', $nominatorId);
-        $table->addFieldConditional('participantId', $participantId);
+        $table->addFieldConditional('nominatedId', $nominatedId);
         $table->addFieldConditional('cycleId', $cycleId);
         return self::convertRowToResource($db->selectOneRow());
     }
@@ -88,10 +88,10 @@ class NominationFactory extends AbstractFactory
         return $db->selectColumn();
     }
 
-    public static function getByParticipant(int $participantId, int $cycleId)
+    public static function getByParticipant(int $nominatedId, int $cycleId)
     {
         extract(self::getDBWithTable());
-        $table->addFieldConditional('participantId', $participantId);
+        $table->addFieldConditional('nominatedId', $nominatedId);
         $table->addFieldConditional('cycleId', $cycleId);
         return self::convertRowToResource($db->selectOneRow());
     }
@@ -102,9 +102,11 @@ class NominationFactory extends AbstractFactory
      * - nominatorId        integer Only returns nominations created by Participant by
      *                              nominatorId
      * - includeNominated   boolean If true, add participant info to nomination.
+     * - includeNominator   boolean If true, add nominator info to nomination.
      * - includeAward       boolean If true, include award title.
      * - includeCycle       boolean If true, include cycle information.
-     * - participantIdOnly  boolean If true, only return ids of participants (nominated).
+     * - unapprovedOnly     boolean If true, only return unapproved nominations.
+     * - nominatedIdOnly  boolean If true, only return ids of nominated participants.
      * - nominatorIdOnly    boolean If true, only return ids of nominators.
      */
     public static function listing(array $options = [])
@@ -119,14 +121,15 @@ class NominationFactory extends AbstractFactory
             $table->addFieldConditional('nominatorId', $options['nominatorId']);
         }
 
+        if (!empty($options['unapprovedOnly'])) {
+            $table->addFieldConditional('approved', 0);
+        }
 
-
-
-        if (!empty($options['participantIdOnly'])) {
+        if (!empty($options['nominatedIdOnly'])) {
             if (!empty($options['nominatorIdOnly'])) {
                 throw new \Exception('Only one ID option may be selected.');
             }
-            $table->addField('participantId');
+            $table->addField('nominatedId');
             $ids = [];
             while ($row = $db->selectColumn()) {
                 $ids[] = $row;
@@ -142,6 +145,9 @@ class NominationFactory extends AbstractFactory
         } else {
             if (!empty($options['includeNominated'])) {
                 self::includeNominated($db, $table);
+            }
+            if (!empty($options['includeNominator'])) {
+                self::includeNominator($db, $table);
             }
             if (!empty($options['includeAward'])) {
                 self::includeAward($db, $table);
@@ -175,12 +181,22 @@ class NominationFactory extends AbstractFactory
 
     private static function includeNominated($db, $table)
     {
-        $participantTable = $db->addTable('award_participant');
-        $participantTable->addField('firstName');
-        $participantTable->addField('lastName');
-        $participantTable->addField('email');
+        $participantTable = $db->addTable('award_participant', 'nominee');
+        $participantTable->addField('firstName', 'nominatedFirstName');
+        $participantTable->addField('lastName', 'nominatedLastName');
+        $participantTable->addField('email', 'nominatedEmail');
 
-        $db->joinResources($table, $participantTable, new Database\Conditional($db, $table->getField('participantId'), $participantTable->getField('id'), '=', 'left'));
+        $db->joinResources($table, $participantTable, new Database\Conditional($db, $table->getField('nominatedId'), $participantTable->getField('id'), '=', 'left'));
+    }
+
+    private static function includeNominator($db, $table)
+    {
+        $participantTable = $db->addTable('award_participant', 'nominator');
+        $participantTable->addField('firstName', 'nominatorFirstName');
+        $participantTable->addField('lastName', 'nominatorLastName');
+        $participantTable->addField('email', 'nominatorEmail');
+
+        $db->joinResources($table, $participantTable, new Database\Conditional($db, $table->getField('nominatorId'), $participantTable->getField('id'), '=', 'left'));
     }
 
 }
