@@ -9,9 +9,7 @@ import {getInviteType} from '../../Share/Invitation'
 declare const cycleId: number
 
 const CycleInvitationStatus = () => {
-  const [invitationList, setInvitationList] = useState<
-    InvitationResource[] | null
-  >()
+  const [invitationList, setInvitationList] = useState<InvitationResource[]>([])
   const [loading, setLoading] = useState(true)
   const [serverError, setServerError] = useState(false)
 
@@ -51,7 +49,7 @@ const CycleInvitationStatus = () => {
       return (
         <tr key={`invite-${value.id}`}>
           <td>
-            {value.firstName} {value.lastName}
+            {value.invitedFirstName} {value.invitedLastName}
           </td>
           <td>{getInviteType(value.inviteType)}</td>
           <td>
