@@ -12,7 +12,7 @@ import ReactTooltip from 'react-tooltip'
 type Props = {
   cycleId: number
   nominationId: number
-  inviteSent: (message: string, messageType: string) => void
+  inviteSent: (message: string, messageType: string, refresh?: boolean) => void
 }
 
 const Form = ({inviteSent, cycleId, nominationId}: Props) => {
@@ -56,11 +56,11 @@ const Form = ({inviteSent, cycleId, nominationId}: Props) => {
         if (response.data.success) {
           inviteSent('Reference invitation sent. Refreshing...', 'success')
         } else {
-          inviteSent(response.data.message, 'danger')
+          inviteSent(response.data.message, 'danger', false)
         }
       })
       .catch(() => {
-        inviteSent('Unknown error. Could not send invitation.', 'danger')
+        inviteSent('Unknown error. Could not send invitation.', 'danger', false)
       })
   }
 
