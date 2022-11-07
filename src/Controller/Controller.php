@@ -49,12 +49,15 @@ class Controller extends \phpws2\Http\Controller
     private function loadSubController(Request $request)
     {
         $roleController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
-
         if (empty($roleController) || preg_match('/\W/', $roleController)) {
             throw new \award\Exception\BadCommand('Missing role controller');
         }
-
-        $subController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
+        if (!in_array($roleController, ['User', 'Admin', 'Participant'])) {
+            $subController = $roleController;
+            $roleController = 'User';
+        } else {
+            $subController = filter_var($request->shiftCommand(), FILTER_SANITIZE_STRING);
+        }
 
         if ($roleController === 'Admin' && !$this->role->isAdmin()) {
             throw new \award\Exception\PrivilegeMissing;
