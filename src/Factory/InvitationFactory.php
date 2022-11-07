@@ -53,7 +53,7 @@ class InvitationFactory extends AbstractFactory
      * creates a new Judge.
      * @param Invitation $invitation
      */
-    public static function confirmJudge(Invitation $invitation)
+    public static function confirm(Invitation $invitation)
     {
         $invitation->confirm = AWARD_INVITATION_CONFIRMED;
         InvitationFactory::save($invitation);
@@ -100,14 +100,18 @@ class InvitationFactory extends AbstractFactory
      *
      * @param int $cycleId
      * @param int $invitedId
+     * @param int $nominatedId ID of participant invited.
      * @throws ResourceNotFound
      */
-    public static function createReferenceInvitation(Participant $invited, int $cycleId)
+    public static function createReferenceInvitation(Participant $invited, int $cycleId, \award\Resource\Nomination $nomination)
     {
         $invitation = self::build();
         $invitation->email = $invited->email;
         $invitation->cycleId = $cycleId;
         $invitation->invitedId = $invited->id;
+        $invitation->senderId = $nomination->nominatorId;
+        $invitation->nominatedId = $nomination->nominatedId;
+        $invitation->nominationId = $nomination->id;
         $invitation->inviteType = AWARD_INVITE_TYPE_REFERENCE;
         $invitation->awardId = CycleFactory::getAwardId($cycleId);
         self::save($invitation);
@@ -141,21 +145,24 @@ class InvitationFactory extends AbstractFactory
      * @param array $options
      * @return type
      */
-    public static function getList(array $options = [])
+    public static function listing(array $options = [])
     {
         /**
          * Options
          * Conditionals
          * - awardId
          * - cycleId
-         * - inviteId
+         * - invitedId
          * - senderId
          * - inviteType
          * - confirm
          *
-         * Information
-         * includeInvited: adds participant information
-         * includeAward: adds award information.
+         * Fields
+         * - invitedIdOnly
+         *
+         * Information - ignored if invitedIdOnly is true
+         * - includeInvited: adds participant information
+         * - includeAward: adds award information.
          * @var \phpws2\Database\DB $db
          * @var \phpws2\Database\Table $table
          */
@@ -165,17 +172,23 @@ class InvitationFactory extends AbstractFactory
         self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
         self::addOrderOptions($table, $options, 'email');
 
-        if (!empty($options['includeInvited'])) {
-            $partTable = $db->addTable('award_participant');
-            $partTable->addField('firstName');
-            $partTable->addField('lastName');
-            $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('invitedId'), $partTable->getField('id'), '='));
-        }
-
-        if (!empty($options['includeAward'])) {
-            $awardTable = $db->addTable('award_award');
-            $awardTable->addField('title', 'awardTitle');
-            $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
+        if (!empty($options['invitedIdOnly'])) {
+            $table->addField('invitedId');
+            $ids = [];
+            while ($row = $db->selectColumn()) {
+                $ids[] = $row;
+            }
+            return $ids;
+        } else {
+            if (!empty($options['includeAward'])) {
+                self::includeAward($db, $table);
+            }
+            if (!empty($options['includeInvited'])) {
+                self::includeInvited($db, $table);
+            }
+            if (!empty($options['includeNominated'])) {
+                self::includeNominated($db, $table);
+            }
         }
 
         $result = $db->select();
@@ -226,6 +239,44 @@ class InvitationFactory extends AbstractFactory
     {
         $invitation->confirm = AWARD_INVITATION_REFUSED;
         InvitationFactory::save($invitation);
+    }
+
+    /**
+     * Helps add information to invitation listing
+     * @param Database\DB $db
+     * @param Database\Table $table
+     */
+    private static function includeAward(Database\DB $db, Database\Table $table)
+    {
+        $awardTable = $db->addTable('award_award');
+        $awardTable->addField('title', 'awardTitle');
+        $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
+    }
+
+    /**
+     * Helps add information to invitation listing
+     * @param Database\DB $db
+     * @param Database\Table $table
+     */
+    private static function includeInvited(Database\DB $db, Database\Table $table)
+    {
+        $partTable = $db->addTable('award_participant');
+        $partTable->addField('firstName', 'invitedFirstName');
+        $partTable->addField('lastName', 'invitedLastName');
+        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('invitedId'), $partTable->getField('id'), '='));
+    }
+
+    /**
+     * Helps add information to invitation listing
+     * @param Database\DB $db
+     * @param Database\Table $table
+     */
+    private static function includeNominated(Database\DB $db, Database\Table $table)
+    {
+        $partTable = $db->addTable('award_participant');
+        $partTable->addField('firstName', 'nominatedFirstName');
+        $partTable->addField('lastName', 'nominatedLastName');
+        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('nominatedId'), $partTable->getField('id'), '='));
     }
 
     /**
