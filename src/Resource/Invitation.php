@@ -89,6 +89,12 @@ class Invitation extends AbstractResource
     private int $nominatedId = 0;
 
     /**
+     * If a reference invite, id of the nomination.
+     * @var int
+     */
+    private int $nominationId = 0;
+
+    /**
      * Id of participant who sent the invitation. Will be zero if sent by an admin.
      * @var int
      */
@@ -154,6 +160,11 @@ class Invitation extends AbstractResource
     public function getNominatedId(): int
     {
         return $this->nominatedId;
+    }
+
+    public function getNominationId(): int
+    {
+        return $this->nominationId;
     }
 
     public function getSenderId(): int
@@ -237,6 +248,12 @@ class Invitation extends AbstractResource
     public function setNominatedId(int $nominatedId): self
     {
         $this->nominatedId = $nominatedId;
+        return $this;
+    }
+
+    public function setNominationId(int $nominationId): self
+    {
+        $this->nominationId = $nominationId;
         return $this;
     }
 

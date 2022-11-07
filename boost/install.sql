@@ -55,6 +55,7 @@ CREATE TABLE award_invitation (
     email varchar(255) not null,
     invitedId int DEFAULT 0,
     inviteType smallint DEFAULT 0,
+    nominationId int DEFAULT 0,
     nominatedId int DEFAULT 0,
     senderId int DEFAULT 0,
     updated DateTime
