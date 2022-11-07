@@ -15,12 +15,14 @@ namespace award\Controller\Participant;
 
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
-use award\Factory\ParticipantFactory;
-use award\Factory\InvitationFactory;
-use award\Factory\EmailFactory;
-use award\Factory\JudgeFactory;
 use award\Factory\AwardFactory;
 use award\Factory\CycleFactory;
+use award\Factory\EmailFactory;
+use award\Factory\InvitationFactory;
+use award\Factory\JudgeFactory;
+use award\Factory\NominationFactory;
+use award\Factory\ParticipantFactory;
+use award\Factory\ReferenceFactory;
 
 class Invitation extends AbstractController
 {
@@ -32,24 +34,50 @@ class Invitation extends AbstractController
             return ['success' => false, 'error' => 'Current participant is not the invited'];
         } else {
             if ($invitation->isJudge()) {
-                InvitationFactory::confirmJudge($invitation);
                 JudgeFactory::create($invitation->cycleId, $invitation->invitedId);
                 EmailFactory::judgeConfirmed(AwardFactory::build($invitation->awardId), CycleFactory::build($invitation->cycleId), ParticipantFactory::build($invitation->invitedId));
             } elseif ($invitation->isReference()) {
-                InvitationFactory::confirmReference($invitation);
-                ReferenceFactory::create($invitation->cycleId, $invitation->invitedId);
+                ReferenceFactory::create($invitation->cycleId, $invitation->nominationId, $invitation->invitedId);
                 EmailFactory::referenceConfirmed(AwardFactory::build($invitation->awardId), CycleFactory::build($invitation->cycleId), ParticipantFactory::build($invitation->invitedId));
             }
+            InvitationFactory::confirm($invitation);
         }
         return ['success' => true];
     }
 
+    /**
+     * JSON listing of reference invitations.
+     * @return array
+     */
     protected function listJson()
     {
         $options['invitedId'] = ParticipantFactory::getCurrentParticipant()->id;
         $options['includeAward'] = true;
+        $options['includeNominated'] = true;
         $options['confirm'] = AWARD_INVITATION_WAITING;
-        return InvitationFactory::getList($options);
+
+        return InvitationFactory::listing($options);
+    }
+
+    protected function participantReferencePost(Request $request)
+    {
+        $cycleId = $request->pullPostInteger('cycleId');
+
+        $invitedParticipant = ParticipantFactory::build($request->pullPostInteger('invitedId'));
+        $nomination = NominationFactory::build($request->pullPostInteger('nominationId'));
+        $invitation = InvitationFactory::createReferenceInvitation($invitedParticipant, $cycleId, $nomination);
+
+        EmailFactory::sendParticipantReferenceInvitation($invitation);
+        return ['success' => true];
+    }
+
+    protected function referenceJson(Request $request)
+    {
+        $nomination = NominationFactory::build($request->pullGetInteger('nominationId'));
+        $options['cycleId'] = $nomination->cycleId;
+        $options['senderId'] = ParticipantFactory::getCurrentParticipant()->id;
+        $options['includeInvited'] = true;
+        return InvitationFactory::listing($options);
     }
 
     protected function refusePatch()
