@@ -25,4 +25,9 @@ class Nomination extends AbstractController
         return NominationFactory::listing(['cycleId' => $request->pullGetInteger('cycleId'), 'includeNominated' => true]);
     }
 
+    protected function needsApprovalJson()
+    {
+        return NominationFactory::listing(['includeNominated' => true, 'includeAward' => true, 'includeCycle' => true, 'unapproveOnly' => true, 'includeNominator' => true]);
+    }
+
 }
