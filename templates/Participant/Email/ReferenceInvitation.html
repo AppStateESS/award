@@ -1,0 +1,10 @@
+<p>Hello <?=$invited->firstName?>,</p>
+
+<p><?=$nominator->firstName, ' ', $nominator->lastName?> has nominated <?=$nominated->firstName, ' ', $nominated->lastName?> for the <?=$awardTitle?>.</p>
+<p><?=$nominator->firstName?> identified you as a reliable reference for <?=$nominated->firstName?>.</p>
+<p>Please <a href="<?=$signIn?>">go to the award website</a>, sign in, and either accept or refuse this
+  invitation.</p>
+<p>If you cannot serve as a reference, please refuse soon so <?=$nominator->firstName?> can find an alternative
+  before the <?=$deadline?> deadline.</p>
+
+<p>Thank you,<br /><?=$contactName?></p>
