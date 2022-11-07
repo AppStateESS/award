@@ -20,10 +20,11 @@ use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mime\Email;
 use phpws2\Settings;
 use award\Factory\JudgeFactory;
-use award\Resource\Participant;
-use award\Resource\Invitation;
-use award\Resource\Cycle;
 use award\Resource\Award;
+use award\Resource\Cycle;
+use award\Resource\Invitation;
+use award\Resource\Nomination;
+use award\Resource\Participant;
 use award\View\EmailView;
 use award\Exception\NoJudges;
 
@@ -107,6 +108,13 @@ class EmailFactory
     {
         $email = self::getEmail();
         $email->to($invitation->email)->html(EmailView::participantJudgeInvitation($invitation))->subject('Award site judge request');
+        return self::send($email);
+    }
+
+    public static function sendParticipantReferenceInvitation(Invitation $invitation)
+    {
+        $email = self::getEmail();
+        $email->to($invitation->email)->html(EmailView::participantReferenceInvitation($invitation))->subject('Award site reference request');
         return self::send($email);
     }
 
