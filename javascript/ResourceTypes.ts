@@ -39,15 +39,23 @@ export interface CycleResource {
 }
 
 export interface InvitationResource {
+  awardId: number
+  awardTitle?: string
   id: number
   confirm: number
+  created: string
   cycleId: number
   email: string
+  invitedFirstName?: string
+  invitedId: number
+  invitedLastName?: string
   inviteType: number
+  nominatedId: number
+  nominatedFirstName?: string
+  nominatedLastName?: string
   participantId: number
-  firstName?: string
-  lastName?: string
-  awardTitle?: string
+  senderId: number
+  updated: string
 }
 
 export interface NominationResource {
