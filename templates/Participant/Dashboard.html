@@ -66,7 +66,7 @@ $now = time();
       </td>
       <td><?=$n['awardTitle']?></td>
       <td><?=$n['term'] === 'yearly' ? $n['awardYear'] : "{$n['awardMonth']}, {$n['awardYear']}"?></td>
-      <td><?=$n['firstName'], ' ', $n['lastName']?></td>
+      <td><?=$n['nominatedFirstName'], ' ', $n['nominatedLastName']?></td>
       <td><?=strftime('%b %e - %l:%M %p', $n['endDate'])?></td>
       <td class="text-center"><?=$n['completed'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
       <td class="text-center"><?=$n['approved'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
