@@ -40,9 +40,9 @@ class Invitation extends AbstractController
         $options['inviteType'] = $request->pullGetInteger('inviteType', true) ? $request->pullGetInteger('inviteType') : null;
         $options['awardId'] = (int) $request->pullGetInteger('awardId', true);
         $options['cycleId'] = (int) $request->pullGetInteger('cycleId', true);
-        $options['includeInvited'] = $request->pullGetBoolean('includeInvited');
+        $options['includeInvited'] = $request->pullGetBoolean('includeInvited', true);
 
-        return InvitationFactory::getList($options);
+        return InvitationFactory::listing($options);
     }
 
     protected function participantJudgePost(Request $request)
