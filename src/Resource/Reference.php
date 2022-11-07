@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace award\Resource;
 
+use award\AbstractClass\AbstractResource;
+
 /**
  * @table reference
  */
-class Reference extends award\AbstractResource
+class Reference extends AbstractResource
 {
 
     /**
@@ -27,7 +29,7 @@ class Reference extends award\AbstractResource
     /**
      * @var int
      */
-    private int $documentId;
+    private ?int $documentId;
 
     /**
      * @var int
@@ -39,20 +41,25 @@ class Reference extends award\AbstractResource
      */
     private int $participantId;
 
-    /**
-     * @return int
-     */
-    public function getCycleId(): int
+    public function __construct()
     {
-        return $this->documentId;
+        parent::__construct('award_reference');
     }
 
     /**
      * @return int
      */
-    public function getDocumentId(): int
+    public function getCycleId(): int
     {
-        return $this->documentId;
+        return $this->cycleId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDocumentId(): ?int
+    {
+        return $this->documentId ?? null;
     }
 
     /**
