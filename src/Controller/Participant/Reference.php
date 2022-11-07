@@ -16,6 +16,7 @@ namespace award\Controller\Participant;
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\ReferenceView;
+use award\View\ParticipantView;
 use award\Factory\ParticipantFactory;
 use award\Factory\ReferenceFactory;
 use award\Factory\EmailFactory;
@@ -30,6 +31,11 @@ class Reference extends AbstractController
         $options['nominationId'] = $request->pullGetInteger('nominationId');
         $options['includeParticipant'] = true;
         return ReferenceFactory::listing($options);
+    }
+
+    protected function remindHtml(Request $request)
+    {
+        return ParticipantView::participantMenu('nomination') . '<p>Send reminder is incomplete.</p>';
     }
 
 }
