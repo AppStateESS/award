@@ -1,11 +1,9 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
+import {InvitationResource} from '../../ResourceTypes'
 
-type Props = {}
-const ParticipantInvites = ({}: Props) => {
+const ParticipantInvites = ({listing}: {listing: InvitationResource[]}) => {
   return <div>ParticipantInvites is ready for content.</div>
 }
 
-ParticipantInvites.propTypes = {}
 export default ParticipantInvites
