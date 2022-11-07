@@ -90,6 +90,14 @@ class NominationView extends AbstractView
     }
 
     /**
+     * Returns the admin script for nominations that require approval.
+     */
+    public static function needsApproval()
+    {
+        return self::scriptView('NominationApproval');
+    }
+
+    /**
      * Error screen for judges trying to nominate.
      * @return string
      */
@@ -146,6 +154,7 @@ class NominationView extends AbstractView
     {
         $values['awardTitle'] = self::getFullAwardTitle($award, $cycle);
         $values['nominated'] = $nominated;
+        $values['deadline'] = $cycle->formatEndDate();
 
         $referencesRequired = $award->getReferencesRequired();
         if ($referencesRequired === 0) {
@@ -173,7 +182,7 @@ class NominationView extends AbstractView
      */
     public static function view(Participant $nominator, Nomination $nomination)
     {
-        $participant = ParticipantFactory::build($nomination->participantId);
+        $participant = ParticipantFactory::build($nomination->nominatedId);
         $award = AwardFactory::build($nomination->awardId);
         $cycle = CycleFactory::build($nomination->cycleId);
         $tpl['approvalRequired'] = (bool) $award->approvalRequired;
