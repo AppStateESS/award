@@ -27,9 +27,16 @@ class Reference extends AbstractResource
     private int $cycleId;
 
     /**
+     * Document id of reference reason
      * @var int
      */
-    private ?int $documentId;
+    private ?int $reasonDocument;
+
+    /**
+     * Text of the reference's reason for approving the nomination.
+     * @var string
+     */
+    private ?string $reasonText;
 
     /**
      * @var int
@@ -57,9 +64,9 @@ class Reference extends AbstractResource
     /**
      * @return int
      */
-    public function getDocumentId(): ?int
+    public function getReasonDocument(): ?int
     {
-        return $this->documentId ?? null;
+        return $this->reasonDocument ?? null;
     }
 
     /**
@@ -78,8 +85,13 @@ class Reference extends AbstractResource
         return $this->participantId;
     }
 
+    public function getReasonText(): string
+    {
+        return $this->reasonText ?? '';
+    }
+
     /**
-     * @param int $documentId
+     * @param int $reasonDocument
      */
     public function setCycleId(int $cycleId): self
     {
@@ -88,11 +100,11 @@ class Reference extends AbstractResource
     }
 
     /**
-     * @param int $documentId
+     * @param int $reasonDocument
      */
-    public function setDocumentId(int $documentId): self
+    public function setReasonDocument(int $reasonDocument): self
     {
-        $this->documentId = $documentId;
+        $this->reasonDocument = $reasonDocument;
         return $this;
     }
 
@@ -111,6 +123,12 @@ class Reference extends AbstractResource
     public function setParticipantId(int $participantId): self
     {
         $this->participantId = $participantId;
+        return $this;
+    }
+
+    public function setReasonText(string $reasonText): self
+    {
+        $this->reasonText = $reasonText;
         return $this;
     }
 
