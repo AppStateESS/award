@@ -159,6 +159,30 @@ class NominationFactory extends AbstractFactory
         return $db->select();
     }
 
+    /**
+     * Counts references available for a specific nomination and updates
+     * a nominations referencesSelected parameter.
+     * @param Nomination $nomination
+     */
+    public static function updateReferenceCount(Nomination $nomination)
+    {
+        $options['nominationId'] = $nomination->id;
+        $options['count'] = true;
+        $referenceCount = ReferenceFactory::listing($options);
+        $nomination->referencesSelected = $referenceCount;
+        self::save($nomination);
+    }
+
+    /**
+     * Updates and saves the nomination objects referencesComplete status.
+     * @param Nomination $nomination
+     */
+    public static function updateReferencesComplete(Nomination $nomination)
+    {
+        $nomination->referencesComplete = ReferenceFactory::nominationReferencesComplete($nomination);
+        self::save($nomination);
+    }
+
     private static function includeAward($db, $table)
     {
         $awardTable = $db->addTable('award_award');
