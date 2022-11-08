@@ -35,10 +35,18 @@ class Invitation extends AbstractController
         } else {
             if ($invitation->isJudge()) {
                 JudgeFactory::create($invitation->cycleId, $invitation->invitedId);
-                EmailFactory::judgeConfirmed(AwardFactory::build($invitation->awardId), CycleFactory::build($invitation->cycleId), ParticipantFactory::build($invitation->invitedId));
+                EmailFactory::judgeConfirmed(AwardFactory::build($invitation->awardId),
+                    CycleFactory::build($invitation->cycleId),
+                    ParticipantFactory::build($invitation->invitedId));
             } elseif ($invitation->isReference()) {
-                ReferenceFactory::create($invitation->cycleId, $invitation->nominationId, $invitation->invitedId);
-                EmailFactory::referenceConfirmed(AwardFactory::build($invitation->awardId), CycleFactory::build($invitation->cycleId), ParticipantFactory::build($invitation->invitedId));
+                $award = AwardFactory::build($invitation->awardId);
+                ReferenceFactory::create($invitation->cycleId,
+                    $invitation->nominationId, $invitation->invitedId);
+                EmailFactory::referenceConfirmed($award, CycleFactory::build($invitation->cycleId),
+                    ParticipantFactory::build($invitation->invitedId));
+                $nomination = NominationFactory::build($invitation->nominationId);
+                NominationFactory::updateReferenceCount($nomination);
+                NominationFactory::updateReferencesComplete($nomination);
             }
             InvitationFactory::confirm($invitation);
         }
