@@ -83,11 +83,11 @@ class Nomination extends AbstractResource
     private ?string $reasonText = null;
 
     /**
-     * References completed their reason input.
-     * Requirement depends on award setting.
+     * All references are selected and they have completed their
+     * reasons (if required).
      * @var bool
      */
-    private bool $referenceReasonComplete = false;
+    private bool $referencesComplete = false;
 
     /**
      * All required references have been selected.
@@ -163,9 +163,9 @@ class Nomination extends AbstractResource
         return $this->reasonText ?? '';
     }
 
-    public function getReferenceReasonComplete(): bool
+    public function getReferencesComplete(): bool
     {
-        return $this->referenceReasonComplete;
+        return $this->referencesComplete;
     }
 
     public function getReferencesSelected(): bool
@@ -261,9 +261,9 @@ class Nomination extends AbstractResource
         return $this;
     }
 
-    public function setReferenceReasonComplete(bool $referenceReasonComplete)
+    public function setReferencesComplete(bool $referencesComplete)
     {
-        $this->referenceReasonComplete = $referenceReasonComplete;
+        $this->referencesComplete = $referencesComplete;
         return $this;
     }
 
