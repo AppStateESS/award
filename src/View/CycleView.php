@@ -51,7 +51,8 @@ class CycleView extends AbstractView
             $values['judges'] = 'No judges, popular vote';
         }
 
-        $values['nominations'] = self::scriptView('Nominations');
+        $values['nominations'] = NominationView::summaryByCycle($cycle->id);
+
         // Uses a global cycleId from the Judges script
         $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
 
@@ -76,7 +77,7 @@ class CycleView extends AbstractView
     {
         $award = AwardFactory::build($cycle->getAwardId());
         $js['defaultCycle'] = $cycle->getValues();
-        $js['awardTitle'] = $award->getTitle();
+        $js['awardTitle'] = self::getFullAwardTitle($award, $cycle);
         $values['menu'] = self::adminMenu('cycle');
         $values['script'] = self::scriptView('CycleForm', $js);
         return self::getTemplate('Admin/AdminForm', $values);
@@ -98,7 +99,7 @@ class CycleView extends AbstractView
     {
         $options = ['incompleteOnly' => true, 'includeAward' => true, 'nominationCount' => true];
 
-        $cycleList = CycleFactory::list($options);
+        $cycleList = CycleFactory::listing($options);
 
         $today = time();
         $format = '%b. %e, %Y - %l:%M %p';
