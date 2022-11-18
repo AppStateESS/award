@@ -16,6 +16,7 @@ namespace award\Controller\Admin;
 use award\AbstractClass\AbstractController;
 use award\Factory\InvitationFactory;
 use award\Factory\ParticipantFactory;
+use award\Factory\ReferenceFactory;
 use award\View\InvitationView;
 use award\Factory\EmailFactory;
 use award\Resource\Participant;
@@ -57,6 +58,7 @@ class Invitation extends AbstractController
 
         $invitation = InvitationFactory::createJudgeInvitation($invited, $cycleId);
         EmailFactory::sendParticipantJudgeInvitation($invitation);
+        InvitationFactory::stampReminder($invitation->id);
         return ['success' => true];
     }
 
@@ -72,6 +74,7 @@ class Invitation extends AbstractController
 
         $invitation = InvitationFactory::createReferenceInvitation($invited, $cycleId);
         EmailFactory::sendParticipantReferenceInvitation($invitation);
+        InvitationFactory::stampReminder($invitation->id);
         return ['success' => true];
     }
 
