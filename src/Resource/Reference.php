@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\Resource;
 
 use award\AbstractClass\AbstractResource;
+use award\Traits\ReminderTrait;
 
 /**
  * @table reference
@@ -21,10 +22,27 @@ use award\AbstractClass\AbstractResource;
 class Reference extends AbstractResource
 {
 
+    use ReminderTrait;
+
+    /**
+     * @var int
+     */
+    private int $awardId;
+
     /**
      * @var int
      */
     private int $cycleId;
+
+    /**
+     * @var int
+     */
+    private int $nominationId;
+
+    /**
+     * @var int
+     */
+    private int $participantId;
 
     /**
      * Document id of reference reason
@@ -38,19 +56,14 @@ class Reference extends AbstractResource
      */
     private ?string $reasonText;
 
-    /**
-     * @var int
-     */
-    private int $nominationId;
-
-    /**
-     * @var int
-     */
-    private int $participantId;
-
     public function __construct()
     {
         parent::__construct('award_reference');
+    }
+
+    public function getAwardId(): int
+    {
+        return $this->awardId;
     }
 
     /**
@@ -88,6 +101,12 @@ class Reference extends AbstractResource
     public function getReasonText(): string
     {
         return $this->reasonText ?? '';
+    }
+
+    public function setAwardId(int $awardId): self
+    {
+        $this->awardId = $awardId;
+        return $this;
     }
 
     /**
