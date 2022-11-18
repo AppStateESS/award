@@ -40,10 +40,11 @@ class Invitation extends AbstractController
                     ParticipantFactory::build($invitation->invitedId));
             } elseif ($invitation->isReference()) {
                 $award = AwardFactory::build($invitation->awardId);
-                ReferenceFactory::create($invitation->cycleId,
-                    $invitation->nominationId, $invitation->invitedId);
+                $reference = ReferenceFactory::create($invitation->cycleId,
+                        $invitation->nominationId, $invitation->invitedId);
                 EmailFactory::referenceConfirmed($award, CycleFactory::build($invitation->cycleId),
                     ParticipantFactory::build($invitation->invitedId));
+                ReferenceFactory::stampReminder($reference->id);
                 $nomination = NominationFactory::build($invitation->nominationId);
                 NominationFactory::updateReferenceCount($nomination);
                 NominationFactory::updateReferencesComplete($nomination);
@@ -76,13 +77,13 @@ class Invitation extends AbstractController
         $invitation = InvitationFactory::createReferenceInvitation($invitedParticipant, $cycleId, $nomination);
 
         EmailFactory::sendParticipantReferenceInvitation($invitation);
+        InvitationFactory::stampReminder($invitation->id);
         return ['success' => true];
     }
 
     protected function referenceJson(Request $request)
     {
-        $nomination = NominationFactory::build($request->pullGetInteger('nominationId'));
-        $options['cycleId'] = $nomination->cycleId;
+        $options['nominationId'] = $request->pullGetInteger('nominationId');
         $options['senderId'] = ParticipantFactory::getCurrentParticipant()->id;
         $options['includeInvited'] = true;
         return InvitationFactory::listing($options);
