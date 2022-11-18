@@ -36,6 +36,13 @@ const Invitation = ({invitationList}: Props) => {
   return (
     <div>
       <table className="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
         <tbody>{content}</tbody>
       </table>
     </div>
