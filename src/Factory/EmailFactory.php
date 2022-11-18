@@ -25,6 +25,7 @@ use award\Resource\Cycle;
 use award\Resource\Invitation;
 use award\Resource\Nomination;
 use award\Resource\Participant;
+use award\Resource\Reference;
 use award\View\EmailView;
 use award\Exception\NoJudges;
 
@@ -76,6 +77,15 @@ class EmailFactory
         $email = self::getEmail();
         $email->to($participant->getEmail())->html(EmailView::newParticipant($participant, $hash))->subject('New Award account confirmation');
         return self::send($email);
+    }
+
+    public static function participantReferenceReminder(\award\Resource\Reference $reference, Participant $nominator)
+    {
+        $referenceParticipant = ParticipantFactory::build($reference->participantId);
+        $content = EmailView::referenceReminder($reference, $referenceParticipant);
+        $email = self::getEmail();
+        $email->to($referenceParticipant->getEmail())->html($content)->subject('Reminder: please complete your award reference');
+        self::send($email);
     }
 
     public static function referenceConfirmed(Award $award, Cycle $cycle, Participant $participant)
