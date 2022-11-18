@@ -92,8 +92,8 @@ class CycleFactory extends AbstractFactory
      * Options
      * - awardId:int          - only cycles with the same awardId
      * - judgeId: int         - only return cycles judged by this participant ID. This setting
-     *                          overwrites the referenceId option
-     * - referenceId: int     - only return cycles referenced by this participant ID. This option
+     *                          overwrites the participantId option
+     * - participantId: int     - only return cycles referenced by this participant ID. This option
      *                          if overwritten by the judgeId option.
      * - deletedOnly:bool     - only deleted cycles
      * - incompletedOnly:int  - only cycles that end in the future.
@@ -103,7 +103,7 @@ class CycleFactory extends AbstractFactory
      * @param array $options
      * @return array
      */
-    public static function list(array $options = [])
+    public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
         $table->addField('id');
@@ -124,9 +124,9 @@ class CycleFactory extends AbstractFactory
             $judgeTable = $db->addTable('award_judge');
             $judgeTable->addFieldConditional('participantId', (int) $options['judgeId']);
             $db->joinResources($table, $judgeTable, new Database\Conditional($db, $table->getField('id'), $judgeTable->getField('cycleId'), '=', 'left'));
-        } elseif (!empty($options['referenceId'])) {
+        } elseif (!empty($options['participantId'])) {
             $referenceTable = $db->addTable('award_reference');
-            $referenceTable->addFieldConditional('participantId', (int) $options['referenceId']);
+            $referenceTable->addFieldConditional('participantId', (int) $options['participantId']);
             $db->joinResources($table, $referenceTable, new Database\Conditional($db, $table->getField('id'), $referenceTable->getField('cycleId'), '='), 'left');
         }
 
@@ -145,7 +145,7 @@ class CycleFactory extends AbstractFactory
         if (!empty($options['includeAward'])) {
             $awardTbl = $db->addTable('award_award');
             $awardTbl->addField('judgeMethod');
-            $awardTbl->addField('title');
+            $awardTbl->addField('title', 'awardTitle');
             $db->joinResources($table, $awardTbl, new Database\Conditional($db, $table->getField('awardId'), $awardTbl->getField('id'), '='), 'left');
         }
 
@@ -229,7 +229,7 @@ class CycleFactory extends AbstractFactory
         $options['includeAward'] = true;
         $options['judgeId'] = $participantId;
         $options['dateFormat'] = true;
-        return self::list($options);
+        return self::listing($options);
     }
 
     /**
@@ -241,9 +241,10 @@ class CycleFactory extends AbstractFactory
     {
         $options['upcoming'] = true;
         $options['includeAward'] = true;
-        $options['referenceId'] = $participantId;
+        $options['includeNominated'] = true;
+        $options['participantId'] = $participantId;
         $options['dateFormat'] = true;
-        return self::list($options);
+        return self::listing($options);
     }
 
     /**
