@@ -5,6 +5,7 @@ import {searchNominees} from '../../Share/ParticipantXHR'
 import './style.css'
 import {ParticipantResource} from '../../ResourceTypes'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import ReactTooltip from 'react-tooltip'
 
 type Props = {
   nominateParticipant: (participantId: number) => void
@@ -107,7 +108,19 @@ const Matches = ({nominateParticipant, cycleId}: Props) => {
           </button>
         </div>
       </div>
-      <div className="small">Can&apos;t find participant?</div>
+      <div className="small font-italic">
+        <a data-tip data-for="participant-info" style={{cursor: 'pointer'}}>
+          Why can&apos;t I find a known participant?
+        </a>
+      </div>
+      <ReactTooltip
+        id="participant-info"
+        type="dark"
+        place="right"
+        effect="solid">
+        Participants who are inactive, already nominated, or serving as a judge
+        are not selectable.
+      </ReactTooltip>
       {searchIcon && (
         <div className="text-secondary m-1 text-center">
           <FontAwesomeIcon icon={['fas', 'spinner']} size="lg" spin />
