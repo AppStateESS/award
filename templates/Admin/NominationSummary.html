@@ -1,0 +1,33 @@
+<h4 class="m-0">Nominations</h4>
+<?php if (empty($nominations)):?>
+<div><em>No nominations for this award.</em></div>
+<?php else:?>
+<table class="table table-striped" aria-label="Nomination summary">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Nominated</th>
+      <th>Nominator</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach ($nominations as $nom):
+    extract($nom);
+    ?>
+    <tr>
+      <td><a href="./award/Admin/Nomination/<?=$id?>">View</a></td>
+      <td><?=$nominatedFirstName?> <?=$nominatedLastName?></td>
+      <td><?=$nominatorFirstName?> <?=$nominatorLastName?></td>
+      <td><?php if ($reasonComplete && $referencesComplete):?>
+        <span class="badge badge-success">Complete</span>
+        <?php else: ?>
+        <span class="badge badge-danger">Incomplete</span>
+        <?php endif;?>
+      </td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
+<?php endif;?>
