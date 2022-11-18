@@ -61,7 +61,7 @@ class AwardFactory extends AbstractFactory
         CycleFactory::deleteByAwardId($award->id);
     }
 
-    public static function getList(array $options = [])
+    public static function listing(array $options = [])
     {
         /**
          * @var \phpws2\Database\DB $db

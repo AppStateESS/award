@@ -34,7 +34,7 @@ class Award extends AbstractController
      */
     protected function basicJson(Request $request)
     {
-        return AwardFactory::getList(['basic' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
+        return AwardFactory::listing(['basic' => true, 'orderBy' => 'title', 'orderDir' => 'asc']);
     }
 
     /**
@@ -91,7 +91,7 @@ class Award extends AbstractController
         $options = [];
         $options['basic'] = $request->pullGetBoolean('basic', true);
         $options['asSelect'] = $request->pullGetBoolean('asSelect', true);
-        return AwardFactory::getList($options);
+        return AwardFactory::listing($options);
     }
 
     protected function newAwardHtml()
