@@ -1,7 +1,7 @@
 'use strict'
 import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
-import {ParticipantResource, ReferenceInvitation} from '../../ResourceTypes'
+import {ReferenceInvitation, ReferenceResource} from '../../ResourceTypes'
 import Modal from '../../Share/Modal'
 import {getList} from '../../Share/XHR'
 import Current from './Current'
@@ -12,44 +12,17 @@ import Message from '../../Share/Message'
 declare const cycleId: number
 declare const nominationId: number
 declare const referencesRequired: number
-declare const canSend: boolean
-declare const sendReason: string
-declare const lastSent: string
+declare const referenceReasonRequired: boolean
+declare const reminderGrace: number
 
 /**
  *  TODO - this script is almost a duplicate of the choose judges form.
  *         The work needs to be broken up.
  *  TODO - do not show reminder if no references have been selected.
- * @returns
  */
 
-const SendReminder = () => {
-  if (canSend) {
-    return (
-      <div>
-        <span className="badge badge-success float-right">
-          Last reminder vote sent: {lastSent}
-        </span>
-        <a
-          className="btn btn-outline-dark btn-sm "
-          href={`./award/Participant/Reference/remind/?nominationId=${nominationId}`}>
-          Send reminder
-        </a>
-      </div>
-    )
-  } else if (sendReason === 'too_soon') {
-    return (
-      <div className="badge badge-danger">
-        Last votex reminder sent: {lastSent}
-      </div>
-    )
-  } else {
-    return <span></span>
-  }
-}
-
 const ChooseReference = () => {
-  const [referenceList, setReferenceList] = useState<ParticipantResource[]>([])
+  const [referenceList, setReferenceList] = useState<ReferenceResource[]>([])
   const [invitationList, setInvitationList] = useState<ReferenceInvitation[]>(
     []
   )
@@ -78,7 +51,7 @@ const ChooseReference = () => {
     const {signal} = controller
     const url = './award/Participant/Reference/'
     const params = {nominationId}
-    const handleSuccess = (rows: ParticipantResource[]) => {
+    const handleSuccess = (rows: ReferenceResource[]) => {
       setReferenceList(rows)
       setReferencesLoading(false)
     }
@@ -115,7 +88,9 @@ const ChooseReference = () => {
       </div>
     )
   } else {
-    currentReferences = <Current {...{referenceList}} />
+    currentReferences = (
+      <Current {...{referenceList, referenceReasonRequired, reminderGrace}} />
+    )
   }
 
   if (invitationLoading) {
@@ -166,20 +141,18 @@ const ChooseReference = () => {
         </div>
         <div className="card-body">{currentReferences}</div>
       </div>
+
       <div className="card">
-        <div className="card-header bg-info">
+        <div className="card-header">
           <button
             title="Invite reference"
             onClick={invite}
-            className="btn btn-sm btn-light float-right">
-            +
+            className="btn btn-sm btn-primary float-right">
+            + Invite
           </button>
           <h4 className="m-0">Invited</h4>
         </div>
         <div className="card-body">{currentInvites}</div>
-        <div className="card-footer">
-          <SendReminder />
-        </div>
       </div>
     </div>
   )
