@@ -1,0 +1,33 @@
+<hr />
+<h3>References</h3>
+<?php if (empty($referenceList)):?>
+<p>No references selected.</p>
+<?php
+ else:?>
+<table class="table table-striped" aria-label="">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach($referenceList as $reference):
+    if ($reference['reasonText'] === '' && empty($reference['reasonDocument'])) {
+      $reason = 'Missing endorsement';
+    } else {
+      $reason = '';
+    }
+
+    ?>
+    <tr>
+      <td><?=$reference['participantFirstName'], ' ', $reference['participantLastName'];?></td>
+      <td><?=$reason?></td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
+
+<?php
+var_dump($referenceList);
+endif;?>
