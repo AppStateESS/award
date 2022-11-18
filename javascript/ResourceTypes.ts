@@ -4,6 +4,17 @@ export interface AwardBasic {
   cycleTerm: string
 }
 
+interface Nominated {
+  nominatedEmail?: string
+  nominatedFirstName?: string
+  nominatedLastName?: string
+}
+interface Nominator {
+  nominatorEmail?: string
+  nominatorFirstName?: string
+  nominatorLastName?: string
+}
+
 export interface AwardResource {
   id: number
   active: boolean | number
@@ -38,7 +49,7 @@ export interface CycleResource {
   voteType: string
 }
 
-export interface InvitationResource {
+export interface InvitationResource extends Nominated {
   awardId: number
   awardTitle?: string
   id: number
@@ -50,15 +61,13 @@ export interface InvitationResource {
   invitedId: number
   invitedLastName?: string
   inviteType: number
-  nominatedId: number
-  nominatedFirstName?: string
-  nominatedLastName?: string
+  lastReminder: string
   participantId: number
   senderId: number
   updated: string
 }
 
-export interface NominationResource {
+export interface NominationResource extends Nominator, Nominated {
   id: number
   allowVote: boolean | number
   approved: boolean | number
@@ -69,8 +78,14 @@ export interface NominationResource {
   reasonText: string
   reasonComplete: boolean | number
   reasonDocument: number
-  referenceReasonComplete: boolean | number
+  referencesComplete: boolean | number
   referencesSelected: boolean | number
+}
+
+export interface ParticipantSummary {
+  participantFirstName?: string
+  participantLastName?: string
+  participantEmail?: string
 }
 
 export interface ParticipantResource {
@@ -86,6 +101,23 @@ export interface ParticipantResource {
   created: number
   updated: number
   trusted: boolean | number
+}
+
+export interface ReferenceResource
+  extends Nominated,
+    Nominator,
+    ParticipantSummary {
+  id: number
+  awardId: number
+  cycleId: number
+  lastReminder: string
+  reasonDocument: number | null
+  reasonText: string
+  nominationId: number
+  participantId: number
+  email?: string
+  firstName?: string
+  lastName?: string
 }
 
 export interface ReferenceInvitation extends InvitationResource {
