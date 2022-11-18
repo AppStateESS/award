@@ -236,13 +236,6 @@ const CycleForm = () => {
     }
   }
 
-  let term
-  if (cycle.term === 'yearly') {
-    term = 'Yearly'
-  } else if (cycle.term === 'monthly') {
-    term = 'Monthly'
-  }
-
   if (steps.current < 3) {
     return (
       <div>
@@ -269,7 +262,7 @@ const CycleForm = () => {
   return (
     <div>
       <h2>
-        {cycle.id > 0 ? 'Update' : 'Create'} {term}{' '}
+        {cycle.id > 0 ? 'Update' : 'Create'}&nbsp;
         <strong>{awardTitle}</strong> Cycle
       </h2>
       {message.text.length > 0 ? (
