@@ -5,8 +5,6 @@ import Loading from '../../Share/Loading'
 import Grid from './Grid'
 import {nominationApprovalList} from '../../Share/NominationXHR'
 
-declare const templateValue: string
-
 const NominationApproval = () => {
   const [nominations, setNominations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -27,7 +25,7 @@ const NominationApproval = () => {
   } else if (nominations.length === 0) {
     return (
       <p>
-        <em>No nominations need approval.</em>
+        <em>No completed nominations need approval.</em>
       </p>
     )
   } else {
