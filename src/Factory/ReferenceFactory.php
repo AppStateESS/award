@@ -17,10 +17,14 @@ use award\Resource\Reference;
 use award\AbstractClass\AbstractFactory;
 use award\View\EmailView;
 use award\Resource\Nomination;
+use award\Resource\Participant;
 use phpws2\Database;
+use award\Traits\ReminderFactoryTrait;
 
 class ReferenceFactory extends AbstractFactory
 {
+
+    use ReminderFactoryTrait;
 
     protected static string $resourceClassName = 'award\Resource\Reference';
     protected static string $table = 'award_reference';
@@ -42,12 +46,26 @@ class ReferenceFactory extends AbstractFactory
     }
 
     /**
+     *
+     * @param Reference $reference
+     * @return Returns TRUE if participant recommended reference.
+     */
+    public static function participantReference(Reference $reference, Participant $participant)
+    {
+        $nomination = NominationFactory::build($reference->nominationId);
+        return $nomination->getNominatorId() === $participant->getId();
+    }
+
+    /**
      * Options
-     * - cycleId (integer) Return only references associated with this cycle.
-     * - nominationId (integer) Return only references associated with this nomination.
-     * - participantIdOnly (boolean) Return only participant ids.
+     * - cycleId            (integer) Return only references associated with this cycle.
+     * - nominationId       (integer) Return only references associated with this nomination.
+     * - participantIdOnly  (boolean) Return only participant ids.
      * - includeParticipant (boolean) Add participant's email plus first and last name.
-     * - count (boolean) Returns the number of references.
+     * - includeNominator   (boolean) Add nominator email and name
+     * - includeNominated   (boolean) Add nominated email and name
+     * - includeAward       (boolean) Add the award title and reference requirements to the row
+     * - count              (boolean) Returns the number of references.
      *
      * @param array $options
      * @return type
@@ -55,13 +73,8 @@ class ReferenceFactory extends AbstractFactory
     public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
-        if (!empty($options['cycleId'])) {
-            $table->addFieldConditional('cycleId', $options['cycleId']);
-        }
 
-        if (!empty($options['nominationId'])) {
-            $table->addFieldConditional('nominationId', $options['nominationId']);
-        }
+        self::addIdOptions($table, ['cycleId', 'nominationId', 'participantId'], $options);
 
         if (!empty($options['participantIdOnly'])) {
             $ids = [];
@@ -75,13 +88,28 @@ class ReferenceFactory extends AbstractFactory
             $countExpression = new Database\Expression("count($idField)");
             $table->addField($countExpression);
             return $db->selectColumn();
-        } elseif (!empty($options['includeParticipant'])) {
-            $partTable = $db->addTable('award_participant');
-            $partTable->addField('firstName');
-            $partTable->addField('lastName');
-            $partTable->addField('email');
-            $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('participantId'), $partTable->getField('id'), '='));
+        } else {
+            if (!empty($options['includeParticipant'])) {
+                self::includeParticipant($db, $table);
+            }
+            if (!empty($options['includeNominator'])) {
+                $nominationTable = $db->addTable('award_nomination', 'nominator', false);
+                $db->joinResources($table, $nominationTable, new Database\Conditional($db, $table->getField('nominationId'), $nominationTable->getField('id'), '='));
+                self::includeParticipant($db, $nominationTable, 'nominator');
+            }
+            if (!empty($options['includeNominated'])) {
+                $nominationTable = $db->addTable('award_nomination', 'nominated', false);
+                $db->joinResources($table, $nominationTable, new Database\Conditional($db, $table->getField('nominationId'), $nominationTable->getField('id'), '='));
+                self::includeParticipant($db, $nominationTable, 'nominated');
+            }
+            if (!empty($options['includeAward'])) {
+                $awardTable = $db->addTable('award_award');
+                $awardTable->addField('title', 'awardTitle');
+                $awardTable->addField('referenceReasonRequired');
+                $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
+            }
         }
+
         return $db->select();
     }
 
