@@ -201,6 +201,21 @@ class AbstractFactory
         return $resource;
     }
 
+    protected static function includeParticipant($db, $table, $type = 'participant')
+    {
+        static $tblCount = 0;
+        $tblCount++;
+        $idField = $type . 'Id';
+        $email = $type . 'Email';
+        $firstName = $type . 'FirstName';
+        $lastName = $type . 'LastName';
+        $partTable = $db->addTable('award_participant', "part$tblCount");
+        $partTable->addField('firstName', $firstName);
+        $partTable->addField('lastName', $lastName);
+        $partTable->addField('email', $email);
+        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField($idField), $partTable->getField('id'), '='));
+    }
+
     /**
      * Loads a resource from the table name set in the object by the id parameter.
      * If allowedDeleted is true, a previously deleted object may be returned.
