@@ -19,6 +19,7 @@ use award\Factory\InvitationFactory;
 use award\Factory\JudgeFactory;
 use award\Factory\NominationFactory;
 use award\Factory\ParticipantFactory;
+use award\Factory\ReferenceFactory;
 use award\AbstractClass\AbstractView;
 
 class ParticipantView extends AbstractView
@@ -81,9 +82,6 @@ class ParticipantView extends AbstractView
     public static function dashboard()
     {
         $participant = ParticipantFactory::getCurrentParticipant();
-        $values['participant'] = $participant;
-
-        $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
 
         // prevents nominate button from appearing for judges
         $values['judgedCycles'] = [];
@@ -93,22 +91,32 @@ class ParticipantView extends AbstractView
                 $values['judgedCycles'][] = $j['cycleId'];
             }
         }
-        $values['judged'] = $judged;
-
-        $values['references'] = CycleFactory::upcomingReferences($participant->id);
-        $values['trusted'] = (bool) ParticipantFactory::currentIsTrusted();
 
         $cycleOptions['upcoming'] = true;
         $cycleOptions['includeAward'] = true;
         $cycleOptions['dateFormat'] = true;
 
         $nominations = NominationFactory::listing(['nominatorId' => $participant->id, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
+
         $values['nominations'] = [];
         if (!empty($nominations)) {
             $values['nominations'] = $nominations;
         }
 
-        $values['upcomingCycles'] = CycleFactory::list($cycleOptions);
+        $values['references'] = ReferenceFactory::listing([
+                'participantId' => $participant->getId(),
+                'includeParticipant' => true,
+                'includeNominator' => true,
+                'includeNominated' => true,
+                'includeAward' => true
+        ]);
+
+        $values['judged'] = $judged;
+
+        $values['trusted'] = (bool) ParticipantFactory::currentIsTrusted();
+        $values['participant'] = $participant;
+        $values['upcomingCycles'] = CycleFactory::listing($cycleOptions);
+        $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
 
         return self::participantMenu('dashboard') . self::getTemplate('Participant/Dashboard', $values);
     }
