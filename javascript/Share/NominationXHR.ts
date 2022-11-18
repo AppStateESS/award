@@ -12,22 +12,6 @@ const nominateText = async (nominationId: number, reasonText: string) => {
   )
 }
 
-const nominateDocument = async (
-  participantId: number,
-  cycleId: number,
-  reasonFile: File
-) => {
-  const formData = new FormData()
-
-  formData.append('document', reasonFile)
-  formData.append('cycleId', cycleId.toString())
-  formData.append('participantId', participantId.toString())
-
-  return axios.post('./award/Participant/Nomination/upload', formData, {
-    headers,
-  })
-}
-
 const nominationApprovalList = async () => {
   const url = './award/Admin/Nomination/needsApproval'
 
@@ -49,4 +33,4 @@ const postNomination = async (participantId: number, cycleId: number) => {
   })
 }
 
-export {nominationApprovalList, nominateDocument, nominateText, postNomination}
+export {nominationApprovalList, nominateText, postNomination}
