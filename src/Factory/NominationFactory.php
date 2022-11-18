@@ -32,15 +32,13 @@ class NominationFactory extends AbstractFactory
     protected static string $table = 'award_nomination';
     protected static string $resourceClassName = 'award\Resource\Nomination';
 
-    public static function canComplete(Award $award, Nomination $nomination)
+    public static function canComplete(Nomination $nomination)
     {
-        return (!$award->nominationReasonRequired || ($award->nominationReasonRequired && $nomination->reasonComplete)) &&
-            (!$award->referencesRequired || ($award->referencesRequired && $nomination->referencesSelected));
+        return $nomination->reasonComplete && $nomination->referencesComplete;
     }
 
     public static function create(int $nominatorId, int $nominatedId, int $awardId, int $cycleId)
     {
-
         $nomination = self::build();
         $nomination->setAwardId($awardId)->
             setCycleId($cycleId)->
@@ -50,16 +48,14 @@ class NominationFactory extends AbstractFactory
         return $nomination;
     }
 
-    public static function nominationAllowed(Participant $nominator, Nomination $nomination)
+    public static function getAssociatedResources(Nomination $nomination)
     {
-        //$participant = ParticipantFactory::build($nomination->nominatedId);
-        if (ParticipantFactory::currentIsJudge($nomination->cycleId)) {
-            throw new CannotNominateJudge;
-        }
+        $resources['nominated'] = ParticipantFactory::build($nomination->nominatedId);
+        $resources['nominator'] = ParticipantFactory::build($nomination->nominatorId);
+        $resources['award'] = AwardFactory::build($nomination->awardId);
+        $resources['cycle'] = CycleFactory::build($nomination->cycleId);
 
-        if ($nomination->nominatorId !== $nominator->id) {
-            throw new ParticipantPrivilegeMissing;
-        }
+        return $resources;
     }
 
     /**
@@ -106,23 +102,22 @@ class NominationFactory extends AbstractFactory
      * - includeAward       boolean If true, include award title.
      * - includeCycle       boolean If true, include cycle information.
      * - unapprovedOnly     boolean If true, only return unapproved nominations.
-     * - nominatedIdOnly  boolean If true, only return ids of nominated participants.
+     * - nominatedIdOnly    boolean If true, only return ids of nominated participants.
      * - nominatorIdOnly    boolean If true, only return ids of nominators.
+     * - completedOnly      boolean If true, only return completed nominations
      */
     public static function listing(array $options = [])
     {
         extract(self::getDBWithTable());
 
-        if (!empty($options['cycleId'])) {
-            $table->addFieldConditional('cycleId', $options['cycleId']);
-        }
-
-        if (!empty($options['nominatorId'])) {
-            $table->addFieldConditional('nominatorId', $options['nominatorId']);
-        }
+        self::addIdOptions($table, ['cycleId', 'nominatorId'], $options);
 
         if (!empty($options['unapprovedOnly'])) {
             $table->addFieldConditional('approved', 0);
+        }
+
+        if (!empty($options['completedOnly'])) {
+            $table->addFieldConditional('completed', 1);
         }
 
         if (!empty($options['nominatedIdOnly'])) {
@@ -157,6 +152,25 @@ class NominationFactory extends AbstractFactory
             }
         }
         return $db->select();
+    }
+
+    public static function nominationAllowed(Participant $nominator, Nomination $nomination)
+    {
+        //$participant = ParticipantFactory::build($nomination->nominatedId);
+        if (ParticipantFactory::currentIsJudge($nomination->cycleId)) {
+            throw new CannotNominateJudge;
+        }
+
+        if ($nomination->nominatorId !== $nominator->id) {
+            throw new ParticipantPrivilegeMissing;
+        }
+    }
+
+    public static function nominationReasonComplete(Award $award, Nomination $nomination)
+    {
+        return !$award->nominationReasonRequired ||
+            ($award->nominationReasonRequired &&
+            (strlen($nomination->reasonText) || $nomination->reasonDocument > 0));
     }
 
     /**
