@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import {createRoot} from 'react-dom/client'
 import {
   AwardResource,
@@ -30,9 +30,9 @@ const NominationReason = () => {
       <hr />
       {award.nominationReasonRequired && (
         <ReasonForm
-          firstName={participant.firstName}
           maxsize={maxsize}
           nomination={nomination}
+          participant={participant}
         />
       )}
     </div>
