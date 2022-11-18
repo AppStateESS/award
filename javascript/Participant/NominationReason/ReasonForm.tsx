@@ -1,26 +1,23 @@
 'use strict'
 import React, {useState, FormEvent, useRef} from 'react'
 import PropTypes from 'prop-types'
-import {nominateText, nominateDocument} from '../../Share/NominationXHR'
-import {
-  CycleResource,
-  ParticipantResource,
-  NominationResource,
-} from '../../ResourceTypes'
-
-declare const cycle: CycleResource
-declare const participant: ParticipantResource
+import {nominateText} from '../../Share/NominationXHR'
+import {nominateDocument} from '../../Share/DocumentXHR'
+import Message from '../../Share/Message'
+import {ParticipantResource, NominationResource} from '../../ResourceTypes'
 
 interface Props {
-  firstName: string
   maxsize: number
   nomination: NominationResource
+  participant: ParticipantResource
 }
 
-const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
+const ReasonForm = ({maxsize, nomination, participant}: Props) => {
   const [reasonText, setReasonText] = useState(nomination.reasonText)
   const [reasonFile, setReasonFile] = useState<File | null>(null)
   const [fileSelected, setFileSelected] = useState(false)
+  const [uploadError, setUploadError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const fileInput = useRef<HTMLInputElement>(null)
 
   const upload = (event: FormEvent<HTMLInputElement>) => {
@@ -32,6 +29,8 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
   }
 
   const clearFile = () => {
+    setUploadError(false)
+    setErrorMessage('')
     setReasonFile(null)
     setFileSelected(false)
     if (fileInput.current) {
@@ -67,9 +66,16 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
       return
     }
 
-    nominateDocument(participant.id, cycle.id, reasonFile).then((response) => {
-      console.log(response)
-    })
+    nominateDocument(nomination.id, reasonFile)
+      .then((response) => {
+        console.log(response.data)
+      })
+      .catch((e) => {
+        setUploadError(true)
+        setErrorMessage(
+          'An error occurred when uploading: ' + e.response.statusText
+        )
+      })
   }
 
   const maxSizeString = fileSize(maxsize)
@@ -95,7 +101,7 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
           Submit reason above
         </button>
       </div>
-
+      {uploadError && <Message message={errorMessage} type="danger" />}
       <div className="row mb-4">
         <div className="col-6">
           <p>
@@ -149,5 +155,9 @@ const ReasonForm = ({firstName, maxsize, nomination}: Props) => {
   )
 }
 
-ReasonForm.propTypes = {firstName: PropTypes.string}
+ReasonForm.propTypes = {
+  maxsize: PropTypes.number,
+  nomination: PropTypes.object,
+  participant: PropTypes.object,
+}
 export default ReasonForm
