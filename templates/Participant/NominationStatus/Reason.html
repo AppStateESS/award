@@ -1,0 +1,11 @@
+<?php
+  /* ../NominationStatus.html is source document */
+  if (!$reasonComplete):
+?>
+<div class="status incomplete"><a href="./award/Participant/Nomination/<?=$nominationId?>/reason/"><i class="fas fa-times"></i> Missing nomination reason.</a></div>
+<?php else:?>
+<div class="status complete">
+  <i class="fas fa-check"></i>
+  Nomination reason complete! <a class="ml-5 btn border-white  text-white" href="./award/Participant/Nomination/<?=$nominationId?>/reason/">Update</a>
+</div>
+<?php endif;?>

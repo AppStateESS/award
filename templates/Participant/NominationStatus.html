@@ -30,7 +30,7 @@ $tpl['nominationComplete'] = (bool) $nomination->completed;
 </style>
 
 <div class="nomination">
-  <h2>Complete your nomination</h2>
+  <h2>Nomination Status</h2>
   <p>You are nominating <?=$firstName?> <?=$lastName?> for the <?=$awardTitle?>.</p>
   <?php if ($canComplete):?>
   <p>It looks like you are ready to complete your nomination! Click the Submit my nomination button below.</p>
@@ -39,33 +39,17 @@ $tpl['nominationComplete'] = (bool) $nomination->completed;
   <?php else:?>
   <p>Your nomination will be pre-approved upon completion!</p>
   <?php endif;?>
-  <button class="btn btn-outline-dark">Submit my nomination</button>
+  <p><a class="btn btn-primary btn-block" href="./award/Participant/">Submit my nomination</a></p>
+
   <?php else:?>
   <p>Your nomination needs a little work. Click on the links in the red boxes to complete the conditional requirements.</p>
   <?php endif;?>
-  <?php if ($reasonRequired):?>
-  <?php if (!$reasonComplete):?>
-  <div class="status incomplete"><a href="./award/Participant/Nomination/<?=$nominationId?>/reason/"><i class="fas fa-times"></i> Missing nomination reason.</a></div>
-  <?php else:?>
-  <div class="status complete">
-    <i class="fas fa-check"></i>
-    Nomination reason complete! <a class="ml-5 btn border-white  text-white" href="./award/Participant/Nomination/<?=$nominationId?>/reason/">Update</a>
-  </div>
-  <?php endif;?>
-  <?php endif;?>
-  <?php if ($referencesRequired):?>
-  <?php if (!$referencesSelected):?>
-  <div class="status incomplete">
-    <a href="./award/Participant/Nomination/<?=$nominationId?>/reference/">
-      <i class="fas fa-times"></i>
-      References not selected.</a>
-  </div>
-  <?php else:?>
-  <div class="status complete">
-    <i class="fas fa-check"></i>
-    References selected!
-  </div>
-  <?php endif;?>
-  <?php endif;?>
+  <?php if ($reasonRequired) {
+    include(PHPWS_HOME_DIR . 'mod/award/templates/Participant/NominationStatus/Reason.html');
+  }?>
+  <?php if ($referencesRequired) {
+    include(PHPWS_HOME_DIR . 'mod/award/templates/Participant/NominationStatus/References.html');
+  }?>
+
 
 </div>

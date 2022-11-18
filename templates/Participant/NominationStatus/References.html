@@ -1,0 +1,27 @@
+<?php
+  /* ../NominationStatus.html is source document */
+  if (!$referencesSelected):
+?>
+<div class="status incomplete">
+  <a href="./award/Participant/Nomination/<?=$nominationId?>/reference/">
+    <i class="fas fa-times"></i>
+    References not selected.</a>
+</div>
+<?php else:?>
+<div class="status complete">
+  <i class="fas fa-check"></i>
+  References selected!
+</div>
+<?php endif;?>
+<?php if (!$referencesComplete):?>
+<div class="status incomplete">
+  <a href="./award/Participant/Nomination/<?=$nominationId?>/reference/">
+    <i class="fas fa-times"></i>
+    One or more reference endorsement is missing.</a>
+</div>
+<?php else:?>
+<div class="status complete">
+  <i class="fas fa-check"></i>
+  All reference endoresements are complete!
+</div>
+<?php endif;?>
