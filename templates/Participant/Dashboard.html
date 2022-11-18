@@ -12,69 +12,33 @@ $now = time();
   }
 </style>
 <h2>Welcome <?=$participant->firstName?>!</h2>
+
 <div>
   <h4>Invitations</h4>
   <?=$participantInvitations?>
 </div>
 <hr />
 
-<?php if (!empty($judged)):?>
-<h4>Upcoming judge deadlines</h4>
-<?php foreach ($judged as $j):?>
-<div><span class="badge badge-info mr-2 text-white">Judge</span>Voting starts for <strong><a href="./award/User/Award/<?=$j['id']?>"><?=$j['title']?></a></strong> on <?=$j['endDate']?>.</div>
-<?php endforeach;?>
-<hr />
-<?php endif;?>
+<?php
+if (!empty($judged)){
+  include(PHPWS_HOME_DIR . 'mod/award/templates/Participant/Dashboard/Judges.html');
+}
+?>
 
-<h4>Current awards</h4>
-<?php if (!empty($upcomingCycles)):?>
-<?php foreach ($upcomingCycles as $c):?>
-<div>
-  <strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> nominations available until <?=$c['endDate']?>.
-  <?php if ($trusted && !in_array($c['id'], $judgedCycles)):?>
-  <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate someone!</a>
-  <?php endif;?>
-</div>
-<?php endforeach;?>
-<?php endif;?>
-<hr />
 <h4>Nominations</h4>
-<?php if (!empty($nominations)):?>
-<table class="table table-striped" aria-label="Nomination listing">
-  <thead>
-    <tr>
-      <th>&nbsp;</th>
-      <th>Award</th>
-      <th>Term</th>
-      <th>Nominated</th>
-      <th>Nomination deadline</th>
-      <th class="text-center">Completed</th>
-      <th class="text-center">Approved</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php foreach ($nominations as $n):?>
-    <tr class="<?=!$n['completed'] && $n['endDate'] < $now ? 'cannot-finish' : ''?>">
-      <td>
-        <?php if(!$n['completed']):
-        if ($n['endDate'] < $now):
-        ?>
-        <div data-toggle="tooltip" data-placement="top" title="Nomination not completed before deadline"><i class="fas fa-exclamation-triangle"></i></div>
-        <?php else:?>
-        <a class="btn btn-success btn-sm" href="./award/Participant/Nomination/<?=$n['id']?>">Finish</a>
-        <?php endif;endif;?>
-      </td>
-      <td><?=$n['awardTitle']?></td>
-      <td><?=$n['term'] === 'yearly' ? $n['awardYear'] : "{$n['awardMonth']}, {$n['awardYear']}"?></td>
-      <td><?=$n['nominatedFirstName'], ' ', $n['nominatedLastName']?></td>
-      <td><?=strftime('%b %e - %l:%M %p', $n['endDate'])?></td>
-      <td class="text-center"><?=$n['completed'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
-      <td class="text-center"><?=$n['approved'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
-
-    </tr>
-    <?php endforeach;?>
-  </tbody>
-</table>
-<?php else:?>
+<?php
+if (!empty($nominations)):
+include(PHPWS_HOME_DIR . 'mod/award/templates/Participant/Dashboard/Nominations.html');
+else:
+?>
 <p><em>No nominations.</em></p>
+<?php endif;?>
+
+<h4>References</h4>
+<?php
+if (!empty($references)):
+include(PHPWS_HOME_DIR . 'mod/award/templates/Participant/Dashboard/References.html');
+else:
+?>
+<p><em>No references.</em></p>
 <?php endif;?>

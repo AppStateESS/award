@@ -1,0 +1,30 @@
+<table class="table table-striped" aria-label="">
+  <thead>
+    <tr>
+      <th>Award</th>
+      <th>Nominated</th>
+      <th>Nominator</th>
+      <th>Endorsement status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach ($references as $ref):
+    ?>
+    <tr>
+      <td><a href="./award/User/Award/<?=$ref['awardId']?>"><?=$ref['awardTitle']?></a></td>
+      <td><?=$ref['nominatedFirstName'], ' ', $ref['nominatedLastName']?> <sup><a href="mailto:<?=$ref['nominatedEmail'];?>"><i class="fas fa-envelope"></i></a></sup></td>
+      <td><?=$ref['nominatorFirstName'], ' ', $ref['nominatorLastName']?> <sup><a href="mailto:<?=$ref['nominatorEmail'];?>"><i class="fas fa-envelope"></i></a></sup></td>
+      <td>
+        <?php if (!$ref['referenceReasonRequired']):?>
+        <span class="badge badge-info text-white">Not required</span>
+        <?php elseif (!empty($ref['reasonDocument']) || !empty($ref['reasonText'])):?>
+        <span class="badge badge-success">Endorsement</span>
+        <?php else:?>
+        <a href="./award/Participant/Reference/<?=$ref['id']?>/reason"><span class="badge badge-danger">Incomplete, click to finish</span></a>
+        <?php endif;?>
+      </td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>

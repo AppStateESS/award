@@ -1,0 +1,18 @@
+<h4>Upcoming judge deadlines</h4>
+<?php foreach ($judged as $j):?>
+<div><span class="badge badge-info mr-2 text-white">Judge</span>Voting starts for <strong><a href="./award/User/Award/<?=$j['id']?>"><?=$j['title']?></a></strong> on <?=$j['endDate']?>.</div>
+<?php endforeach;?>
+<hr />
+<?php endif;?>
+
+<h4>Current awards</h4>
+<?php if (!empty($upcomingCycles)):?>
+<?php foreach ($upcomingCycles as $c):?>
+<div>
+  <strong><a href="./award/User/Award/<?=$c['id']?>"><?=$c['title']?></a></strong> nominations available until <?=$c['endDate']?>.
+  <?php if ($trusted && !in_array($c['id'], $judgedCycles)):?>
+  <a class="btn btn-sm btn-primary" href="./award/Participant/Nomination/nominate/?cycleId=<?=$c['id']?>">Nominate someone!</a>
+  <?php endif;?>
+</div>
+<?php endforeach;?>
+<hr />

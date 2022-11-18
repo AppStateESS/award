@@ -1,0 +1,34 @@
+<table class="table table-striped" aria-label="Nomination listing">
+  <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th>Award</th>
+      <th>Term</th>
+      <th>Nominated</th>
+      <th>Nomination deadline</th>
+      <th class="text-center">Completed</th>
+      <th class="text-center">Approved</th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php foreach ($nominations as $n):?>
+    <tr class="<?=!$n['completed'] && $n['endDate'] < $now ? 'cannot-finish' : ''?>">
+      <td>
+        <?php if(!$n['completed']):
+        if ($n['endDate'] < $now):
+        ?>
+        <div data-toggle="tooltip" data-placement="top" title="Nomination not completed before deadline"><i class="fas fa-exclamation-triangle"></i></div>
+        <?php else:?>
+        <a class="btn btn-success btn-sm" href="./award/Participant/Nomination/<?=$n['id']?>">Finish</a>
+        <?php endif;endif;?>
+      </td>
+      <td><?=$n['awardTitle']?></td>
+      <td><?=$n['term'] === 'yearly' ? $n['awardYear'] : "{$n['awardMonth']}, {$n['awardYear']}"?></td>
+      <td><?=$n['nominatedFirstName'], ' ', $n['nominatedLastName']?></td>
+      <td><?=strftime('%b %e - %l:%M %p', $n['endDate'])?></td>
+      <td class="text-center"><?=$n['completed'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
+      <td class="text-center"><?=$n['approved'] ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-danger">No</span>'?></td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
