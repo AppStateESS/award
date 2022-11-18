@@ -47,6 +47,26 @@ class DocumentFactory extends AbstractFactory
         return $max_size;
     }
 
+    public static function copyUploadFile($sourceFile)
+    {
+
+    }
+
+    public function getFileDirectory()
+    {
+        return PHPWS_HOME_DIR . 'files/award/';
+    }
+
+    public static function nominationFileName()
+    {
+        return 'nomination-' . microtime() . '.pdf';
+    }
+
+    public static function referenceFileName()
+    {
+        return 'reference-' . microtime() . '.pdf';
+    }
+
     /**
      * This function is a copy of of a function from Stackoverflow
      * https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
