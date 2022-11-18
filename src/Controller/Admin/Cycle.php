@@ -76,7 +76,7 @@ class Cycle extends AbstractController
         if ($awardId) {
             $options['awardId'] = $awardId;
         }
-        return CycleFactory::list($options);
+        return CycleFactory::listing($options);
     }
 
     protected function post(Request $request)
