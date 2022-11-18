@@ -63,6 +63,22 @@ class CycleLogFactory extends AbstractFactory
         return $row;
     }
 
+    public static function getLastReferenceInvitationRemind(int $cycleId, bool $toUnixTime = false)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('cycleId', $cycleId);
+        $table->addFieldConditional('action', 'reference_invitation_reminder');
+        $table->addField('username');
+        $table->addField('stamped');
+        $table->addOrderBy('stamped', 'desc');
+        $db->setLimit('1');
+        $row = $db->selectOneRow();
+        if ($toUnixTime && is_array($row)) {
+            $row['stamped'] = strtotime($row['stamped']);
+        }
+        return $row;
+    }
+
     public static function stampJudgeReminder(Cycle $cycle, string $username)
     {
         $log = self::build();
