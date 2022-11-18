@@ -1,0 +1,16 @@
+<h2><?=$awardTitle?> nomination</h2>
+
+<div class="row mb-3">
+  <div class="col-6">
+    <div class="lead"><strong>Nominated:</strong> <a title="View nominated" href="./award/Admin/Participant/<?=$nominated->getId()?>"><?=$nominated->getFullName()?></a> <a href="mailto:<?=$nominated->getEmail()?>"><sup><i class="fas fa-envelope"></i></sup></a></div>
+  </div>
+  <div class="col-6">
+    <div class="lead"><strong>Nominator:</strong> <a title="View nominator" href="./award/Admin/Participant/<?=$nominated->getId()?>"><?=$nominator->getFullName()?></a> <a href="mailto:<?=$nominator->getEmail()?>"><sup><i class="fas fa-envelope"></i></sup></a></div>
+  </div>
+</div>
+
+<?php if ($nomination->getReasonComplete()) {
+  include PHPWS_SOURCE_DIR . 'mod/award/templates/Admin/NominationView/Reason.html';
+}?>
+
+<?=$referenceSummary?>
