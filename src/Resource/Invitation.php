@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace award\Resource;
 
 use award\Traits\TrackedTrait;
+use award\Traits\ReminderTrait;
 use award\AbstractClass\AbstractResource;
 
 /**
@@ -38,6 +39,7 @@ class Invitation extends AbstractResource
 {
 
     use TrackedTrait;
+    use ReminderTrait;
 
     /**
      * Award id
