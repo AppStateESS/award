@@ -26,11 +26,15 @@ const Modal = ({
   includeCloseButton,
 }: Props) => {
   useEffect(() => {
-    document.getElementsByTagName('body')[0].classList.add('modal-open')
+    if (show) {
+      document.getElementsByTagName('body')[0].classList.add('modal-open')
+    } else {
+      document.getElementsByTagName('body')[0].classList.remove('modal-open')
+    }
 
     return () =>
       document.getElementsByTagName('body')[0].classList.remove('modal-open')
-  }, [])
+  }, [show])
 
   let modalClass = 'modal fade'
 
@@ -47,7 +51,7 @@ const Modal = ({
   }
 
   return (
-    <Fragment>
+    <div>
       {show && <Backdrop />}
       <div className={modalClass} style={{display: show ? 'block' : 'none'}}>
         <div className={`modal-dialog ${modalSize}`}>
@@ -75,7 +79,7 @@ const Modal = ({
           </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   )
 }
 
