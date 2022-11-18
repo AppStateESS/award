@@ -83,8 +83,11 @@ class Participant extends AbstractController
             return ['error' => 'untrusted'];
         }
         $options['search'] = $request->pullGetString('search');
-        $options['cycleId'] = $request->pullGetInteger('cycleId');
+        $cycleId = $request->pullGetInteger('cycleId');
+        $options['cycleId'] = $cycleId;
 
+        $notIn = NominationFactory::listing(['nominatedIdOnly' => true, 'cycleId' => $cycleId]);
+        $options['notIn'] = $notIn;
         return ParticipantFactory::listing($options);
     }
 
