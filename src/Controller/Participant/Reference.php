@@ -21,6 +21,7 @@ use award\Factory\ParticipantFactory;
 use award\Factory\ReferenceFactory;
 use award\Factory\EmailFactory;
 use award\Factory\Authenticate;
+use award\Exception\ParticipantPrivilegeMissing;
 
 class Reference extends AbstractController
 {
@@ -36,6 +37,19 @@ class Reference extends AbstractController
     protected function remindHtml(Request $request)
     {
         return ParticipantView::participantMenu('nomination') . '<p>Send reminder is incomplete.</p>';
+    }
+
+    protected function remindJson()
+    {
+        $reference = ReferenceFactory::build($this->id);
+        $participant = ParticipantFactory::getCurrentParticipant();
+        if (ReferenceFactory::participantReference($reference,
+                $participant)) {
+            EmailFactory::participantReferenceReminder($reference, $participant);
+        } else {
+            throw new ParticipantPrivilegeMissing();
+        }
+        return ['success' => true];
     }
 
 }
