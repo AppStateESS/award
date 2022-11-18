@@ -19,10 +19,13 @@ use award\Factory\ParticipantFactory;
 use award\Factory\JudgeFactory;
 use award\Factory\CycleFactory;
 use award\AbstractClass\AbstractFactory;
+use award\Traits\ReminderFactoryTrait;
 use phpws2\Database;
 
 class InvitationFactory extends AbstractFactory
 {
+
+    use ReminderFactoryTrait;
 
     protected static string $table = 'award_invitation';
     protected static string $resourceClassName = 'award\Resource\Invitation';
@@ -91,6 +94,7 @@ class InvitationFactory extends AbstractFactory
         $invitation->invitedId = $invited->id;
         $invitation->inviteType = AWARD_INVITE_TYPE_JUDGE;
         $invitation->awardId = CycleFactory::getAwardId($cycleId);
+
         self::save($invitation);
         return $invitation;
     }
@@ -153,6 +157,7 @@ class InvitationFactory extends AbstractFactory
          * - awardId
          * - cycleId
          * - invitedId
+         * - nominationId
          * - senderId
          * - inviteType
          * - confirm
@@ -168,7 +173,7 @@ class InvitationFactory extends AbstractFactory
          */
         extract(self::getDBWithTable());
 
-        self::addIdOptions($table, ['awardId', 'cycleId', 'invitedId', 'senderId'], $options);
+        self::addIdOptions($table, ['awardId', 'cycleId', 'invitedId', 'senderId', 'nominationId'], $options);
         self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
         self::addOrderOptions($table, $options, 'email');
 
@@ -184,10 +189,10 @@ class InvitationFactory extends AbstractFactory
                 self::includeAward($db, $table);
             }
             if (!empty($options['includeInvited'])) {
-                self::includeInvited($db, $table);
+                self::includeParticipant($db, $table, 'invited');
             }
             if (!empty($options['includeNominated'])) {
-                self::includeNominated($db, $table);
+                self::includeParticipant($db, $table, 'nominated');
             }
         }
 
@@ -251,19 +256,6 @@ class InvitationFactory extends AbstractFactory
         $awardTable = $db->addTable('award_award');
         $awardTable->addField('title', 'awardTitle');
         $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
-    }
-
-    /**
-     * Helps add information to invitation listing
-     * @param Database\DB $db
-     * @param Database\Table $table
-     */
-    private static function includeInvited(Database\DB $db, Database\Table $table)
-    {
-        $partTable = $db->addTable('award_participant');
-        $partTable->addField('firstName', 'invitedFirstName');
-        $partTable->addField('lastName', 'invitedLastName');
-        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('invitedId'), $partTable->getField('id'), '='));
     }
 
     /**
