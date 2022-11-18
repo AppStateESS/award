@@ -80,6 +80,17 @@ class EmailView extends AbstractView
         return self::getTemplate('Participant/Email/ReferenceInvitation', $values);
     }
 
+    /**
+     * Content for an email reminding a reference to enter their reason information.
+     * @param \award\Resource\Reference $reference
+     * @param Participant $participant
+     */
+    public static function referenceReminder(\award\Resource\Reference $reference, Participant $participant)
+    {
+        $values = ['firstName' => $participant->getFirstName()];
+        return self::getTemplate('Participant/Email/ReferenceReminder', $values);
+    }
+
     public static function sendActivationReminder($participant, $hash)
     {
 
