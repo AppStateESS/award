@@ -1,0 +1,16 @@
+<?php if ($nomination->getReasonText() !== ''):?>
+<hr />
+<div class="mb-4">
+  <h4>Nomination endorsement</h4>
+  <div class="card">
+    <div class="card-body">
+      <p class="card-text"><?=nl2br($nomination->getReasonText())?></p>
+    </div>
+  </div>
+  <?php endif;?>
+
+  <?php
+if ($nomination->getReasonDocument() && isset($reasonDocument)):?>
+  <div>Reason document link should go here.</div>
+  <?php endif;?>
+</div>
