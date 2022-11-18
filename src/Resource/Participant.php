@@ -123,6 +123,11 @@ class Participant extends AbstractResource
         return $this->firstName;
     }
 
+    public function getFullName(): string
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
     /**
      * @return string
      */
