@@ -20,13 +20,28 @@ use award\Factory\CycleFactory;
 use award\Factory\CycleLogFactory;
 use award\Factory\SettingFactory;
 use award\Factory\ParticipantFactory;
-use award\Resource\Cycle;
 use award\Resource\Award;
+use award\Resource\Cycle;
 use award\Resource\Nomination;
 use award\Resource\Participant;
 
 class NominationView extends AbstractView
 {
+
+    public static function adminView(Nomination $nomination)
+    {
+        $template = NominationFactory::getAssociatedResources($nomination);
+        extract($template);
+        $template['nomination'] = $nomination;
+        $template['awardTitle'] = self::getFullAwardTitle($award, $cycle);
+        if ($award->getReferencesRequired()) {
+            $template['referenceSummary'] = self::scriptView('ReferenceSummary', ['nominationId' => $nomination->id]);
+        } else {
+            $template['referenceSummary'] = false;
+        }
+
+        return self::getTemplate('Admin/NominationView', $template);
+    }
 
     public static function cannotNominateParticipant()
     {
@@ -127,13 +142,24 @@ class NominationView extends AbstractView
     }
 
     /**
-     * #TODO
-     * @return type
+     * Gives participants a message that only certain accounts can nominate.
+     */
+    public static function onlyTrusted()
+    {
+        return self::getTemplate('Participant/OnlyTrusted');
+    }
+
+    /**
+     * A full view of all the nominations submitted by the participant. Unlike the
+     * dashboard view which only contains nomination needing attention.
+     * @return string
      */
     public static function participantView()
     {
-        $menu = self::participantMenu('nominations');
-        return $menu . '<p>List of all people participant has nominated.</p>';
+        $participant = ParticipantFactory::getCurrentParticipant();
+        $tpl['now'] = time();
+        $tpl['nominations'] = NominationFactory::listing(['nominatorId' => $participant->id, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
+        return self::getTemplate('Participant/NominationList', $tpl);
     }
 
     public static function reasonForm(Award $award, Cycle $cycle, Nomination $nomination, Participant $nominee)
@@ -161,17 +187,21 @@ class NominationView extends AbstractView
             return ReferenceView::referencesNotRequired();
         }
         $values['referencesRequired'] = $referencesRequired;
-        $values['chooseReference'] = self::chooseReferenceScript($cycle, $nomination->id, $referencesRequired);
+        $values['chooseReference'] = self::chooseReferenceScript($award, $cycle, $nomination->id, $referencesRequired);
 
         return self::getTemplate('Participant/SelectReferences', $values);
     }
 
     /**
-     * Gives participants a message that only certain accounts can nominate.
+     * An admin menu of a cycle's current nominations.
+     * @param int $cycleId
      */
-    public static function onlyTrusted()
+    public static function summaryByCycle(int $cycleId)
     {
-        return self::getTemplate('Participant/OnlyTrusted');
+        $nominationList = NominationFactory::listing(['cycleId' => $cycleId,
+                'includeNominated' => true, 'includeNominator' => true]);
+        $values['nominations'] = $nominationList;
+        return self::getTemplate('Admin/NominationSummary', $values);
     }
 
     /**
@@ -180,52 +210,37 @@ class NominationView extends AbstractView
      * @param Nomination $nomination The current nomination object.
      * @return string
      */
-    public static function view(Participant $nominator, Nomination $nomination)
+    public static function view(Nomination $nomination)
     {
-        $participant = ParticipantFactory::build($nomination->nominatedId);
+        $nominator = ParticipantFactory::build($nomination->nominatedId);
         $award = AwardFactory::build($nomination->awardId);
         $cycle = CycleFactory::build($nomination->cycleId);
         $tpl['approvalRequired'] = (bool) $award->approvalRequired;
         $tpl['reasonRequired'] = (bool) $award->nominationReasonRequired;
-        $tpl['reasonComplete'] = (bool) $nomination->reasonComplete;
         $tpl['referencesRequired'] = $award->referencesRequired;
+
+        $tpl['nominationId'] = $nomination->id;
+        $tpl['reasonComplete'] = (bool) $nomination->reasonComplete;
         $tpl['referencesSelected'] = (bool) $nomination->referencesSelected;
         $tpl['nominationComplete'] = (bool) $nomination->completed;
-        $tpl['firstName'] = $participant->firstName;
-        $tpl['lastName'] = $participant->lastName;
-        $tpl['awardTitle'] = self::getFullAwardTitle($award, $cycle);
-        $tpl['nominationId'] = $nomination->id;
+        $tpl['referencesComplete'] = (bool) $nomination->referencesComplete;
 
-        $tpl['canComplete'] = NominationFactory::canComplete($award, $nomination);
+        $tpl['firstName'] = $nominator->firstName;
+        $tpl['lastName'] = $nominator->lastName;
+        $tpl['awardTitle'] = self::getFullAwardTitle($award, $cycle);
+
+        $tpl['canComplete'] = NominationFactory::canComplete($nomination);
 
         return self::getTemplate('Participant/NominationStatus', $tpl);
     }
 
-    private static function chooseReferenceScript(Cycle $cycle, int $nominationId, int $referencesRequired)
+    private static function chooseReferenceScript(Award $award, Cycle $cycle, int $nominationId, int $referencesRequired)
     {
-
-        $lastReminder = CycleLogFactory::getLastReferenceRemind($cycle->id);
-        $now = time();
-        $sendReason = null;
-        if ($lastReminder === false) {
-            $canSend = true;
-        } else {
-            $stamped = strtotime($lastReminder['stamped']);
-
-            if ($stamped + (AWARD_JUDGE_REMINDER_GRACE * 86400) < $now) {
-                $canSend = true;
-            } else {
-                $canSend = false;
-                $sendReason = 'too_soon';
-            }
-        }
-
-        $js['canSend'] = $canSend;
-        $js['sendReason'] = $sendReason;
-        $js['lastSent'] = $lastReminder === false ? 'Never' : $lastReminder['stamped'];
         $js['cycleId'] = $cycle->id;
         $js['nominationId'] = $nominationId;
+        $js['reminderGrace'] = AWARD_REFERENCE_REMINDER_GRACE;
         $js['referencesRequired'] = $referencesRequired;
+        $js['referenceReasonRequired'] = $award->getReferenceReasonRequired();
         return self::scriptView('ChooseReference', $js);
     }
 
