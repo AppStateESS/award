@@ -96,7 +96,8 @@ class Nomination extends AbstractController
         }
         $nomination = NominationFactory::build($this->id);
         $nominator = ParticipantFactory::getCurrentParticipant();
-        if ($nominator->getId() !== $nomination->getNominatorId()) {
+
+        if (!NominationFactory::nominationAllowed($nominator, $nomination)) {
             throw new ParticipantPrivilegeMissing();
         }
 
