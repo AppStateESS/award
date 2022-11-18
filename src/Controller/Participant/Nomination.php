@@ -18,22 +18,23 @@ use award\AbstractClass\AbstractController;
 use award\View\NominationView;
 use award\View\ParticipantView;
 use award\Exception\ResourceNotFound;
-use award\Factory\ParticipantFactory;
-use award\Factory\InvitationFactory;
-use award\Factory\EmailFactory;
+use award\Exception\ParticipantPrivilegeMissing;
 use award\Factory\AwardFactory;
+use award\Factory\DocumentFactory;
 use award\Factory\CycleFactory;
+use award\Factory\EmailFactory;
+use award\Factory\InvitationFactory;
 use award\Factory\NominationFactory;
+use award\Factory\ParticipantFactory;
 use award\Resource\Cycle;
 use award\Resource\Participant;
 
 class Nomination extends AbstractController
 {
 
-    // TODO finish
     protected function listHtml()
     {
-        return NominationView::participantView();
+        return ParticipantView::participantMenu('nomination') . NominationView::participantView();
     }
 
     /**
@@ -82,14 +83,23 @@ class Nomination extends AbstractController
         }
     }
 
+    /**
+     * Form for the nominator to enter the reason for the nomination
+     * @param Request $request
+     * @return type
+     * @throws ParticipantPrivilegeMissing
+     */
     protected function reasonHtml(Request $request)
     {
         if (!ParticipantFactory::currentIsTrusted()) {
             return NominationView::onlyTrusted();
         }
-        $nominator = ParticipantFactory::getCurrentParticipant();
-
         $nomination = NominationFactory::build($this->id);
+        $nominator = ParticipantFactory::getCurrentParticipant();
+        if ($nominator->getId() !== $nomination->getNominatorId()) {
+            throw new ParticipantPrivilegeMissing();
+        }
+
         $award = AwardFactory::build($nomination->awardId);
         $cycle = CycleFactory::build($nomination->cycleId);
         $nominee = ParticipantFactory::build($nomination->nominatedId);
@@ -131,13 +141,34 @@ class Nomination extends AbstractController
 
     protected function uploadPost(Request $request)
     {
-        if (empty($_FILES['nominationUpload'])) {
-            throw new \Exception('nomination document not found');
+        $nominationId = $request->pullPostInteger('nominationId');
+        $nomination = NominationFactory::build($nominationId);
+        $maxFileSize = DocumentFactory::maximumUploadSize();
+
+        if (empty($_FILES['document'])) {
+            return ['success' => false, 'error' => 'document file not found'];
         }
 
-        $document = DocumentFactory::build();
+        $fileArray = $_FILES['document'];
+        if ($fileArray['type'] !== 'application/pdf') {
+            return ['success' => false, 'error' => 'document is not a PDF'];
+        }
 
-        exit;
+        $sourceFile = $fileArray['tmp_name'];
+        $destinationDir = DocumentFactory::getFileDirectory();
+        $destinationFileName = DocumentFactory::nominationFileName();
+
+        if (!move_uploaded_file($sourceFile, $destinationDir . $destinationFileName)) {
+            return ['success' => false, 'error' => 'failed to save uploaded file'];
+        }
+
+        $nominated = ParticipantFactory::build($nomination->nominatedId);
+        $nominatedName = $nominated->firstName . ' ' . $nominated->lastName;
+
+        $document = DocumentFactory::build();
+        $document->setFilename($destinationFileName)->setNominationId($nomination->id)->
+            setTitle('$nominatedName-nomination-reason.pdf');
+        DocumentFactory::save($document);
     }
 
     /**
@@ -168,14 +199,13 @@ class Nomination extends AbstractController
         $nominated = ParticipantFactory::build($nomination->nominatedId);
 
         $cycle = CycleFactory::build($nomination->cycleId);
-        $award = AwardFactory::build($nomination->awardId);
         #TODO there needs to be a post-complete nomination view.
 
         $result = $this->validateHtml($cycle, $nominator, $nominated);
         if ($result !== true) {
             return $result;
         }
-        return NominationView::participantMenu('nomination') . NominationView::view($nominator, $nomination);
+        return NominationView::participantMenu('nomination') . NominationView::view($nomination);
     }
 
 }
