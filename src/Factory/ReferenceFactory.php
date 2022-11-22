@@ -50,7 +50,7 @@ class ReferenceFactory extends AbstractFactory
      * @param Reference $reference
      * @return Returns TRUE if participant recommended reference.
      */
-    public static function participantReference(Reference $reference, Participant $participant)
+    public static function isNominatorReference(Reference $reference, Participant $participant)
     {
         $nomination = NominationFactory::build($reference->nominationId);
         return $nomination->getNominatorId() === $participant->getId();
