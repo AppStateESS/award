@@ -79,10 +79,10 @@ class EmailFactory
         return self::send($email);
     }
 
-    public static function participantReferenceReminder(\award\Resource\Reference $reference, Participant $nominator)
+    public static function referenceReminder(Reference $reference)
     {
         $referenceParticipant = ParticipantFactory::build($reference->participantId);
-        $content = EmailView::referenceReminder($reference, $referenceParticipant);
+        $content = EmailView::referenceReminder($reference);
         $email = self::getEmail();
         $email->to($referenceParticipant->getEmail())->html($content)->subject('Reminder: please complete your award reference');
         self::send($email);
@@ -91,6 +91,20 @@ class EmailFactory
     public static function referenceConfirmed(Award $award, Cycle $cycle, Participant $participant)
     {
 
+    }
+
+    public static function remindJudgeInvitation(Invitation $invitation)
+    {
+
+    }
+
+    public static function remindReferenceInvitation(Invitation $invitation)
+    {
+        $invited = ParticipantFactory::build($invitation->invitedId);
+        $content = EmailView::referenceInviteReminder($invitation);
+        $email = self::getEmail();
+        $email->to($invited->getEmail())->html($content)->subject('Reminder: please respond to your reference request');
+        self::send($email);
     }
 
     public static function remindJudges($cycleId, $content)
