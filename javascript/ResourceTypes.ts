@@ -58,6 +58,7 @@ export interface InvitationResource extends Nominated {
   cycleId: number
   email: string
   invitedFirstName?: string
+  invitedEmail?: string
   invitedId: number
   invitedLastName?: string
   inviteType: number
@@ -111,7 +112,7 @@ export interface ReferenceResource
   awardId: number
   cycleId: number
   lastReminder: string
-  reasonDocument: number | null
+  reasonDocument: number
   reasonText: string
   nominationId: number
   participantId: number
@@ -130,4 +131,24 @@ export interface VoteTypes {
   description: string
   className: string
   allowParticipantVoting: boolean | number
+}
+
+/**
+ * Mirror of config/system.php with 'AWARD_' removed.
+ */
+export const AwardDefines = {
+  INVITATION_WAITING: 0,
+  INVITATION_CONFIRMED: 1,
+  INVITATION_REFUSED: 2,
+  INVITATION_NO_CONTACT: 3,
+  INVITE_TYPE_NEW: 0,
+  INVITE_TYPE_JUDGE: 1,
+  INVITE_TYPE_REFERENCE: 2,
+  INVITE_TYPE_NOMINATED: 3,
+  HASH_DEFAULT_TIMER_HOURS: 2,
+  JUDGE_REMINDER_GRACE: 2,
+  JUDGE_INVITE_REMINDER_GRACE: 2,
+  NOMINATED_INVITE_REMINDER_GRACE: 2,
+  REFERENCE_REMINDER_GRACE: 2,
+  REFERENCE_INVITE_REMINDER_GRACE: 2,
 }
