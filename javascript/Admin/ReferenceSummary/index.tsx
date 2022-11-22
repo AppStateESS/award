@@ -3,7 +3,12 @@ import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
 import {ReferenceResource} from '../../ResourceTypes'
 import Loading from '../../Share/Loading'
-import {getNominationReferences} from '../../Share/ReferenceXHR'
+import {reasonCompleted} from '../../Share/Reference'
+import {referenceReminderAllowed} from '../../Share/Reminder'
+import {
+  getNominationReferences,
+  sendReferenceReasonReminder,
+} from '../../Share/ReferenceXHR'
 import Reason from './Reason'
 
 declare const nominationId: number
@@ -25,6 +30,18 @@ const ReferenceSummary = () => {
       setLoading(false)
     })
   }
+
+  const remind = (key: number) => {
+    const reference = referenceList[key]
+    sendReferenceReasonReminder(reference.id, 'Admin').then((response) => {
+      if (response.data.success) {
+        reference.lastReminder = 'today'
+        referenceList[key] = reference
+        setReferenceList([...referenceList])
+      }
+    })
+  }
+
   if (loading) {
     return <Loading things="references" />
   } else if (referenceList.length === 0) {
@@ -43,7 +60,30 @@ const ReferenceSummary = () => {
             </tr>
           </thead>
           <tbody>
-            {referenceList.map((value) => {
+            {referenceList.map((value, key) => {
+              let remindButton
+              if (!reasonCompleted(value)) {
+                if (referenceReminderAllowed(value.lastReminder)) {
+                  remindButton = (
+                    <span
+                      className="badge badge-primary"
+                      style={{cursor: 'pointer'}}
+                      onClick={() => {
+                        remind(key)
+                      }}>
+                      Send reminder
+                    </span>
+                  )
+                } else {
+                  remindButton = (
+                    <span
+                      title={`Last sent ${value.lastReminder}`}
+                      className="badge badge-info text-white">
+                      Too soon
+                    </span>
+                  )
+                }
+              }
               return (
                 <tr key={`ref-${value.id}`}>
                   <td>
@@ -60,7 +100,7 @@ const ReferenceSummary = () => {
                       showReasonText={() => showReasonText(value.reasonText)}
                     />
                   </td>
-                  <td>{value.lastReminder}</td>
+                  <td>{remindButton}</td>
                 </tr>
               )
             })}
