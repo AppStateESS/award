@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace award\Controller\Admin;
 
+use award\Factory\EmailFactory;
 use award\Factory\ReferenceFactory;
 use award\AbstractClass\AbstractController;
 use Canopy\Request;
@@ -27,6 +28,18 @@ class Reference extends AbstractController
                 'includeParticipant' => true,
                 'includeNominated' => true,
                 'includeNominator' => true]);
+    }
+
+    /**
+     * Reminds a reference they need to complete their reference reason.
+     */
+    protected function remindJson()
+    {
+        $reference = ReferenceFactory::build($this->id);
+        EmailFactory::referenceReminder($reference);
+        $reference->stampLastReminder();
+        ReferenceFactory::save($reference);
+        return ['success' => true];
     }
 
 }
