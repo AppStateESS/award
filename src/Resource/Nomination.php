@@ -222,12 +222,6 @@ class Nomination extends AbstractResource
         return $this;
     }
 
-    public function setDocumentId(int $documentId): self
-    {
-        $this->documentId = $documentId;
-        return $this;
-    }
-
     public function setNominatorId(int $nominatorId): self
     {
         $this->nominatorId = $nominatorId;
