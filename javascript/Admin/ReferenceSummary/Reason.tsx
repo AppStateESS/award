@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {ReferenceResource} from '../../ResourceTypes'
 
@@ -14,7 +14,7 @@ const Reason = ({reference, showReasonText}: Props) => {
     reasonSupplied = true
     textLink = <a onClick={showReasonText}>Text</a>
   }
-  if (reference.reasonDocument !== null) {
+  if (reference.reasonDocument !== 0) {
     reasonSupplied = true
     documentLink = <a href="">Document</a>
   }
@@ -32,5 +32,5 @@ const Reason = ({reference, showReasonText}: Props) => {
   }
 }
 
-Reason.propTypes = {}
+Reason.propTypes = {reference: PropTypes.object, showReasonText: PropTypes.func}
 export default Reason
