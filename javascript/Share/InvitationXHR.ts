@@ -11,7 +11,7 @@ const acceptInvitation = async (invitationId: number) => {
 const getCycleInvitations = async (cycleId: number) => {
   return axios.get('award/Admin/Invitation', {
     headers,
-    params: {cycleId, includeInvited: true},
+    params: {cycleId, includeInvited: true, includeNominated: true},
   })
 }
 
@@ -20,6 +20,16 @@ const refuseInvitation = async (invitationId: number) => {
     method: 'patch',
     url: `award/Participant/Invitation/${invitationId}/refuse`,
     headers,
+  })
+}
+
+const sendInvitationReminder = async (invitationId: number, role: string) => {
+  if (role !== 'Admin' || role !== 'Participant') {
+    role = 'Admin'
+  }
+  const url = `award/${role}/Invitation/${invitationId}/remind`
+  return axios.get(url, {
+    headers: {'X-Requested-With': 'XMLHttpRequest'},
   })
 }
 
@@ -58,6 +68,7 @@ export {
   acceptInvitation,
   getCycleInvitations,
   refuseInvitation,
+  sendInvitationReminder,
   sendParticipantJudgeInvitation,
   sendParticipantReferenceInvitation,
 }
