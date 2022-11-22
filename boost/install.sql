@@ -185,7 +185,6 @@ CREATE TABLE award_reference (
     lastReminder DateTime,
     UNIQUE KEY nompart (nominationId, participantId),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
-    FOREIGN KEY(documentId) REFERENCES award_document(id),
     FOREIGN KEY(nominationId) REFERENCES award_nomination(id),
     FOREIGN KEY(participantId) REFERENCES award_participant(id)
 );
