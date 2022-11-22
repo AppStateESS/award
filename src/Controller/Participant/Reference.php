@@ -34,6 +34,17 @@ class Reference extends AbstractController
         return ReferenceFactory::listing($options);
     }
 
+    protected function reasonHtml()
+    {
+        $reference = ReferenceFactory::build($this->id);
+        $participant = ParticipantFactory::getCurrentParticipant();
+        if ($reference->participantId === $participant->id) {
+            return ReferenceView::reasonForm($reference, $participant);
+        } else {
+            throw new ParticipantPrivilegeMissing();
+        }
+    }
+
     protected function remindHtml(Request $request)
     {
         return ParticipantView::participantMenu('nomination') . '<p>Send reminder is incomplete.</p>';
@@ -43,12 +54,14 @@ class Reference extends AbstractController
     {
         $reference = ReferenceFactory::build($this->id);
         $participant = ParticipantFactory::getCurrentParticipant();
-        if (ReferenceFactory::participantReference($reference,
+        if (ReferenceFactory::isNominatorReference($reference,
                 $participant)) {
-            EmailFactory::participantReferenceReminder($reference, $participant);
+            EmailFactory::referenceReminder($reference, $participant);
         } else {
             throw new ParticipantPrivilegeMissing();
         }
+        $reference->stampLastReminder();
+        ReferenceFactory::save($reference);
         return ['success' => true];
     }
 
