@@ -27,28 +27,28 @@ class Reference extends AbstractResource
     /**
      * @var int
      */
-    private int $awardId;
+    private int $awardId = 0;
 
     /**
      * @var int
      */
-    private int $cycleId;
+    private int $cycleId = 0;
 
     /**
      * @var int
      */
-    private int $nominationId;
+    private int $nominationId = 0;
 
     /**
      * @var int
      */
-    private int $participantId;
+    private int $participantId = 0;
 
     /**
      * Document id of reference reason
      * @var int
      */
-    private ?int $reasonDocument;
+    private int $reasonDocument = 0;
 
     /**
      * Text of the reference's reason for approving the nomination.
