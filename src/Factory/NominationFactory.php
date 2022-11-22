@@ -25,9 +25,12 @@ use award\Resource\Nomination;
 use award\Resource\Participant;
 use Canopy\Request;
 use phpws2\Database;
+use award\Traits\AssociateTrait;
 
 class NominationFactory extends AbstractFactory
 {
+
+    use AssociateTrait;
 
     protected static string $table = 'award_nomination';
     protected static string $resourceClassName = 'award\Resource\Nomination';
@@ -46,16 +49,6 @@ class NominationFactory extends AbstractFactory
             setNominatorId($nominatorId);
         self::save($nomination);
         return $nomination;
-    }
-
-    public static function getAssociatedResources(Nomination $nomination)
-    {
-        $resources['nominated'] = ParticipantFactory::build($nomination->nominatedId);
-        $resources['nominator'] = ParticipantFactory::build($nomination->nominatorId);
-        $resources['award'] = AwardFactory::build($nomination->awardId);
-        $resources['cycle'] = CycleFactory::build($nomination->cycleId);
-
-        return $resources;
     }
 
     /**
