@@ -36,12 +36,13 @@ class Invitation extends AbstractController
 
     protected function listJson(Request $request)
     {
-
         $options['confirm'] = $request->pullGetInteger('confirm', true) ? $request->pullGetInteger('confirm') : null;
         $options['inviteType'] = $request->pullGetInteger('inviteType', true) ? $request->pullGetInteger('inviteType') : null;
         $options['awardId'] = (int) $request->pullGetInteger('awardId', true);
         $options['cycleId'] = (int) $request->pullGetInteger('cycleId', true);
         $options['includeInvited'] = $request->pullGetBoolean('includeInvited', true);
+        $options['includeNominated'] = $request->pullGetBoolean('includeNominated', true);
+        $options['includeNominator'] = $request->pullGetBoolean('includeNominator', true);
 
         return InvitationFactory::listing($options);
     }
@@ -78,7 +79,7 @@ class Invitation extends AbstractController
         return ['success' => true];
     }
 
-    public function post(Request $request)
+    protected function post(Request $request)
     {
         $email = $request->pullPostString('email');
         $type = $request->pullPostInteger('type');
@@ -95,6 +96,21 @@ class Invitation extends AbstractController
             case AWARD_INVITE_TYPE_NEW:
                 return self::newParticipant($email);
         }
+    }
+
+    protected function remindJson()
+    {
+        $invitation = InvitationFactory::build($this->id);
+        if ($invitation->isReference()) {
+            EmailFactory::remindReferenceInvitation($invitation);
+        } elseif ($invitation->isJudge) {
+            EmailFactory::remindJudgeInvitation($invitation);
+        } else {
+            throw new \Exception('wrong invite type for reminder email');
+        }
+        $invitation->stampLastReminder();
+        InvitationFactory::save($invitation);
+        return ['success' => true, 'last' => $invitation->getLastReminder()];
     }
 
     /**
