@@ -25,6 +25,8 @@ define('AWARD_DEFAULT_VOTE_TYPE', 'SingleVote');
  * The invitation status. A refuse always will prevent the person from
  * ever being sent an email. Changes to the settings below **must** be updated in
  * scripts as well.
+ *
+ * ResourceTypes.ts mirrors this
  */
 define('AWARD_INVITATION_WAITING', 0);
 define('AWARD_INVITATION_CONFIRMED', 1);
@@ -41,5 +43,6 @@ define('AWARD_HASH_DEFAULT_TIMER_HOURS', 2);
 // How many days between bulk reminders.
 define('AWARD_JUDGE_REMINDER_GRACE', 2);
 define('AWARD_JUDGE_INVITE_REMINDER_GRACE', 2);
+define('AWARD_NOMINATED_INVITE_REMINDER_GRACE', 2);
 define('AWARD_REFERENCE_REMINDER_GRACE', 2);
 define('AWARD_REFERENCE_INVITE_REMINDER_GRACE', 2);
