@@ -6,8 +6,11 @@ const getNominationReferences = (nominationId: number) => {
   return axios.get(url, {params: {nominationId}, headers})
 }
 
-const sendReferenceReasonReminder = (referenceId: number) => {
-  const url = `./award/Participant/Reference/${referenceId}/remind`
+const sendReferenceReasonReminder = (referenceId: number, role = 'Admin') => {
+  if (role !== 'Admin' && role !== 'Participant') {
+    role = 'Admin'
+  }
+  const url = `./award/${role}/Reference/${referenceId}/remind`
 
   return axios.get(url, {
     headers,
