@@ -20,8 +20,10 @@ use award\Resource\Invitation;
 use award\Resource\Cycle;
 use award\Resource\Award;
 use award\Resource\Nomination;
-use award\Factory\CycleFactory;
+use award\Resource\Reference;
 use award\Factory\AwardFactory;
+use award\Factory\CycleFactory;
+use award\Factory\NominationFactory;
 use award\Factory\ParticipantFactory;
 
 /**
@@ -29,6 +31,21 @@ use award\Factory\ParticipantFactory;
  */
 class EmailView extends AbstractView
 {
+
+    /**
+     * Content for an email reminding a reference to enter their reason information.
+     * @param \award\Resource\Reference $reference
+     */
+    public static function referenceReminder(Reference $reference)
+    {
+        $values = self::defaultEmailValues();
+        $nomination = NominationFactory::build($reference->nominationId);
+        extract(NominationFactory::getAssociated($nomination));
+        $values['awardTitle'] = self::getFullAwardTitle($award, $cycle);
+        $values['nominatedName'] = $nominated->getFullName();
+        $values['deadline'] = $cycle->formatEndDate();
+        return self::getTemplate('Email/ReferenceReminder', $values);
+    }
 
     public static function existParticipantWarning(Participant $participant)
     {
@@ -80,15 +97,10 @@ class EmailView extends AbstractView
         return self::getTemplate('Participant/Email/ReferenceInvitation', $values);
     }
 
-    /**
-     * Content for an email reminding a reference to enter their reason information.
-     * @param \award\Resource\Reference $reference
-     * @param Participant $participant
-     */
-    public static function referenceReminder(\award\Resource\Reference $reference, Participant $participant)
+    public static function referenceInviteReminder(Invitation $invitation)
     {
-        $values = ['firstName' => $participant->getFirstName()];
-        return self::getTemplate('Participant/Email/ReferenceReminder', $values);
+        $values = array_merge(self::getInvitationObjects($invitation), self::defaultEmailValues());
+        return self::getTemplate('Participant/Email/ReferenceInvitation', $values);
     }
 
     public static function sendActivationReminder($participant, $hash)
