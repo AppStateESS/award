@@ -18,8 +18,8 @@
     ?>
     <tr>
       <td><a href="./award/Admin/Nomination/<?=$id?>">View</a></td>
-      <td><?=$nominatedFirstName?> <?=$nominatedLastName?></td>
-      <td><?=$nominatorFirstName?> <?=$nominatorLastName?></td>
+      <td><?=$nominatedFirstName?> <?=$nominatedLastName?> <a href="mailto:<?=$nominatedEmail?>"><sup><i class="fas fa-envelope"></i></sup></a></td>
+      <td><?=$nominatorFirstName?> <?=$nominatorLastName?> <a href="mailto:<?=$nominatorEmail?>"><sup><i class="fas fa-envelope"></i></sup></a></td>
       <td><?php if ($reasonComplete && $referencesComplete):?>
         <span class="badge badge-success">Complete</span>
         <?php else: ?>
