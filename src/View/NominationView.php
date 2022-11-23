@@ -30,7 +30,7 @@ class NominationView extends AbstractView
 
     public static function adminView(Nomination $nomination)
     {
-        $template = NominationFactory::getAssociatedResources($nomination);
+        $template = NominationFactory::getAssociated($nomination);
         extract($template);
         $template['nomination'] = $nomination;
         $template['awardTitle'] = self::getFullAwardTitle($award, $cycle);
