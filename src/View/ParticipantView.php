@@ -43,11 +43,6 @@ class ParticipantView extends AbstractView
         return self::getTemplate('User/AuthorizeFailed');
     }
 
-    public static function inaccessible()
-    {
-        return self::centerCard('Participant not accessible', self::getTemplate('Error/Inaccessible'), 'danger');
-    }
-
     /**
      * Displays the sign up form for new participant accounts.
      *
@@ -145,6 +140,11 @@ class ParticipantView extends AbstractView
     public static function forgotPasswordPost($email)
     {
         return self::getTemplate('User/ForgotPost', ['email' => $email]);
+    }
+
+    public static function inaccessible()
+    {
+        return self::centerCard('Participant not accessible', self::getTemplate('Error/Inaccessible'), 'danger');
     }
 
     /**
