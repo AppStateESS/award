@@ -3,6 +3,7 @@ import React, {useState, useEffect} from 'react'
 import {createRoot} from 'react-dom/client'
 import {ReferenceResource} from '../../ResourceTypes'
 import Loading from '../../Share/Loading'
+import Modal from '../../Share/Modal'
 import {reasonCompleted} from '../../Share/Reference'
 import {referenceReminderAllowed} from '../../Share/Reminder'
 import {
@@ -10,6 +11,7 @@ import {
   sendReferenceReasonReminder,
 } from '../../Share/ReferenceXHR'
 import Reason from './Reason'
+import ReferenceText from './ReferenceText'
 
 declare const nominationId: number
 
@@ -19,9 +21,12 @@ const ReferenceSummary = () => {
   useEffect(() => {
     load()
   }, [])
+  const [showText, setShowText] = useState(false)
+  const [referenceText, setReferenceText] = useState('')
 
   const showReasonText = (reasonText: string) => {
-    console.log(reasonText)
+    setShowText(true)
+    setReferenceText(reasonText)
   }
 
   const load = () => {
@@ -50,6 +55,15 @@ const ReferenceSummary = () => {
     return (
       <div>
         <h3>References</h3>
+        <Modal
+          title="Text endorsement"
+          show={showText}
+          size="lg"
+          close={() => {
+            setShowText(false)
+          }}>
+          <ReferenceText text={referenceText} />
+        </Modal>
         <table className="table table-striped">
           <thead>
             <tr>
