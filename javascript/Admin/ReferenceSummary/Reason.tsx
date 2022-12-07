@@ -12,7 +12,11 @@ const Reason = ({reference, showReasonText}: Props) => {
 
   if (reference.reasonText.length > 0) {
     reasonSupplied = true
-    textLink = <a onClick={showReasonText}>Text</a>
+    textLink = (
+      <button className="btn btn-sm btn-link" onClick={showReasonText}>
+        Text
+      </button>
+    )
   }
   if (reference.reasonDocument !== 0) {
     reasonSupplied = true
