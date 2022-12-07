@@ -108,9 +108,23 @@ CREATE TABLE award_nomination (
 
 CREATE TABLE award_document (
     id int PRIMARY KEY AUTO_INCREMENT,
+    created DateTime,
     filename varchar(255),
     nominationId int,
-    title varchar(255),
+    referenceId int default 0,
+    title varchar(255)
+);
+
+CREATE TABLE award_reason (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    complete bool default 0,
+    cycleId int default 0,
+    documentId int default 0,
+    nominationId int default 0,
+    reasonText text default '',
+    referenceId int default 0,
+    reasonType tinyint default 0,
+    FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(nominationId) REFERENCES award_nomination(id)
 );
 
