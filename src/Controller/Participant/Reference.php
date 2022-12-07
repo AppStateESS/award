@@ -17,9 +17,9 @@ use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\ReferenceView;
 use award\View\ParticipantView;
+use award\Factory\EmailFactory;
 use award\Factory\ParticipantFactory;
 use award\Factory\ReferenceFactory;
-use award\Factory\EmailFactory;
 use award\Factory\Authenticate;
 use award\Exception\ParticipantPrivilegeMissing;
 
@@ -29,7 +29,10 @@ class Reference extends AbstractController
     protected function listJson(Request $request)
     {
         $options = [];
-        $options['nominationId'] = $request->pullGetInteger('nominationId');
+        $options['nominationId'] = $nominationId = $request->pullGetInteger('nominationId');
+        if (ParticipantFactory::currentOwnsNomination($nominationId)) {
+            throw new ParticipantPrivilegeMissing;
+        }
         $options['includeParticipant'] = true;
         return ReferenceFactory::listing($options);
     }
@@ -38,11 +41,13 @@ class Reference extends AbstractController
     {
         $reference = ReferenceFactory::build($this->id);
         $participant = ParticipantFactory::getCurrentParticipant();
-        if ($reference->participantId === $participant->id) {
-            return ReferenceView::reasonForm($reference, $participant);
-        } else {
+        if (!ParticipantFactory::currentIsReference($reference->id)) {
             throw new ParticipantPrivilegeMissing();
         }
+        if (!ReferenceFactory::canUpdate($reference)) {
+            return ReferenceView::passedUpdate();
+        }
+        return ParticipantView::participantMenu('dashboard') . ReferenceView::reasonForm($reference, $participant);
     }
 
     protected function remindHtml(Request $request)
@@ -54,15 +59,40 @@ class Reference extends AbstractController
     {
         $reference = ReferenceFactory::build($this->id);
         $participant = ParticipantFactory::getCurrentParticipant();
-        if (ReferenceFactory::isNominatorReference($reference,
-                $participant)) {
-            EmailFactory::referenceReminder($reference, $participant);
-        } else {
+
+        if (!ParticipantFactory::currentOwnsReference($reference->id)) {
             throw new ParticipantPrivilegeMissing();
         }
+
+        EmailFactory::referenceReminder($reference, $participant);
         $reference->stampLastReminder();
         ReferenceFactory::save($reference);
         return ['success' => true];
+    }
+
+    protected function textPut(Request $request)
+    {
+        $reference = ReferenceFactory::build($this->id);
+        if (!ParticipantFactory::currentOwnsReference($reference->id)) {
+            throw new ParticipantPrivilegeMissing();
+        }
+        $reference->setReasonText($request->pullPutString('reasonText'));
+        ReferenceFactory::save($reference);
+        return ['success' => true];
+    }
+
+    protected function uploadPost(Request $request)
+    {
+        $reference = ReferenceFactory::build($request->pullPostInteger('referenceId'));
+
+        if (!ParticipantFactory::currentIsReference($reference->id)) {
+            throw new ParticipantPrivilegeMissing();
+        }
+        if (empty($_FILES['document'])) {
+            return ['success' => false, 'error' => 'document file not found'];
+        }
+        $fileArray = $_FILES['document'];
+        return ReferenceFactory::saveDocument($reference, $fileArray);
     }
 
 }
