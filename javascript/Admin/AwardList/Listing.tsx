@@ -18,10 +18,9 @@ const Listing = ({awardList, reload, setAwardList}: ListingProps) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [currentAward, setCurrentAward] = useState<AwardResource>()
   const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [current, setCurrent] = useState('option')
 
-  const select = (award: AwardResource, key: number) => {
-    const [current, setCurrent] = useState('option')
-
+  const selectAdmin = (award: AwardResource, key: number) => {
     const updateActive = () => {
       const active = !award.active
       award.active = active
@@ -120,7 +119,7 @@ const Listing = ({awardList, reload, setAwardList}: ListingProps) => {
           {awardList.map((value: AwardResource, key: number) => {
             return (
               <tr key={`award-${value.id}`}>
-                <td>{select(value, key)}</td>
+                <td>{selectAdmin(value, key)}</td>
                 <td>{value.title}</td>
                 <td>{value.cycleTerm}</td>
                 <td>
