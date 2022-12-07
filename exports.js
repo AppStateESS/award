@@ -31,6 +31,8 @@ const participantScripts = {
   NominationReason: exports.APP_DIR + '/Participant/NominationReason/index.tsx',
   ParticipantInvitations:
     exports.APP_DIR + '/Participant/ParticipantInvitations/index.tsx',
+  ReferenceReasonForm:
+    exports.APP_DIR + '/Participant/ReferenceReasonForm/index.tsx',
 }
 
 exports.entry = {...adminScripts, ...userScripts, ...participantScripts}
