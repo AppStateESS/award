@@ -122,7 +122,11 @@ const ParticipantInvitations = () => {
         </table>
       )
     } else {
-      return <span>No invitations pending</span>
+      return (
+        <span>
+          <em>No invitations pending</em>
+        </span>
+      )
     }
   }
 
