@@ -11,5 +11,19 @@ const nominateDocument = async (nominationId: number, reasonFile: File) => {
     headers,
   })
 }
+const referenceDocument = async (referenceId: number, reasonFile: File) => {
+  const formData = new FormData()
 
-export {nominateDocument}
+  formData.append('document', reasonFile)
+  formData.append('referenceId', referenceId.toString())
+
+  return axios.post(`./award/Participant/Reference/upload`, formData, {
+    headers,
+  })
+}
+
+const deleteParticipantDocument = async (documentId: number) => {
+  return axios.delete(`./award/Participant/Document/${documentId}`, {headers})
+}
+
+export {deleteParticipantDocument, nominateDocument, referenceDocument}
