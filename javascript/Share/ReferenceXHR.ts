@@ -17,4 +17,11 @@ const sendReferenceReasonReminder = (referenceId: number, role = 'Admin') => {
   })
 }
 
-export {getNominationReferences, sendReferenceReasonReminder}
+const referenceText = async (referenceId: number, reasonText: string) => {
+  const data = {referenceId, reasonText}
+  return axios.put(`./award/Participant/Reference/${referenceId}/text`, data, {
+    headers,
+  })
+}
+
+export {getNominationReferences, referenceText, sendReferenceReasonReminder}
