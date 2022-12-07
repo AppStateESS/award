@@ -20,14 +20,34 @@ use award\Resource\Nomination;
 use award\Resource\Participant;
 use phpws2\Database;
 use award\Traits\ReminderFactoryTrait;
+use award\Traits\AssociateTrait;
 
 class ReferenceFactory extends AbstractFactory
 {
 
     use ReminderFactoryTrait;
+    use AssociateTrait;
 
     protected static string $resourceClassName = 'award\Resource\Reference';
     protected static string $table = 'award_reference';
+
+    public static function canUpdate(Reference $reference)
+    {
+        return CycleFactory::build($reference->cycleId)->getEndDate() > time();
+    }
+
+    /**
+     * Sets the reason documentId to zero and resets the reason complete
+     * status based on the reason text.
+     * @param int $referenceId
+     */
+    public static function clearDocument(int $referenceId)
+    {
+        $reference = self::build($referenceId);
+        $reference->setReasonDocument(0);
+        $reference->setReasonComplete(strlen($nomination->getReasonText()) > 0);
+        self::save($reference);
+    }
 
     /**
      * Creates a new reference.
@@ -46,17 +66,6 @@ class ReferenceFactory extends AbstractFactory
     }
 
     /**
-     *
-     * @param Reference $reference
-     * @return Returns TRUE if participant recommended reference.
-     */
-    public static function isNominatorReference(Reference $reference, Participant $participant)
-    {
-        $nomination = NominationFactory::build($reference->nominationId);
-        return $nomination->getNominatorId() === $participant->getId();
-    }
-
-    /**
      * Options
      * - cycleId            (integer) Return only references associated with this cycle.
      * - nominationId       (integer) Return only references associated with this nomination.
@@ -65,6 +74,7 @@ class ReferenceFactory extends AbstractFactory
      * - includeNominator   (boolean) Add nominator email and name
      * - includeNominated   (boolean) Add nominated email and name
      * - includeAward       (boolean) Add the award title and reference requirements to the row
+     * - includeCycleEnd    (boolean) Add the cycle end date.
      * - count              (boolean) Returns the number of references.
      *
      * @param array $options
@@ -107,6 +117,12 @@ class ReferenceFactory extends AbstractFactory
                 $awardTable->addField('title', 'awardTitle');
                 $awardTable->addField('referenceReasonRequired');
                 $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
+            }
+
+            if (!empty($options['includeCycleEnd'])) {
+                $cycleTable = $db->addTable('award_cycle');
+                $cycleTable->addField('endDate');
+                $db->joinResources($table, $cycleTable, new Database\Conditional($db, $table->getField('cycleId'), $cycleTable->getField('id'), '='));
             }
         }
 
@@ -153,6 +169,41 @@ class ReferenceFactory extends AbstractFactory
         }
         // references passed the reason check, return true
         return true;
+    }
+
+    public static function saveDocument(Reference $reference, array $fileArray)
+    {
+        if ($fileArray['type'] !== 'application/pdf') {
+            return ['success' => false, 'error' => 'document is not a PDF'];
+        }
+
+        if ($fileArray['size'] > DocumentFactory::maximumUploadSize()) {
+            return ['success' => false, 'error' => 'uploaded file is too large'];
+        }
+        $sourceFile = $fileArray['tmp_name'];
+        $destinationDir = DocumentFactory::getFileDirectory();
+        $destinationFileName = DocumentFactory::referenceFileName($reference->id);
+
+        if (!move_uploaded_file($sourceFile, $destinationDir . $destinationFileName)) {
+            return ['success' => false, 'error' => 'failed to save uploaded file'];
+        }
+
+        $nomination = NominationFactory::build($reference->nominationId);
+        $referenceParticipant = ParticipantFactory::build($reference->participantId);
+        $nominated = ParticipantFactory::build($nomination->getNominatedId());
+
+        $referenceName = DocumentFactory::referenceDocumentTitle($referenceParticipant, $nominated);
+
+        $document = DocumentFactory::build();
+        $document->setFilename($destinationFileName)->setReferenceId($reference->getId())->setTitle($referenceName);
+
+        // deletes the previous document
+        DocumentFactory::deleteByReferenceId($reference->getId());
+
+        DocumentFactory::save($document);
+        $reference->setReasonDocument($document->id);
+        self::save($reference);
+        return ['success' => true, 'documentId' => $document->id, 'filename' => $document->title];
     }
 
 }
