@@ -1,0 +1,6 @@
+.endorsement-text {
+  border: 1px solid black;
+  padding: 1em;
+  overflow: auto;
+  max-height: 200px;
+}
