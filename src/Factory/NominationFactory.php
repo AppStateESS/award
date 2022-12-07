@@ -40,6 +40,19 @@ class NominationFactory extends AbstractFactory
         return $nomination->reasonComplete && $nomination->referencesComplete;
     }
 
+    /**
+     * Sets the reason documentId to zero and resets the reason complete
+     * status based on the reason text.
+     * @param int $nominationId
+     */
+    public static function clearDocument(int $nominationId)
+    {
+        $nomination = self::build($nominationId);
+        $nomination->setReasonDocument(0);
+        $nomination->setReasonComplete(strlen($nomination->getReasonText()) > 0);
+        self::save($nomination);
+    }
+
     public static function create(int $nominatorId, int $nominatedId, int $awardId, int $cycleId)
     {
         $nomination = self::build();
@@ -149,7 +162,6 @@ class NominationFactory extends AbstractFactory
 
     public static function nominationAllowed(Participant $nominator, Nomination $nomination)
     {
-        //$participant = ParticipantFactory::build($nomination->nominatedId);
         if (ParticipantFactory::currentIsJudge($nomination->cycleId)) {
             throw new CannotNominateJudge;
         }
