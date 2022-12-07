@@ -17,12 +17,97 @@ use award\AbstractClass\AbstractFactory;
 use award\Resource\Document;
 use phpws2\Database;
 use Canopy\Request;
+use award\Resource\Participant;
 
 class DocumentFactory extends AbstractFactory
 {
 
     protected static string $table = 'award_document';
     protected static string $resourceClassName = 'award\Resource\Document';
+
+    public static function delete(Document $document)
+    {
+        $referenceId = $document->getReferenceId();
+        $nominationId = $document->getNominationId();
+        if ($referenceId) {
+            ReferenceFactory::clearDocument($referenceId);
+        } elseif ($nominationId) {
+            NominationFactory::clearDocument($nominationId);
+        } else {
+            throw \Exception('unassociated document');
+        }
+        $path = self::getFileDirectory() . $document->getFilename();
+        unlink($path);
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('id', $document->getId());
+        return $db->delete();
+    }
+
+    public static function deleteByNominationId(int $nominationId)
+    {
+
+        $document = self::getByNominationId($nominationId);
+        if ($document === false) {
+            throw new MissingDocument();
+        }
+        self::delete($document);
+    }
+
+    public static function deleteByReferenceId(int $referenceId)
+    {
+        $document = self::getByReferenceId($referenceId);
+        if ($document === false) {
+            throw new MissingDocument();
+        }
+        self::delete($document);
+    }
+
+    public static function download(Document $document)
+    {
+        $fullPath = self::getFileDirectory() . $document->getFilename();
+        if (preg_match('/\.pdf$/', $document->getTitle())) {
+            header('Content-Type: application/pdf');
+        } else {
+            header('Content-Type: application/octet-stream');
+        }
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-disposition: download; filename=\"" . $document->getTitle() . "\"");
+        readfile($fullPath);
+        exit;
+    }
+
+    public static function getByNominationId(int $nominationId)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('nominationId', $nominationId);
+        $row = $db->selectOneRow();
+        if (empty($row)) {
+            return false;
+        } else {
+            $document = self::build();
+            $document->setValues($row);
+            return $document;
+        }
+    }
+
+    public static function getByReferenceId(int $referenceId)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('referenceId', $referenceId);
+        $row = $db->selectOneRow();
+        if (empty($row)) {
+            return false;
+        } else {
+            $document = self::build();
+            $document->setValues($row);
+            return $document;
+        }
+    }
+
+    public static function getFileDirectory()
+    {
+        return PHPWS_HOME_DIR . 'files/award/';
+    }
 
     /**
      * This function is a copy of of a function from Stackoverflow
@@ -47,24 +132,21 @@ class DocumentFactory extends AbstractFactory
         return $max_size;
     }
 
-    public static function copyUploadFile($sourceFile)
+    public static function nominationFileName($nominationId)
     {
-
+        return "nomination_{$nominationId}.pdf";
     }
 
-    public function getFileDirectory()
+    public static function referenceDocumentTitle(Participant $reference, Participant $nominated)
     {
-        return PHPWS_HOME_DIR . 'files/award/';
+        $referenceName = self::participantNameToFileName($reference);
+        $nominatedName = self::participantNameToFileName($nominated);
+        return "{$referenceName}-reference-for-{$nominatedName}.pdf";
     }
 
-    public static function nominationFileName()
+    public static function referenceFileName($referenceId)
     {
-        return 'nomination-' . microtime() . '.pdf';
-    }
-
-    public static function referenceFileName()
-    {
-        return 'reference-' . microtime() . '.pdf';
+        return "reference_{$referenceId}.pdf";
     }
 
     /**
@@ -81,6 +163,11 @@ class DocumentFactory extends AbstractFactory
         } else {
             return round($size);
         }
+    }
+
+    private static function participantNameToFileName(Participant $participant)
+    {
+        return preg_replace('/\W/', '_', $participant->firstName . ' ' . $participant->lastName);
     }
 
 }
