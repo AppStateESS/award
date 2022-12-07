@@ -61,7 +61,7 @@ class Cycle extends AbstractController
     protected function judgeReminderSentHtml()
     {
         $cycle = CycleFactory::build($this->id);
-        return CycleView::judgeReminderSent($cycle);
+        return CycleView::adminMenu('cycle') . CycleView::centerCard('Vote reminder sent', CycleView::judgeReminderSent($cycle));
     }
 
     protected function listHtml(Request $request)
