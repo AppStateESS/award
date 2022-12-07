@@ -115,6 +115,12 @@ EOF;
         return self::http;
     }
 
+    public static function getLogoutUrl()
+    {
+        $auth = \Current_User::getAuthorization();
+        return $auth->logout_link;
+    }
+
     protected static function getScript($scriptName)
     {
         $jsDirectory = self::getHttp() . 'javascript/';
@@ -129,8 +135,7 @@ EOF;
 
     public static function adminMenu($active)
     {
-        $auth = \Current_User::getAuthorization();
-        $params = ['active' => $active, 'logoutUrl' => $auth->logout_link];
+        $params = ['active' => $active, 'logoutUrl' => self::getLogoutUrl()];
         return self::getTemplate('Admin/Menu', $params);
     }
 
