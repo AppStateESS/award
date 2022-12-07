@@ -13,6 +13,7 @@ import {faEnvelope} from '@fortawesome/free-solid-svg-icons'
 import {invitationReminderAllowed} from '../../Share/Reminder'
 
 declare const cycleId: number
+declare const deadlinePassed: boolean
 
 const CycleInvitationStatus = () => {
   const [invitationList, setInvitationList] = useState<InvitationResource[]>([])
@@ -65,7 +66,17 @@ const CycleInvitationStatus = () => {
     const rows = invitationList?.map((value, key) => {
       let remindButton
       if (value.confirm === AwardDefines.INVITATION_WAITING) {
-        if (invitationReminderAllowed(value.lastReminder, value.inviteType)) {
+        if (deadlinePassed) {
+          remindButton = (
+            <span
+              className="badge badge-warning text-white"
+              title={`Last sent ${value.lastReminder}`}>
+              Deadline passed
+            </span>
+          )
+        } else if (
+          invitationReminderAllowed(value.lastReminder, value.inviteType)
+        ) {
           remindButton = (
             <span
               className="badge badge-primary"
@@ -78,7 +89,11 @@ const CycleInvitationStatus = () => {
           )
         } else {
           remindButton = (
-            <span className="badge badge-info text-white">Too soon</span>
+            <span
+              className="badge badge-info text-white"
+              title={`Last sent ${value.lastReminder}`}>
+              Too soon
+            </span>
           )
         }
       }
