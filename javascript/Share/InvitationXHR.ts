@@ -24,7 +24,7 @@ const refuseInvitation = async (invitationId: number) => {
 }
 
 const sendInvitationReminder = async (invitationId: number, role: string) => {
-  if (role !== 'Admin' || role !== 'Participant') {
+  if (role !== 'Admin' && role !== 'Participant') {
     role = 'Admin'
   }
   const url = `award/${role}/Invitation/${invitationId}/remind`
