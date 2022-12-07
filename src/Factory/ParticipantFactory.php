@@ -13,20 +13,21 @@ declare(strict_types=1);
 
 namespace award\Factory;
 
-use award\Resource\Participant;
-use award\Resource\Cycle;
-use award\Resource\Award;
 use award\AbstractClass\AbstractFactory;
-use award\Factory\ParticipantHashFactory;
-use award\Factory\JudgeFactory;
-use award\Factory\CycleFactory;
-use award\View\EmailView;
-use phpws2\Database;
 use award\Exception\BannedParticipant;
 use award\Exception\InactiveParticipant;
 use award\Exception\JudgeMayNotNominate;
 use award\Exception\ParticipantAlreadyNominated;
 use award\Exception\NotTrusted;
+use award\Factory\ParticipantHashFactory;
+use award\Factory\JudgeFactory;
+use award\Factory\CycleFactory;
+use award\Resource\Award;
+use award\Resource\Cycle;
+use award\Resource\Document;
+use award\Resource\Participant;
+use award\View\EmailView;
+use phpws2\Database;
 
 class ParticipantFactory extends AbstractFactory
 {
@@ -134,6 +135,50 @@ class ParticipantFactory extends AbstractFactory
     public static function currentIsTrusted()
     {
         return self::getCurrentParticipant()->getTrusted();
+    }
+
+    /**
+     * Returns TRUE is the associated reference is the current participant.
+     * @param int $referenceId
+     * @return boolean
+     */
+    public static function currentIsReference(int $referenceId)
+    {
+        return ReferenceFactory::build($referenceId)->getParticipantId() === self::getCurrentParticipant()->getId();
+    }
+
+    /**
+     * Returns TRUE is the associated document resource is owned by the current participant.
+     * @param award\Resource\Document $document
+     * @return boolean
+     */
+    public static function currentOwnsDocument(Document $document)
+    {
+        $nominationId = $document->getNominationId();
+        $referenceId = $document->getReferenceId();
+        return ($nominationId && self::currentOwnsNomination($nominationId)) ||
+            ($referenceId && self::currentIsReference($referenceId));
+    }
+
+    /**
+     * Returns TRUE is the associated nomination id was created by the current participant.
+     * @param int $referenceId
+     * @return boolean
+     */
+    public static function currentOwnsNomination(int $nominationId)
+    {
+        return NominationFactory::build($nominationId)->getNominatorId() === self::getCurrentParticipant()->getId();
+    }
+
+    /**
+     * Returns TRUE is the associated reference was suggested by the current participant.
+     * @param int $referenceId
+     * @return boolean
+     */
+    public static function currentOwnsReference(int $referenceId)
+    {
+        $reference = ReferenceFactory::build($referenceId);
+        return NominationFactory::build($reference->nominationId)->getNominatorId() === self::getCurrentParticipant()->getId();
     }
 
     /**
@@ -256,7 +301,6 @@ class ParticipantFactory extends AbstractFactory
             $table->addField('updated');
             $table->addField('trusted');
         }
-
 
         if (!empty($options['cycleId'])) {
             $judgeIds = JudgeFactory::listing(['cycleId' => $options['cycleId'], 'participantIdOnly' => true]);
