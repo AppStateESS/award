@@ -131,7 +131,7 @@ abstract class AbstractController
         return $request->isAjax() ? $this->jsonResponse($content) : $this->htmlResponse($content);
     }
 
-    protected function delete(Request $request)
+    protected function delete()
     {
         throw new BadCommand(__FUNCTION__);
     }
