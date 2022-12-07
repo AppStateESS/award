@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import {nominateText} from '../../Share/NominationXHR'
 import {nominateDocument} from '../../Share/DocumentXHR'
 import Message from '../../Share/Message'
+import {fileSize} from '../../Share/FileSize'
 import {ParticipantResource, NominationResource} from '../../ResourceTypes'
 
 interface Props {
@@ -14,7 +15,7 @@ interface Props {
 
 const ReasonForm = ({maxsize, nomination, participant}: Props) => {
   const [reasonText, setReasonText] = useState(nomination.reasonText)
-  const [reasonFile, setReasonFile] = useState<File | null>(null)
+  const [reasonDocument, setReasonDocument] = useState<File | null>(null)
   const [fileSelected, setFileSelected] = useState(false)
   const [uploadError, setUploadError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
@@ -24,34 +25,27 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
     if (!event.currentTarget.files) {
       return
     }
-    setReasonFile(event.currentTarget.files[0])
+    setReasonDocument(event.currentTarget.files[0])
     setFileSelected(true)
   }
 
   const clearFile = () => {
     setUploadError(false)
     setErrorMessage('')
-    setReasonFile(null)
+    setReasonDocument(null)
     setFileSelected(false)
     if (fileInput.current) {
       fileInput.current.value = ''
     }
   }
 
-  const fileSize = (size: number) => {
-    if (size < 1000) {
-      return size + ' bytes'
-    } else if (size >= 1000000) {
-      return Math.floor((size / 1000000) * 10) / 10 + 'MB'
-    } else if (size >= 1000) {
-      return Math.floor((size / 1000) * 10) / 10 + 'KB'
-    }
-  }
-
   const wrongFormat =
-    reasonFile === null ? false : reasonFile.type.match(/\/pdf/) === null
+    reasonDocument === null
+      ? false
+      : reasonDocument.type.match(/\/pdf/) === null
 
-  const fileTooBig = reasonFile === null ? false : reasonFile.size > maxsize
+  const fileTooBig =
+    reasonDocument === null ? false : reasonDocument.size > maxsize
 
   const submitTextNomination = () => {
     nominateText(nomination.id, reasonText).then((response) => {
@@ -62,11 +56,11 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
   }
 
   const submitDocumentNomination = () => {
-    if (reasonFile === null) {
+    if (reasonDocument === null) {
       return
     }
 
-    nominateDocument(nomination.id, reasonFile)
+    nominateDocument(nomination.id, reasonDocument)
       .then((response) => {
         console.log(response.data)
       })
@@ -95,7 +89,7 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
       />
       <div className="text-center mb-5">
         <button
-          disabled={reasonText.length == 0 || reasonFile != null}
+          disabled={reasonText.length == 0 || reasonDocument != null}
           className="btn btn-success"
           onClick={submitTextNomination}>
           Submit reason above
@@ -111,14 +105,14 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
           <input type="file" name="file" onChange={upload} ref={fileInput} />
         </div>
         <div className="col-6">
-          {fileSelected && reasonFile?.name ? (
+          {fileSelected && reasonDocument?.name ? (
             <div>
               <p>
-                <strong>Filename:</strong> {reasonFile.name}
+                <strong>Filename:</strong> {reasonDocument.name}
                 <br />
                 <strong>Filetype:</strong>{' '}
                 <span className={wrongFormat ? 'text-danger' : 'text-success'}>
-                  {reasonFile.type}{' '}
+                  {reasonDocument.type}{' '}
                   {wrongFormat ? (
                     <span className="badge badge-danger">
                       File is not a PDF
@@ -128,7 +122,7 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
                 <br />
                 <strong>Size in bytes:</strong>{' '}
                 <span className={fileTooBig ? 'text-danger' : 'text-success'}>
-                  {fileSize(reasonFile.size)}{' '}
+                  {fileSize(reasonDocument.size)}{' '}
                   {fileTooBig ? (
                     <span className="badge badge-danger">
                       File size exceeds {maxSizeString}
@@ -145,7 +139,7 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
       </div>
       <div className="text-center">
         <button
-          disabled={reasonFile == null || wrongFormat || fileTooBig}
+          disabled={reasonDocument == null || wrongFormat || fileTooBig}
           className="btn btn-success"
           onClick={submitDocumentNomination}>
           Submit document as reason
