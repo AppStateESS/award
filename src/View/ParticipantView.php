@@ -32,6 +32,12 @@ class ParticipantView extends AbstractView
         return self::getTemplate('Admin/AdminForm', $params);
     }
 
+    public static function adminLoggedWarning()
+    {
+        return parent::centerCard('Currently logged administrator',
+                self::getTemplate('Admin/Error/LoggedWarning', ['logout' => parent::getLogoutUrl()]), 'danger');
+    }
+
     public static function authorizeComplete()
     {
         return self::getTemplate('User/AuthorizeComplete');
@@ -87,10 +93,6 @@ class ParticipantView extends AbstractView
             }
         }
 
-        $cycleOptions['upcoming'] = true;
-        $cycleOptions['includeAward'] = true;
-        $cycleOptions['dateFormat'] = true;
-
         $nominations = NominationFactory::listing(['nominatorId' => $participant->id, 'includeNominated' => true, 'includeAward' => true, 'includeCycle' => true]);
 
         $values['nominations'] = [];
@@ -99,6 +101,7 @@ class ParticipantView extends AbstractView
         }
 
         $values['references'] = ReferenceFactory::listing([
+                'includeCycleEnd' => true,
                 'participantId' => $participant->getId(),
                 'includeParticipant' => true,
                 'includeNominator' => true,
@@ -107,12 +110,15 @@ class ParticipantView extends AbstractView
         ]);
 
         $values['judged'] = $judged;
-
         $values['trusted'] = (bool) ParticipantFactory::currentIsTrusted();
         $values['participant'] = $participant;
-        $values['upcomingCycles'] = CycleFactory::listing($cycleOptions);
-        $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
 
+        $cycleOptions['upcoming'] = true;
+        $cycleOptions['includeAward'] = true;
+        $cycleOptions['dateFormat'] = true;
+        $values['upcomingCycles'] = CycleFactory::listing($cycleOptions);
+
+        $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
         return self::participantMenu('dashboard') . self::getTemplate('Participant/Dashboard', $values);
     }
 
@@ -179,6 +185,13 @@ class ParticipantView extends AbstractView
      */
     public static function signIn()
     {
+        $participant = ParticipantFactory::getCurrentParticipant();
+        if ($participant) {
+            \Canopy\Server::forward('./award/Participant/Participant/dashboard');
+        }
+        if (\Current_User::isLogged()) {
+            return self::adminLoggedWarning();
+        }
         self::scriptView('SignInForm');
         return self::getTemplate('User/SignIn');
     }
