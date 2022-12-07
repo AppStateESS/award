@@ -143,8 +143,10 @@ class Nomination extends AbstractController
     protected function uploadPost(Request $request)
     {
         $nominationId = $request->pullPostInteger('nominationId');
+        if (ParticipantFactory::currentOwnsNomination($nominationId)) {
+            throw new ParticipantPrivilegeMissing();
+        }
         $nomination = NominationFactory::build($nominationId);
-        $maxFileSize = DocumentFactory::maximumUploadSize();
 
         if (empty($_FILES['document'])) {
             return ['success' => false, 'error' => 'document file not found'];
@@ -153,6 +155,10 @@ class Nomination extends AbstractController
         $fileArray = $_FILES['document'];
         if ($fileArray['type'] !== 'application/pdf') {
             return ['success' => false, 'error' => 'document is not a PDF'];
+        }
+
+        if ($fileArray['size'] > DocumentFactory::maximumUploadSize()) {
+            return ['success' => false, 'error' => 'uploaded file is too large'];
         }
 
         $sourceFile = $fileArray['tmp_name'];
@@ -164,12 +170,14 @@ class Nomination extends AbstractController
         }
 
         $nominated = ParticipantFactory::build($nomination->nominatedId);
-        $nominatedName = $nominated->firstName . ' ' . $nominated->lastName;
+        $nominatedName = $nominated->firstName . '_' . $nominated->lastName;
 
         $document = DocumentFactory::build();
         $document->setFilename($destinationFileName)->setNominationId($nomination->id)->
-            setTitle('$nominatedName-nomination-reason.pdf');
+            setTitle("{$nominatedName}_nomination_reason.pdf");
+
         DocumentFactory::save($document);
+        return ['success' => true];
     }
 
     /**
