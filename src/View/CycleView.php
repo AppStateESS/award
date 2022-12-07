@@ -54,7 +54,7 @@ class CycleView extends AbstractView
         $values['nominations'] = NominationView::summaryByCycle($cycle->id);
 
         // Uses a global cycleId from the Judges script
-        $values['invitationStatus'] = self::scriptView('CycleInvitationStatus');
+        $values['invitationStatus'] = self::scriptView('CycleInvitationStatus', ['deadlinePassed' => $cycle->getEndDate() < time()]);
 
         return self::getTemplate('Admin/CycleView', $values);
     }
@@ -88,7 +88,7 @@ class CycleView extends AbstractView
         $values['judges'] = JudgeFactory::listing(['cycleId' => $cycle->id, 'includeParticipant' => true]);
         $values['days'] = AWARD_JUDGE_REMINDER_GRACE;
 
-        return self::adminMenu('cycle') . self::getTemplate('Admin/JudgeReminderSent', $values);
+        return self::getTemplate('Admin/JudgeReminderSent', $values);
     }
 
     /**
