@@ -49,6 +49,15 @@ export interface CycleResource {
   voteType: string
 }
 
+export interface DocumentResource {
+  id: number
+  filename: string
+  nominationId: number
+  referenceId: number
+  title: string
+  created: string
+}
+
 export interface InvitationResource extends Nominated {
   awardId: number
   awardTitle?: string
