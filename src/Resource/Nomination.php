@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace award\Resource;
 
 use award\AbstractClass\AbstractResource;
+use award\Traits\ReasonResourceTrait;
 
 /**
  * @table nomination
@@ -21,80 +22,62 @@ use award\AbstractClass\AbstractResource;
 class Nomination extends AbstractResource
 {
 
+    use ReasonResourceTrait;
+
     /**
      * Determines if judges are allowed to vote for this nomination.
      * Could be set to false for a "sudden death" vote in a tie.
      * @var bool
      */
-    private bool $allowVote = true;
+    protected bool $allowVote = true;
 
     /**
      * Determines if this nomination is allowed to pushed forward in
      * the process.
      * @var bool
      */
-    private bool $approved = false;
+    protected bool $approved = false;
 
     /**
      * @var int
      */
-    private int $awardId = 0;
+    protected int $awardId = 0;
 
     /**
      * @var bool
      */
-    private bool $completed = false;
+    protected bool $completed = false;
 
     /**
      * @var int
      */
-    private int $cycleId;
+    protected int $cycleId;
 
     /**
      * Participant id of nominator.
      * @var int
      */
-    private int $nominatorId = 0;
+    protected int $nominatorId = 0;
 
     /**
      * Id of participant nominated.
      * @var int
      */
-    private int $nominatedId = 0;
-
-    /**
-     * Nominator completed the reason for the nomination.
-     * Requirement depends on award setting.
-     * @var bool
-     */
-    private bool $reasonComplete = false;
-
-    /**
-     * ID of the award_document used for the nomination reason.
-     * @var int
-     */
-    private int $reasonDocument = 0;
-
-    /**
-     * The reason for the nomination. May be empty due to not
-     * required or because a document was uploaded instead.
-     * @var string
-     */
-    private ?string $reasonText = null;
+    protected int $nominatedId = 0;
 
     /**
      * All references are selected and they have completed their
      * reasons (if required).
      * @var bool
      */
-    private bool $referencesComplete = false;
+    protected bool $referencesComplete = false;
 
     /**
      * All required references have been selected.
      * Requirement depends on award setting.
      * @var bool
      */
-    private bool $referencesSelected = false;
+    protected bool $referencesSelected = false;
 
     public function __construct()
     {
@@ -146,21 +129,6 @@ class Nomination extends AbstractResource
     public function getNominatedId(): int
     {
         return $this->nominatedId;
-    }
-
-    public function getReasonComplete(): bool
-    {
-        return $this->reasonComplete;
-    }
-
-    public function getReasonDocument(): int
-    {
-        return $this->reasonDocument;
-    }
-
-    public function getReasonText(): string
-    {
-        return $this->reasonText ?? '';
     }
 
     public function getReferencesComplete(): bool
@@ -234,24 +202,6 @@ class Nomination extends AbstractResource
     public function setNominatedId(int $participantId): self
     {
         $this->nominatedId = $participantId;
-        return $this;
-    }
-
-    public function setReasonComplete(bool $reasonComplete)
-    {
-        $this->reasonComplete = $reasonComplete;
-        return $this;
-    }
-
-    public function setReasonDocument(int $reasonDocument)
-    {
-        $this->reasonDocument = $reasonDocument;
-        return $this;
-    }
-
-    public function setReasonText(string $reasonText)
-    {
-        $this->reasonText = $reasonText;
         return $this;
     }
 
