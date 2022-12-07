@@ -23,7 +23,7 @@ trait AssociateTrait
      * @param AbstractResource $resource
      * @return array
      */
-    public static function getAssociated(AbstractResource $resource)
+    public static function getAssociated(AbstractResource $resource, array $ignore = [], bool $asArray = false)
     {
         $resourceIdList = [
             'award' => 'award\Factory\AwardFactory',
@@ -38,8 +38,12 @@ trait AssociateTrait
         $resources = [];
         foreach ($resourceIdList as $parameter => $factory) {
             $idParam = $parameter . 'Id';
-            if (isset($resourceValues[$idParam]) && $resourceValues[$idParam] > 0) {
-                $resources[$parameter] = $factory::build($resource->$idParam);
+            if (!in_array($parameter, $ignore) && isset($resourceValues[$idParam]) && $resourceValues[$idParam] > 0) {
+                if ($asArray) {
+                    $resources[$parameter] = $factory::build($resource->$idParam)->getValues();
+                } else {
+                    $resources[$parameter] = $factory::build($resource->$idParam);
+                }
             }
         }
         return $resources;
