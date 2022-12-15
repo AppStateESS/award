@@ -1,29 +1,35 @@
-import axios from 'axios'
+import axios, {AxiosRequestConfig} from 'axios'
+import {ReasonResource} from '../ResourceTypes'
 const headers = {'X-Requested-With': 'XMLHttpRequest'}
 
-const nominateDocument = async (nominationId: number, reasonFile: File) => {
+export const uploadDocument = async (
+  reason: ReasonResource,
+  reasonFile: File
+) => {
   const formData = new FormData()
+  const url = `./award/Participant/Reason/upload`
+
+  if (reason.id > 0) {
+    formData.append('reasonId', reason.id.toString())
+  } else {
+    formData.append('referenceId', reason.referenceId.toString())
+    formData.append('nominationId', reason.nominationId.toString())
+  }
 
   formData.append('document', reasonFile)
-  formData.append('nominationId', nominationId.toString())
+  formData.append('reasonType', reason.reasonType.toString())
 
-  return axios.post(`./award/Participant/Nomination/upload`, formData, {
+  const config: AxiosRequestConfig = {
+    method: 'post',
+    url,
+    data: formData,
+    timeout: 3000,
     headers,
-  })
-}
-const referenceDocument = async (referenceId: number, reasonFile: File) => {
-  const formData = new FormData()
+  }
 
-  formData.append('document', reasonFile)
-  formData.append('referenceId', referenceId.toString())
-
-  return axios.post(`./award/Participant/Reference/upload`, formData, {
-    headers,
-  })
+  return axios(config)
 }
 
-const deleteParticipantDocument = async (documentId: number) => {
+export const deleteParticipantDocument = async (documentId: number) => {
   return axios.delete(`./award/Participant/Document/${documentId}`, {headers})
 }
-
-export {deleteParticipantDocument, nominateDocument, referenceDocument}
