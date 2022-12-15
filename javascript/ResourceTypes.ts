@@ -85,9 +85,7 @@ export interface NominationResource extends Nominator, Nominated {
   completed: boolean | number
   cycleId: number
   participantId: number
-  reasonText: string
-  reasonComplete: boolean | number
-  reasonDocument: number
+  reasonId: number
   referencesComplete: boolean | number
   referencesSelected: boolean | number
 }
@@ -113,6 +111,17 @@ export interface ParticipantResource {
   trusted: boolean | number
 }
 
+export interface ReasonResource {
+  id: number
+  complete: boolean | number
+  cycleId: number
+  documentId: number
+  nominationId: number
+  reasonText: string
+  referenceId: number
+  reasonType: number
+}
+
 export interface ReferenceResource
   extends Nominated,
     Nominator,
@@ -121,8 +130,7 @@ export interface ReferenceResource
   awardId: number
   cycleId: number
   lastReminder: string
-  reasonDocument: number
-  reasonText: string
+  reasonId: number
   nominationId: number
   participantId: number
   email?: string
