@@ -92,32 +92,28 @@ CREATE TABLE award_nomination (
     awardId int,
     completed bool default 0,
     cycleId int,
+    nominatedId int default 0,
     nominatorId int default 0,
-    participantId int default 0,
-    reasonComplete bool default 0,
-    reasonDocument int default 0,
-    reasonText text default '',
+    reasonId int default 0,
     referencesComplete bool default 0,
     referencesSelected bool default 0,
-    UNIQUE KEY part_cyc (participantId, cycleId),
+    UNIQUE KEY part_cyc (nominatedId, cycleId),
     FOREIGN KEY(awardId) REFERENCES award_award(id),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(nominatorId) REFERENCES award_participant(id),
-    FOREIGN KEY(participantId) REFERENCES award_participant(id),
+    FOREIGN KEY(nominatedId) REFERENCES award_participant(id),
 );
 
 CREATE TABLE award_document (
     id int PRIMARY KEY AUTO_INCREMENT,
     created DateTime,
     filename varchar(255),
-    nominationId int,
-    referenceId int default 0,
+    reasonId int,    
     title varchar(255)
 );
 
 CREATE TABLE award_reason (
     id int PRIMARY KEY AUTO_INCREMENT,
-    complete bool default 0,
     cycleId int default 0,
     documentId int default 0,
     nominationId int default 0,
