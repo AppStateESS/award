@@ -1,40 +1,27 @@
 'use strict'
 import React from 'react'
 import {createRoot} from 'react-dom/client'
-import {
-  AwardResource,
-  CycleResource,
-  DocumentResource,
-  ParticipantResource,
-  ReferenceResource,
-} from '../../ResourceTypes'
+import {DocumentResource, ReasonResource} from '../../ResourceTypes'
 import ReasonForm from './ReasonForm'
-import {fullAwardTitle} from '../../Share/Cycle'
 
-declare const participant: ParticipantResource
-declare const award: AwardResource
-declare const reference: ReferenceResource
-declare const cycle: CycleResource
+declare const awardTitle: string
+declare const currentDocument: DocumentResource
 declare const maxsize: number
-declare const currentReasonDocument: DocumentResource
+declare const nominatedName: string
+declare const reason: ReasonResource
 
 const ReferenceReasonForm = () => {
-  const fullName = (
-    <span>
-      {participant.firstName} {participant.lastName}
-    </span>
-  )
   return (
     <div>
       <h3>
-        Nominate {fullName} for the {fullAwardTitle(award, cycle)}
+        {nominatedName} for the {awardTitle} nomination
       </h3>
       <hr />
       <ReasonForm
-        currentReasonDocument={currentReasonDocument}
+        currentDocument={currentDocument}
         maxsize={maxsize}
-        reference={reference}
-        participant={participant}
+        nominatedName={nominatedName}
+        reason={reason}
       />
     </div>
   )
