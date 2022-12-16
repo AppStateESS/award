@@ -12,7 +12,12 @@
 
     foreach ($references as $ref):
     if ($ref['endDate'] > time()) {
-      $link =  ' href="./award/Participant/Reference/'.$ref['id'].'/reason" title="Click to update"';
+      if ($ref['reasonId']) {
+        $link =  ' href="./award/Participant/Reason/'.$ref['reasonId'].'/edit" title="Click to update"';
+
+      } else {
+        $link =  ' href="./award/Participant/Reason/createReference/?referenceId='.$ref['id'].'" title="Click to update"';
+      }
     } else {
       $link = '';
     }
@@ -24,7 +29,7 @@
       <td>
         <?php if (!$ref['referenceReasonRequired']):?>
         <span class="badge badge-info text-white">Not required</span>
-        <?php elseif (!empty($ref['reasonDocument']) || !empty($ref['reasonText'])):?>
+        <?php elseif ($ref['reasonId'] > 0):?>
         <a<?=$link?>><span class="badge badge-success">Endorsement complete</span></a>
           <?php else:?>
           <a<?=$link?>><span class="badge badge-danger">Incomplete, click to finish</span></a>
