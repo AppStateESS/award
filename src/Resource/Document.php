@@ -30,27 +30,22 @@ class Document extends AbstractResource
     /**
      * @var string
      */
-    private string $filename;
+    private string $filename = '';
 
     /**
-     * Id for the nomination reason document. Only > 0 for nominations.
+     * Id for the reason to which it is associated
      * @var int
      */
-    private int $nominationId = 0;
-
-    /**
-     * Id for the reference reason document. Only > 0 for references.
-     * @var int
-     */
-    private int $referenceId = 0;
+    private int $reasonId = 0;
 
     /**
      * @var string
      */
-    private string $title;
+    private string $title = '';
 
     public function __construct()
     {
+        $this->created = new \DateTime;
         parent::__construct('award_document');
     }
 
@@ -70,14 +65,9 @@ class Document extends AbstractResource
     /**
      * @return int
      */
-    public function getNominationId(): int
+    public function getReasonId(): int
     {
-        return $this->nominationId;
-    }
-
-    public function getReferenceId(): int
-    {
-        return $this->referenceId;
+        return $this->reasonId;
     }
 
     /**
@@ -105,15 +95,9 @@ class Document extends AbstractResource
     /**
      * @param int $nominationId
      */
-    public function setNominationId(int $nominationId): self
+    public function setReasonId(int $reasonId): self
     {
-        $this->nominationId = $nominationId;
-        return $this;
-    }
-
-    public function setReferenceId(int $referenceId): self
-    {
-        $this->referenceId = $referenceId;
+        $this->reasonId = $reasonId;
         return $this;
     }
 
