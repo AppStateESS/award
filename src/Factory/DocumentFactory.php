@@ -18,6 +18,7 @@ use award\Resource\Document;
 use phpws2\Database;
 use Canopy\Request;
 use award\Resource\Participant;
+use award\Resource\Reason;
 
 class DocumentFactory extends AbstractFactory
 {
@@ -25,17 +26,52 @@ class DocumentFactory extends AbstractFactory
     protected static string $table = 'award_document';
     protected static string $resourceClassName = 'award\Resource\Document';
 
+    public static function createDocument(array $fileArray, Reason $reason)
+    {
+        if (!$reason->getId()) {
+            throw new \Exception('reason id may not be zero');
+        }
+        if ($fileArray['type'] !== 'application/pdf') {
+            return ['success' => false, 'error' => 'document is not a PDF'];
+        }
+
+        if ($fileArray['size'] > DocumentFactory::maximumUploadSize()) {
+            return ['success' => false, 'error' => 'uploaded file is too large'];
+        }
+        $reference = ReferenceFactory::build($reason->getReferenceId());
+        $nomination = NominationFactory::build($reason->getNominationId());
+        $nominated = ParticipantFactory::build($nomination->getNominatedId());
+
+        $sourceFile = $fileArray['tmp_name'];
+        $destinationDir = DocumentFactory::getFileDirectory();
+        if ($reason->isReference()) {
+            $destinationFileName = DocumentFactory::referenceFileName($reason->getReferenceId());
+            $referenceParticipant = ParticipantFactory::build($reference->participantId);
+            $documentTitle = DocumentFactory::referenceDocumentTitle($referenceParticipant, $nominated);
+        } else {
+            $destinationFileName = DocumentFactory::nominationFileName($nomination->getId());
+            $nominator = ParticipantFactory::build($nomination->getNominatorId());
+            $documentTitle = DocumentFactory::nominationDocumentTitle($nominator, $nominated);
+        }
+
+        if (!move_uploaded_file($sourceFile, $destinationDir . $destinationFileName)) {
+            return ['success' => false, 'error' => 'failed to save uploaded file'];
+        }
+
+        $document = DocumentFactory::build();
+        $document->setFilename($destinationFileName)->setReasonId($reason->getId())->setTitle($documentTitle);
+
+        return DocumentFactory::save($document);
+    }
+
+    /**
+     * Deletes the document from the directory and removes the row
+     * from the award_document table. Does not update the reason resource.
+     * @param Document $document
+     * @return type
+     */
     public static function delete(Document $document)
     {
-        $referenceId = $document->getReferenceId();
-        $nominationId = $document->getNominationId();
-        if ($referenceId) {
-            ReferenceFactory::clearDocument($referenceId);
-        } elseif ($nominationId) {
-            NominationFactory::clearDocument($nominationId);
-        } else {
-            throw \Exception('unassociated document');
-        }
         $path = self::getFileDirectory() . $document->getFilename();
         unlink($path);
         extract(self::getDBWithTable());
@@ -130,6 +166,13 @@ class DocumentFactory extends AbstractFactory
             }
         }
         return $max_size;
+    }
+
+    public static function nominationDocumentTitle(Participant $nominator, Participant $nominated)
+    {
+        $nominatorName = self::participantNameToFileName($nominator);
+        $nominatedName = self::participantNameToFileName($nominated);
+        return "{$nominatorName}-nomination-for-{$nominatedName}.pdf";
     }
 
     public static function nominationFileName($nominationId)
