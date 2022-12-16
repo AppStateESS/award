@@ -15,6 +15,8 @@ namespace award\AbstractClass;
 
 use phpws2\Database;
 use Canopy\Request;
+use award\Exception\ResourceNotFound;
+use phpws2\Database\DB;
 use phpws2\Database\Table;
 
 require_once PHPWS_SOURCE_DIR . 'mod/award/config/system.php';
@@ -81,7 +83,7 @@ class AbstractFactory
      * properly typed values.
      * @return phpws2\Database\DB
      */
-    public static function getDB(): \phpws2\Database\DB
+    public static function getDB(): DB
     {
         $db = Database::getDB();
         $db::$PDO->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
@@ -108,16 +110,13 @@ class AbstractFactory
     public static function save(AbstractResource $resource)
     {
         $id = $resource->getId();
-        if ($id) {
-            if (method_exists($resource, 'stampUpdated')) {
-                $resource->stampUpdated();
-            }
-        } else {
-            if (method_exists($resource, 'stampCreated')) {
-                $resource->stampCreated();
-                $resource->stampUpdated();
-            }
+        if (method_exists($resource, 'stampUpdated')) {
+            $resource->stampUpdated();
         }
+        if (!$id && method_exists($resource, 'stampCreated')) {
+            $resource->stampCreated();
+        }
+
         $values = $resource->getValues();
         unset($values['id']);
         $db = Database::getDB();
@@ -216,6 +215,17 @@ class AbstractFactory
         $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField($idField), $partTable->getField('id'), '='));
     }
 
+    protected static function injectResult(AbstractResource $resource, DB $db)
+    {
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return false;
+        } else {
+            $resource->setValues($result);
+            return $resource;
+        }
+    }
+
     /**
      * Loads a resource from the table name set in the object by the id parameter.
      * If allowedDeleted is true, a previously deleted object may be returned.
@@ -235,13 +245,7 @@ class AbstractFactory
         if (!$allowDeleted && property_exists($resource, 'deleted')) {
             $tbl->addFieldConditional('deleted', 0);
         }
-        $result = $db->selectOneRow();
-        if (empty($result)) {
-            return false;
-        } else {
-            $resource->setValues($result);
-            return $resource;
-        }
+        return self::injectResult($resource, $db);
     }
 
 }
