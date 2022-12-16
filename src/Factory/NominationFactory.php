@@ -80,6 +80,14 @@ class NominationFactory extends AbstractFactory
         return self::convertRowToResource($db->selectOneRow());
     }
 
+    public static function getByParticipant(int $nominatedId, int $cycleId)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('nominatedId', $nominatedId);
+        $table->addFieldConditional('cycleId', $cycleId);
+        return self::convertRowToResource($db->selectOneRow());
+    }
+
     public static function getCycleCount(int $cycleId)
     {
         extract(self::getDBWithTable());
@@ -90,12 +98,14 @@ class NominationFactory extends AbstractFactory
         return $db->selectColumn();
     }
 
-    public static function getByParticipant(int $nominatedId, int $cycleId)
+    public static function getNominated(Nomination $nomination)
     {
-        extract(self::getDBWithTable());
-        $table->addFieldConditional('nominatedId', $nominatedId);
-        $table->addFieldConditional('cycleId', $cycleId);
-        return self::convertRowToResource($db->selectOneRow());
+        return ParticipantFactory::build($nomination->getNominatedId());
+    }
+
+    public static function getNominator(Nomination $nomination)
+    {
+        return ParticipantFactory::build($nomination->getNominator());
     }
 
     /**
