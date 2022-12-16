@@ -171,39 +171,4 @@ class ReferenceFactory extends AbstractFactory
         return true;
     }
 
-    public static function saveDocument(Reference $reference, array $fileArray)
-    {
-        if ($fileArray['type'] !== 'application/pdf') {
-            return ['success' => false, 'error' => 'document is not a PDF'];
-        }
-
-        if ($fileArray['size'] > DocumentFactory::maximumUploadSize()) {
-            return ['success' => false, 'error' => 'uploaded file is too large'];
-        }
-        $sourceFile = $fileArray['tmp_name'];
-        $destinationDir = DocumentFactory::getFileDirectory();
-        $destinationFileName = DocumentFactory::referenceFileName($reference->id);
-
-        if (!move_uploaded_file($sourceFile, $destinationDir . $destinationFileName)) {
-            return ['success' => false, 'error' => 'failed to save uploaded file'];
-        }
-
-        $nomination = NominationFactory::build($reference->nominationId);
-        $referenceParticipant = ParticipantFactory::build($reference->participantId);
-        $nominated = ParticipantFactory::build($nomination->getNominatedId());
-
-        $referenceName = DocumentFactory::referenceDocumentTitle($referenceParticipant, $nominated);
-
-        $document = DocumentFactory::build();
-        $document->setFilename($destinationFileName)->setReferenceId($reference->getId())->setTitle($referenceName);
-
-        // deletes the previous document
-        DocumentFactory::deleteByReferenceId($reference->getId());
-
-        DocumentFactory::save($document);
-        $reference->setReasonDocument($document->id);
-        self::save($reference);
-        return ['success' => true, 'documentId' => $document->id, 'filename' => $document->title];
-    }
-
 }
