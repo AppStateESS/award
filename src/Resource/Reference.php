@@ -40,21 +40,16 @@ class Reference extends AbstractResource
     private int $nominationId = 0;
 
     /**
+     * Id of the participant serving as the reference.
      * @var int
      */
     private int $participantId = 0;
 
     /**
-     * Document id of reference reason
+     * Id of reference reason
      * @var int
      */
-    private int $reasonDocument = 0;
-
-    /**
-     * Text of the reference's reason for approving the nomination.
-     * @var string
-     */
-    private ?string $reasonText;
+    private int $reasonId = 0;
 
     public function __construct()
     {
@@ -77,14 +72,6 @@ class Reference extends AbstractResource
     /**
      * @return int
      */
-    public function getReasonDocument(): ?int
-    {
-        return $this->reasonDocument ?? null;
-    }
-
-    /**
-     * @return int
-     */
     public function getNominationId(): int
     {
         return $this->nominationId;
@@ -98,9 +85,12 @@ class Reference extends AbstractResource
         return $this->participantId;
     }
 
-    public function getReasonText(): string
+    /**
+     * @return int
+     */
+    public function getReasonId(): int
     {
-        return $this->reasonText ?? '';
+        return $this->reasonId;
     }
 
     public function setAwardId(int $awardId): self
@@ -110,20 +100,11 @@ class Reference extends AbstractResource
     }
 
     /**
-     * @param int $reasonDocument
+     * @param int $cycleId
      */
     public function setCycleId(int $cycleId): self
     {
         $this->cycleId = $cycleId;
-        return $this;
-    }
-
-    /**
-     * @param int $reasonDocument
-     */
-    public function setReasonDocument(int $reasonDocument): self
-    {
-        $this->reasonDocument = $reasonDocument;
         return $this;
     }
 
@@ -145,9 +126,12 @@ class Reference extends AbstractResource
         return $this;
     }
 
-    public function setReasonText(string $reasonText): self
+    /**
+     * @param int $reasonId
+     */
+    public function setReasonId(int $reasonId): self
     {
-        $this->reasonText = $reasonText;
+        $this->reasonId = $reasonId;
         return $this;
     }
 
