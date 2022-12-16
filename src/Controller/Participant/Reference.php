@@ -37,19 +37,6 @@ class Reference extends AbstractController
         return ReferenceFactory::listing($options);
     }
 
-    protected function reasonHtml()
-    {
-        $reference = ReferenceFactory::build($this->id);
-        $participant = ParticipantFactory::getCurrentParticipant();
-        if (!ParticipantFactory::currentIsReference($reference->id)) {
-            throw new ParticipantPrivilegeMissing();
-        }
-        if (!ReferenceFactory::canUpdate($reference)) {
-            return ReferenceView::passedUpdate();
-        }
-        return ParticipantView::participantMenu('dashboard') . ReferenceView::reasonForm($reference, $participant);
-    }
-
     protected function remindHtml(Request $request)
     {
         return ParticipantView::participantMenu('nomination') . '<p>Send reminder is incomplete.</p>';
@@ -68,31 +55,6 @@ class Reference extends AbstractController
         $reference->stampLastReminder();
         ReferenceFactory::save($reference);
         return ['success' => true];
-    }
-
-    protected function textPut(Request $request)
-    {
-        $reference = ReferenceFactory::build($this->id);
-        if (!ParticipantFactory::currentOwnsReference($reference->id)) {
-            throw new ParticipantPrivilegeMissing();
-        }
-        $reference->setReasonText($request->pullPutString('reasonText'));
-        ReferenceFactory::save($reference);
-        return ['success' => true];
-    }
-
-    protected function uploadPost(Request $request)
-    {
-        $reference = ReferenceFactory::build($request->pullPostInteger('referenceId'));
-
-        if (!ParticipantFactory::currentIsReference($reference->id)) {
-            throw new ParticipantPrivilegeMissing();
-        }
-        if (empty($_FILES['document'])) {
-            return ['success' => false, 'error' => 'document file not found'];
-        }
-        $fileArray = $_FILES['document'];
-        return ReferenceFactory::saveDocument($reference, $fileArray);
     }
 
 }
