@@ -44,7 +44,7 @@ class Cycle extends AbstractController
         return CycleFactory::currentList($request->pullGetInteger('awardId'));
     }
 
-    protected function delete(Request $request)
+    protected function delete()
     {
         $this->idRequired();
         CycleFactory::delete($this->id);

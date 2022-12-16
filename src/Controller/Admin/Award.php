@@ -54,7 +54,7 @@ class Award extends AbstractController
         return AwardView::deleteForm($award);
     }
 
-    protected function delete(Request $request)
+    protected function delete()
     {
         $this->idRequired();
         AwardFactory::delete($this->id);
