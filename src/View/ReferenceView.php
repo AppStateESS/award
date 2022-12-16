@@ -27,30 +27,9 @@ class ReferenceView extends AbstractView
         return self::centerCard('Award deadline has passed', self::getTemplate('Error/ReferencePassedUpdate'), 'danger');
     }
 
-    public static function reasonForm(Reference $reference)
-    {
-        $values = ReferenceFactory::getAssociated($reference, ['nomination'], true);
-        if (!$values['award']['referenceReasonRequired']) {
-            return self::referenceReasonNotRequired();
-        }
-        $values['reference'] = $reference->getValues();
-        $values['maxsize'] = \award\Factory\DocumentFactory::maximumUploadSize();
-        $document = DocumentFactory::build();
-
-        $reasonDocument = $reference->getReasonDocument();
-        $values['currentReasonDocument'] = DocumentFactory::build($reasonDocument)->getValues();
-
-        return self::scriptView('ReferenceReasonForm', $values);
-    }
-
     public static function referencesNotRequired()
     {
         return self::centerCard('References not required', self::getTemplate('Error/ReferencesNotRequired'), 'danger');
-    }
-
-    public static function referenceReasonNotRequired()
-    {
-        return self::centerCard('Reference endorsement not required', self::getTemplate('Error/ReferenceReasonNotRequired'), 'danger');
     }
 
 }
