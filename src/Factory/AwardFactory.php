@@ -61,6 +61,20 @@ class AwardFactory extends AbstractFactory
         CycleFactory::deleteByAwardId($award->id);
     }
 
+    public static function getByCycleId(int $cycleId)
+    {
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable());
+        $cycleTable = $db->addTable('award_cycle', null, false);
+        $db->joinResources($table, $cycleTable, new Database\Conditional($db, $table->getField('id'), $cycleTable->getField('awardId'), '='), 'left');
+        $cycleTable->addFieldConditional('id', $cycleId);
+
+        return parent::injectResult(self::build(), $db);
+    }
+
     public static function listing(array $options = [])
     {
         /**
