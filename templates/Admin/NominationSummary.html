@@ -20,7 +20,7 @@
       <td><a href="./award/Admin/Nomination/<?=$id?>">View</a></td>
       <td><?=$nominatedFirstName?> <?=$nominatedLastName?> <a href="mailto:<?=$nominatedEmail?>"><sup><i class="fas fa-envelope"></i></sup></a></td>
       <td><?=$nominatorFirstName?> <?=$nominatorLastName?> <a href="mailto:<?=$nominatorEmail?>"><sup><i class="fas fa-envelope"></i></sup></a></td>
-      <td><?php if ($reasonComplete && $referencesComplete):?>
+      <td><?php if ($reasonId):?>
         <span class="badge badge-success">Complete</span>
         <?php else: ?>
         <span class="badge badge-danger">Incomplete</span>
