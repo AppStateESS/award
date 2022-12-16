@@ -14,15 +14,12 @@ declare(strict_types=1);
 namespace award\Resource;
 
 use award\AbstractClass\AbstractResource;
-use award\Traits\ReasonResourceTrait;
 
 /**
  * @table nomination
  */
 class Nomination extends AbstractResource
 {
-
-    use ReasonResourceTrait;
 
     /**
      * Determines if judges are allowed to vote for this nomination.
@@ -64,6 +61,12 @@ class Nomination extends AbstractResource
      * @var int
      */
     protected int $nominatedId = 0;
+
+    /**
+     * Id of reason give for the nomination
+     * @var int
+     */
+    protected int $reasonId = 0;
 
     /**
      * All references are selected and they have completed their
@@ -129,6 +132,11 @@ class Nomination extends AbstractResource
     public function getNominatedId(): int
     {
         return $this->nominatedId;
+    }
+
+    public function getReasonId(): int
+    {
+        return $this->reasonId;
     }
 
     public function getReferencesComplete(): bool
@@ -202,6 +210,12 @@ class Nomination extends AbstractResource
     public function setNominatedId(int $participantId): self
     {
         $this->nominatedId = $participantId;
+        return $this;
+    }
+
+    public function setReasonId(int $reasonId)
+    {
+        $this->reasonId = $reasonId;
         return $this;
     }
 
