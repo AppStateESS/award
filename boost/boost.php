@@ -11,6 +11,6 @@
  */
 $proper_name = 'Award';
 $version = '1.0.0';
-$import_sql = true;
+$import_sql = false;
 $image_dir = true;
 $file_dir = true;
