@@ -27,9 +27,4 @@ class DashboardView extends AbstractView
         return self::getTemplate('Admin/Dashboard', $params, true);
     }
 
-    private static function newAwardRequests()
-    {
-        AwardView::newAwardRequests();
-    }
-
 }
