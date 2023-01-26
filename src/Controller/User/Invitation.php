@@ -15,20 +15,38 @@ namespace award\Controller\User;
 
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
-use award\View\InvitationView;
+use award\Exception\ResourceNotFound;
 use award\Factory\InvitationFactory;
+use award\View\InvitationView;
 
 class Invitation extends AbstractController
 {
 
+    public function finalRefusalHtml(Request $request)
+    {
+        $invitation = InvitationFactory::build($this->id);
+        InvitationFactory::noContact($invitation);
+        return InvitationView::finalRefusal();
+    }
+
+    /**
+     * Refusal form for new participant requests. All other refusals handled
+     * in the Participant controller.
+     * @param Request $request
+     * @return string
+     * @throws ResourceNotFound
+     */
     public function refuseHtml(Request $request)
     {
-        $email = strtolower($request->pullGetString('email'));
+        $email = strtolower($request->pullGetString('email', true));
         $invitation = InvitationFactory::build($this->id);
-        if ($invitation->email !== $email) {
-            throw new \award\Exception\ResourceNotFound;
+        if (!$invitation->isNew() || $invitation->getEmail() !== $email) {
+            throw new ResourceNotFound();
         }
-        return InvitationView::refuse($invitation);
+        if ($invitation->isRefused()) {
+            return InvitationView::previouslyRefused($invitation);
+        }
+        return InvitationView::refuseNew($invitation);
     }
 
 }
