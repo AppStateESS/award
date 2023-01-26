@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useCallback} from 'react'
 import {createRoot} from 'react-dom/client'
 import {getList} from '../../Share/XHR'
 import Loading from '../../Share/Loading'
@@ -81,12 +81,20 @@ const ParticipantList = () => {
     getList(params)
   }
 
+  const closeModal = useCallback(() => {
+    setInviteModal(false)
+  }, [inviteModal])
+
+  const clearError = useCallback(() => {
+    setError('')
+  }, [error])
+
   if (loading) {
     return <Loading things="participants" />
   } else {
     return (
       <div>
-        {error && <ErrorAlert message={error} close={() => setError('')} />}
+        {error && <ErrorAlert message={error} close={clearError} />}
         <div className="row">
           <div className="col-sm-6 d-flex align-items-center">
             <button
@@ -114,9 +122,7 @@ const ParticipantList = () => {
           title="Invite participant"
           show={inviteModal}
           includeCloseButton={false}
-          close={() => {
-            setInviteModal(false)
-          }}>
+          close={closeModal}>
           <InviteForm
             key={formKey}
             close={() => {
