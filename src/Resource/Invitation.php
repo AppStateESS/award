@@ -174,14 +174,39 @@ class Invitation extends AbstractResource
         return $this->senderId;
     }
 
+    public function isConfirmed(): bool
+    {
+        return $this->comfirm === AWARD_INVITATION_CONFIRMED;
+    }
+
     public function isJudge(): bool
     {
         return $this->inviteType === AWARD_INVITE_TYPE_JUDGE;
     }
 
+    public function isNew(): bool
+    {
+        return $this->inviteType === AWARD_INVITE_TYPE_NEW;
+    }
+
+    public function isNominated(): bool
+    {
+        return $this->inviteType === AWARD_INVITE_TYPE_NOMINATED;
+    }
+
     public function isReference(): bool
     {
         return $this->inviteType === AWARD_INVITE_TYPE_REFERENCE;
+    }
+
+    public function isRefused(): bool
+    {
+        return $this->confirm === AWARD_INVITATION_REFUSED;
+    }
+
+    public function isWaiting(): bool
+    {
+        return $this->confirm === AWARD_INVITATION_WAITING;
     }
 
     public function setAwardId(int $awardId): self
