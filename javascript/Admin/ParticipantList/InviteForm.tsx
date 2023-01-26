@@ -86,7 +86,7 @@ const InviteForm = ({close}: {close: () => void}) => {
     case 'sent':
       button = (
         <button className="btn btn-success btn-block" onClick={close}>
-          Invite sent!
+          Invite sent! Click to close.
         </button>
       )
       break
