@@ -179,6 +179,11 @@ class Participant extends AbstractResource
         return password_verify($password, $this->password);
     }
 
+    public function isTrusted()
+    {
+        return $this->getTrusted();
+    }
+
     /**
      * Set the value of active
      *
