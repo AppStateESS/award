@@ -6,5 +6,8 @@ export interface AuthAvailable {
 
 export interface InterfaceSettings {
   authAvailable: AuthAvailable[]
+  siteContactName: string
+  siteContactEmail: string
   useWarehouse: boolean
+  trustedDefault: boolean
 }
