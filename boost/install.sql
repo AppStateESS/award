@@ -101,7 +101,7 @@ CREATE TABLE award_nomination (
     FOREIGN KEY(awardId) REFERENCES award_award(id),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(nominatorId) REFERENCES award_participant(id),
-    FOREIGN KEY(nominatedId) REFERENCES award_participant(id),
+    FOREIGN KEY(nominatedId) REFERENCES award_participant(id)
 );
 
 CREATE TABLE award_document (
@@ -132,6 +132,7 @@ CREATE TABLE award_cyclelog (
     documentId int NULL,
     participantId int NULL,
     stamped TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    username varchar(255) default null,
     FOREIGN KEY(awardId) REFERENCES award_award(id),
     FOREIGN KEY(cycleId) REFERENCES award_cycle(id),
     FOREIGN KEY(documentId) REFERENCES award_document(id),
@@ -187,6 +188,7 @@ CREATE TABLE award_judge  (
 
 CREATE TABLE award_reference (
     id int PRIMARY KEY AUTO_INCREMENT,
+    awardId int,
     cycleId int,
     nominationId int,
     participantId int,
