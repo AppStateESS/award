@@ -63,73 +63,81 @@ const CycleInvitationStatus = () => {
   if (serverError) {
     content = <div className="alert alert-danger">Server error</div>
   } else if (!loading) {
-    const rows = invitationList?.map((value, key) => {
-      let remindButton
-      if (value.confirm === AwardDefines.INVITATION_WAITING) {
-        if (deadlinePassed) {
-          remindButton = (
-            <span
-              className="badge badge-warning text-white"
-              title={`Last sent ${value.lastReminder}`}>
-              Deadline passed
-            </span>
-          )
-        } else if (
-          invitationReminderAllowed(value.lastReminder, value.inviteType)
-        ) {
-          remindButton = (
-            <span
-              className="badge badge-primary"
-              style={{cursor: 'pointer'}}
-              onClick={() => {
-                remind(key)
-              }}>
-              Send reminder
-            </span>
-          )
-        } else {
-          remindButton = (
-            <span
-              className="badge badge-info text-white"
-              title={`Last sent ${value.lastReminder}`}>
-              Too soon
-            </span>
-          )
+    if (invitationList.length > 0) {
+      const rows = invitationList?.map((value, key) => {
+        let remindButton
+        if (value.confirm === AwardDefines.INVITATION_WAITING) {
+          if (deadlinePassed) {
+            remindButton = (
+              <span
+                className="badge badge-warning text-white"
+                title={`Last sent ${value.lastReminder}`}>
+                Deadline passed
+              </span>
+            )
+          } else if (
+            invitationReminderAllowed(value.lastReminder, value.inviteType)
+          ) {
+            remindButton = (
+              <span
+                className="badge badge-primary"
+                style={{cursor: 'pointer'}}
+                onClick={() => {
+                  remind(key)
+                }}>
+                Send reminder
+              </span>
+            )
+          } else {
+            remindButton = (
+              <span
+                className="badge badge-info text-white"
+                title={`Last sent ${value.lastReminder}`}>
+                Too soon
+              </span>
+            )
+          }
         }
-      }
-      return (
-        <tr key={`invite-${value.id}`}>
-          <td>
-            {value.invitedFirstName} {value.invitedLastName}{' '}
-            <sup>
-              <a href={`mailto:${value.invitedEmail}`}>
-                <FontAwesomeIcon icon={faEnvelope} />
-              </a>
-            </sup>
-          </td>
-          <td>
-            {getInviteType(value.inviteType)}{' '}
-            {value.inviteType === AwardDefines.INVITE_TYPE_REFERENCE &&
-              `for ${value.nominatedFirstName} ${value.nominatedLastName}`}
-          </td>
-          <td>{confirmStatus(value.confirm)}</td>
-          <td>{remindButton}</td>
-        </tr>
-      )
-    })
-    content = (
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Invited</th>
-            <th>Invite type</th>
-            <th>Status</th>
-            <th>Remind</th>
+        return (
+          <tr key={`invite-${value.id}`}>
+            <td>
+              {value.invitedFirstName} {value.invitedLastName}{' '}
+              <sup>
+                <a href={`mailto:${value.invitedEmail}`}>
+                  <FontAwesomeIcon icon={faEnvelope} />
+                </a>
+              </sup>
+            </td>
+            <td>
+              {getInviteType(value.inviteType)}{' '}
+              {value.inviteType === AwardDefines.INVITE_TYPE_REFERENCE &&
+                `for ${value.nominatedFirstName} ${value.nominatedLastName}`}
+            </td>
+            <td>{confirmStatus(value.confirm)}</td>
+            <td>{remindButton}</td>
           </tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
-    )
+        )
+      })
+      content = (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Invited</th>
+              <th>Invite type</th>
+              <th>Status</th>
+              <th>Remind</th>
+            </tr>
+          </thead>
+          <tbody>{rows}</tbody>
+        </table>
+      )
+    } else {
+      content = (
+        <div>
+          <em>No pending invitations.</em>
+        </div>
+      )
+    }
   }
 
   return (
