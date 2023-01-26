@@ -45,8 +45,7 @@ class ParticipantView extends AbstractView
 
     public static function authorizeFailed()
     {
-
-        return self::getTemplate('User/AuthorizeFailed');
+        return parent::centerCard('Authorization failed', self::getTemplate('User/AuthorizeFailed'), 'danger');
     }
 
     /**
@@ -117,6 +116,19 @@ class ParticipantView extends AbstractView
         $cycleOptions['includeAward'] = true;
         $cycleOptions['dateFormat'] = true;
         $values['upcomingCycles'] = CycleFactory::listing($cycleOptions);
+        $values['cycleFunction'] = function ($cycle) {
+            if ($cycle['term'] === 'yearly') {
+                return $cycle['awardYear'];
+            } else {
+                return DateTime::createFromFormat('!m', $cycle['awardMonth'])->format('F');
+            }
+        };
+
+        $value['trusted'] = $participant->isTrusted();
+
+        $values['allowNominateButton'] = function ($cycle) {
+            return $cycle['startDate'] < time() && $cycle['endDate'] > time();
+        };
 
         $values['participantInvitations'] = self::scriptView('ParticipantInvitations');
         return self::participantMenu('dashboard') . self::getTemplate('Participant/Dashboard', $values);
