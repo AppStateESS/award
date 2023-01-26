@@ -11,14 +11,14 @@ const NewInvites = ({listing}: Props) => {
         <tr>
           <th>Email</th>
           <th>Date sent</th>
-          <th>Status</th>
         </tr>
         {listing.map((value) => {
           return (
             <tr key={`invite-${value.id}`}>
-              <td>{value.email}</td>
+              <td>
+                <a href={`mailto:${value.email}`}>{value.email}</a>
+              </td>
               <td>{value.created}</td>
-              <td>{confirmStatus(value.confirm)}</td>
             </tr>
           )
         })}
