@@ -61,23 +61,16 @@ class ParticipantFactory extends AbstractFactory
     }
 
     /**
-     * Flips the participant account to active if their hash and email are correct.
+     * Flips the participant account to active and sets their trusted status.
      *
-     * @param string $email
-     * @param string $hash
-     * @return boolean
+     * @param Participant
+     * @return void
      */
-    public static function authorize(string $email, string $hash): bool
+    public static function authorize(Participant $participant)
     {
-        $participant = self::getByEmail($email);
-        $checkHash = ParticipantHashFactory::get($participant->id);
-        if ($participant && $checkHash === $hash) {
-            $participant->setActive(true);
-            self::save($participant);
-            return true;
-        } else {
-            return false;
-        }
+        $participant->setActive(true);
+        $participant->setTrusted(SettingFactory::getTrustedDefault());
+        self::save($participant);
     }
 
     public static function canNominate(Participant $nominator, Participant $participant, $cycleId)
@@ -112,7 +105,7 @@ class ParticipantFactory extends AbstractFactory
         $participant = new Participant;
         $participant->setActive(false)->setEmail($email)->setFirstName($firstName)
             ->setLastName($lastName)->hashPassword($password);
-
+        $participant->setTrusted(SettingFactory::getTrustedDefault());
         self::save($participant);
         return $participant;
     }
@@ -324,6 +317,14 @@ class ParticipantFactory extends AbstractFactory
         if (empty($options['allowInactive'])) {
             $table->addFieldConditional('active', 1);
         }
+
+        if (empty($options['sortBy'])) {
+            $sortBy = 'email';
+        }
+        if (empty($options['sortDir'])) {
+            $sortDir = 'asc';
+        }
+        $table->addOrderBy($sortBy, $sortDir);
         // TODO an option needs to exist for this in the case of reports.
         $db->setLimit(50);
         return $db->select();
