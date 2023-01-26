@@ -45,10 +45,9 @@ class ParticipantHashFactory extends AbstractFactory
     }
 
     /**
-     * Returns the hash for the current participant id that is under
-     * the timeout deadline.
+     * Returns the hash and timeout for the current participant id.
      * @param int $participantId
-     * @return type
+     * @return array | false
      */
     public static function get(int $participantId)
     {
@@ -58,9 +57,9 @@ class ParticipantHashFactory extends AbstractFactory
          */
         extract(self::getDBWithTable());
         $table->addField('hash');
+        $table->addField('timeout');
         $table->addFieldConditional('participantId', $participantId);
-        $table->addFieldConditional('timeout', time(), '>=');
-        return $db->selectColumn();
+        return $db->selectOneRow();
     }
 
     public static function isValid(int $participantId, string $hash): bool
