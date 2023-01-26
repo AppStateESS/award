@@ -15,6 +15,7 @@ namespace award\View;
 
 use award\AbstractClass\AbstractView;
 use award\Factory\InvitationFactory;
+use award\Resource\Invitation;
 
 class InvitationView extends AbstractView
 {
@@ -28,6 +29,21 @@ class InvitationView extends AbstractView
         $tplValues['menu'] = self::adminMenu('invitation');
         $tplValues['script'] = self::scriptView('InvitationList');
         return self::getTemplate('Admin/AdminForm', $tplValues);
+    }
+
+    public static function finalRefusal()
+    {
+        return self::centerCard('Invitation refused', self::getTemplate('User/FinalRefusal'));
+    }
+
+    public static function previouslyRefused(Invitation $invitation)
+    {
+        return self::centerCard('Refusal previously recorded', self::getTemplate('User/RefusePrevious', ['invitation' => $invitation]), 'info');
+    }
+
+    public static function refuseNew(Invitation $invitation)
+    {
+        return self::centerCard('Refuse new account invitation', self::getTemplate('User/RefuseNew', ['invitation' => $invitation]), 'danger');
     }
 
 }
