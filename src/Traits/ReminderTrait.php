@@ -27,9 +27,9 @@ trait ReminderTrait
         return $this->lastReminder ? $this->lastReminder->format($format ?? 'Y-m-d H:i:s') : null;
     }
 
-    public function setLastReminder(string $datetime)
+    public function setLastReminder($datetime = null)
     {
-        $this->lastReminder = new \DateTime($datetime);
+        $this->lastReminder = ($datetime !== null) ? new \DateTime($datetime) : null;
     }
 
     public function stampLastReminder()
