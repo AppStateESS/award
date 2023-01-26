@@ -46,8 +46,8 @@ class InvitationFactory extends AbstractFactory
         extract(self::getDBWithTable());
         $table->addFieldConditional('email', strtolower($email));
         $table->addFieldConditional('inviteType', AWARD_INVITE_TYPE_NEW);
-        $table->addFieldConditional('cycleId', 0);
         $table->addFieldConditional('confirm', AWARD_INVITATION_NO_CONTACT);
+
         return !empty($db->selectOneRow());
     }
 
@@ -131,6 +131,36 @@ class InvitationFactory extends AbstractFactory
     }
 
     /**
+     * Checks for previous invitation to help prevent a repeated request.
+     * @param string $email
+     * @param int $inviteType
+     * @param int $cycleId
+     * @return boolean
+     */
+    public static function getPreviousInvite(string $email, int $inviteType, int $cycleId = 0)
+    {
+        $email = strtolower($email);
+        /**
+         * @var \phpws2\Database\DB $db
+         * @var \phpws2\Database\Table $table
+         */
+        extract(self::getDBWithTable());
+
+        $table->addFieldConditional('email', $email);
+        $table->addFieldConditional('inviteType', $inviteType);
+        $table->addFieldConditional('cycleId', $cycleId);
+
+        $result = $db->selectOneRow();
+        if (empty($result)) {
+            return false;
+        } else {
+            $invitation = self::build();
+            $invitation->setValues($result);
+            return $invitation;
+        }
+    }
+
+    /**
      * Returns the results of the award_invitation table.
      * Can be filtered in options with:
      * - awardId
@@ -174,8 +204,12 @@ class InvitationFactory extends AbstractFactory
         extract(self::getDBWithTable());
 
         self::addIdOptions($table, ['awardId', 'cycleId', 'invitedId', 'senderId', 'nominationId'], $options);
-        self::addIssetOptions($table, ['inviteType', 'confirm'], $options);
+        self::addIssetOptions($table, ['inviteType'], $options);
         self::addOrderOptions($table, $options, 'email');
+
+        if (isset($options['confirm'])) {
+            $table->addFieldConditional('confirm', $options['confirm']);
+        }
 
         if (!empty($options['invitedIdOnly'])) {
             $table->addField('invitedId');
@@ -195,7 +229,6 @@ class InvitationFactory extends AbstractFactory
                 self::includeParticipant($db, $table, 'nominated');
             }
         }
-
         $result = $db->select();
 
         if (empty($result)) {
@@ -210,40 +243,32 @@ class InvitationFactory extends AbstractFactory
         }
     }
 
-    /**
-     * Checks for previous invitation to help prevent a repeated request.
-     * @param string $email
-     * @param int $inviteType
-     * @param int $cycleId
-     * @return boolean
-     */
-    public static function getPreviousInvite(string $email, int $inviteType, int $cycleId = 0)
+    public static function noContact(Invitation $invitation)
     {
-        $email = strtolower($email);
-        /**
-         * @var \phpws2\Database\DB $db
-         * @var \phpws2\Database\Table $table
-         */
-        extract(self::getDBWithTable());
-
-        $table->addFieldConditional('email', $email);
-        $table->addFieldConditional('inviteType', $inviteType);
-        $table->addFieldConditional('cycleId', $cycleId);
-
-        $result = $db->selectOneRow();
-        if (empty($result)) {
-            return false;
-        } else {
-            $invitation = self::build();
-            $invitation->setValues($result);
-            return $invitation;
-        }
+        $invitation->confirm = AWARD_INVITATION_NO_CONTACT;
+        InvitationFactory::save($invitation);
     }
 
-    public static function refuseJudge(Invitation $invitation)
+    public static function refuse(Invitation $invitation)
     {
         $invitation->confirm = AWARD_INVITATION_REFUSED;
         InvitationFactory::save($invitation);
+    }
+
+    /**
+     * Checks the invitation list for a new, waiting, invititation with the same email and changes
+     * them to confirmed.
+     * @param string $email
+     */
+    public static function confirmNewStatus(string $email)
+    {
+        extract(self::getDBWithTable());
+        $table->addFieldConditional('email', $email);
+        $table->addFieldConditional('inviteType', AWARD_INVITE_TYPE_NEW);
+        $table->addFieldConditional('confirm', AWARD_INVITATION_WAITING);
+        $table->addValue('confirm', AWARD_INVITATION_CONFIRMED);
+        $table->addValue('updated', self::getDateTimeString());
+        $db->update();
     }
 
     /**
@@ -255,20 +280,7 @@ class InvitationFactory extends AbstractFactory
     {
         $awardTable = $db->addTable('award_award');
         $awardTable->addField('title', 'awardTitle');
-        $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='));
-    }
-
-    /**
-     * Helps add information to invitation listing
-     * @param Database\DB $db
-     * @param Database\Table $table
-     */
-    private static function includeNominated(Database\DB $db, Database\Table $table)
-    {
-        $partTable = $db->addTable('award_participant');
-        $partTable->addField('firstName', 'nominatedFirstName');
-        $partTable->addField('lastName', 'nominatedLastName');
-        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField('nominatedId'), $partTable->getField('id'), '='));
+        $db->joinResources($table, $awardTable, new Database\Conditional($db, $table->getField('awardId'), $awardTable->getField('id'), '='), 'left');
     }
 
     /**
