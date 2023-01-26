@@ -11,8 +11,48 @@ $now = time();
     color: red;
   }
 </style>
+
+<div class="float-right lead">Nomination status:
+  <?php if ($trusted):?>
+  <span class="badge badge-success">Trusted</span>
+  <?php else:?>
+  <span class="badge badge-info">Untrusted</span>
+  <?php endif;?>
+</div>
+
 <h2>Welcome <?=$participant->firstName?>!</h2>
 
+<h4>Upcoming awards</h4>
+<?php if (!empty($upcomingCycles)):?>
+<table class="table table-striped" aria-label="">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Cycle</th>
+      <th>Start</th>
+      <th>Deadline</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <?php
+    foreach ($upcomingCycles as $cycle):
+    ?>
+    <tr>
+      <td><?=$cycle['awardTitle']?></td>
+      <td><?=$cycleFunction($cycle)?></td>
+      <td><?=$cycle['formatStartDate']?></td>
+      <td><?=$cycle['formatEndDate']?></td>
+      <td><?php if ($trusted && $allowNominateButton($cycle)):?>
+        <a href="./award/Participant/Nomination/nominate/?cycleId=<?=$cycle['id']?>">Nominate</a>
+        <?php endif;?>
+      </td>
+    </tr>
+    <?php endforeach;?>
+  </tbody>
+</table>
+<?php endif;?>
+<hr />
 <div>
   <h4>Invitations</h4>
   <?=$participantInvitations?>
