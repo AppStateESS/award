@@ -69,6 +69,10 @@ const SignUpForm = () => {
     password2.length === 0 ||
     email.length === 0
 
+  const submitClass = disableSave
+    ? 'btn btn-success btn-block disabled'
+    : 'btn btn-success btn-block'
+
   return (
     <div>
       <div className="form-group row">
@@ -182,9 +186,10 @@ const SignUpForm = () => {
       </div>
       <button
         tabIndex={0}
-        className="btn btn-success btn-block"
+        className={submitClass}
         onClick={checkAndSave}
-        disabled={disableSave}>
+        style={{cursor: disableSave ? 'not-allowed' : 'pointer'}}
+        aria-disabled={disableSave}>
         Create account
       </button>
     </div>
