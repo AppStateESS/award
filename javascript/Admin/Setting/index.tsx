@@ -4,6 +4,11 @@ import {createRoot} from 'react-dom/client'
 import Authentication from './Authentication'
 import {InterfaceSettings} from './Interface'
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {
+  toggleAuthCall,
+  toggleTrustedCall,
+  toggleWarehouseCall,
+} from './SettingXHR'
 
 const iconOff = (
   <FontAwesomeIcon
@@ -38,39 +43,26 @@ const Setting = () => {
       })
   }
 
-  const toggleWarehouse = (toggle: boolean) => {
+  const toggleWarehouse = () => {
     if (settings !== undefined) {
-      settings.useWarehouse = !toggle
+      settings.useWarehouse = !settings.useWarehouse
       setSettings({...settings})
-      const url = 'award/Admin/Setting/warehouseToggle'
-      const data = {useWarehouse: settings.useWarehouse}
-
-      return axios({
-        method: 'post',
-        url,
-        data,
-        timeout: 3000,
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
-      })
+      toggleWarehouseCall(settings.useWarehouse)
     }
   }
 
   const toggleAuth = (filename: string, toggle: boolean) => {
-    axios({
-      method: 'post',
-      url: 'award/Admin/Setting/authenticatorToggle',
-      data: {filename, toggle: !toggle},
-      timeout: 3000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      },
-    })
-      .then((response) => {
-        load()
-      })
-      .catch((error) => {
-        console.log('Error:', error)
-      })
+    if (settings !== undefined) {
+      toggleAuthCall(filename, toggle, load)
+    }
+  }
+
+  const toggleTrusted = () => {
+    if (settings !== undefined) {
+      settings.trustedDefault = !settings.trustedDefault
+      setSettings({...settings})
+      toggleTrustedCall(settings.trustedDefault)
+    }
   }
 
   return (
@@ -79,29 +71,41 @@ const Setting = () => {
         <h3>Authentication</h3>
         {settings && (
           <Authentication
-            authAvailable={settings.authAvailable}
+            authAvailable={settings?.authAvailable}
             toggleAuth={toggleAuth}
           />
         )}
         <h3>Nomination search</h3>
-        {settings && (
-          <table className="table">
-            <tbody>
-              <tr>
-                <td>Use warehouse to autocomplete</td>
-                <td>
-                  <a
-                    style={{cursor: 'pointer'}}
-                    onClick={() => {
-                      toggleWarehouse(settings.useWarehouse)
-                    }}>
-                    {settings.useWarehouse ? iconOn : iconOff}
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        )}
+
+        <table className="table">
+          <tbody>
+            <tr>
+              <td>Use warehouse to autocomplete</td>
+              <td>
+                <a style={{cursor: 'pointer'}} onClick={toggleWarehouse}>
+                  {settings?.useWarehouse ? iconOn : iconOff}
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Trusted</h3>
+        <table className="table">
+          <tbody>
+            <tr>
+              <td>
+                Set new participants to{' '}
+                <span className="text-success">Trusted</span> status
+              </td>
+              <td>
+                <a style={{cursor: 'pointer'}} onClick={toggleTrusted}>
+                  {settings?.trustedDefault ? iconOn : iconOff}
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   )
