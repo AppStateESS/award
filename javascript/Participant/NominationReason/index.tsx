@@ -6,6 +6,7 @@ import {
   CycleResource,
   ParticipantResource,
   NominationResource,
+  ReasonResource,
 } from '../../ResourceTypes'
 import ReasonForm from './ReasonForm'
 import {fullAwardTitle} from '../../Share/Cycle'
@@ -13,6 +14,7 @@ import {fullAwardTitle} from '../../Share/Cycle'
 declare const participant: ParticipantResource
 declare const award: AwardResource
 declare const nomination: NominationResource
+declare const reason: ReasonResource
 declare const cycle: CycleResource
 declare const maxsize: number
 
@@ -33,6 +35,7 @@ const NominationReason = () => {
           maxsize={maxsize}
           nomination={nomination}
           participant={participant}
+          reason={reason}
         />
       )}
     </div>
