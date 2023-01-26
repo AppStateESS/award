@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace award\Factory;
 
+use phpws2\Settings;
+
 class SettingFactory
 {
 
@@ -25,9 +27,18 @@ class SettingFactory
         }
     }
 
+    public static function getAll()
+    {
+        $settings['siteContactName'] = Settings::get('award', 'siteContactName');
+        $settings['siteContactEmail'] = Settings::get('award', 'siteContactEmail');
+        $settings['trustedDefault'] = Settings::get('award', 'trustedDefault');
+        $settings['useWarehouse'] = Settings::get('award', 'useWarehouse');
+        return $settings;
+    }
+
     public static function getEnabledAuthenticators()
     {
-        $authenticators = \phpws2\Settings::get('award', 'enabledAuthenticators');
+        $authenticators = Settings::get('award', 'enabledAuthenticators');
         return explode(',', $authenticators);
     }
 
@@ -37,9 +48,18 @@ class SettingFactory
      */
     public static function getSiteContact()
     {
-        $contact['contactName'] = \phpws2\Settings::get('award', 'siteContactName');
-        $contact['contactEmail'] = \phpws2\Settings::get('award', 'siteContactEmail');
+        $contact['contactName'] = Settings::get('award', 'siteContactName');
+        $contact['contactEmail'] = Settings::get('award', 'siteContactEmail');
         return $contact;
+    }
+
+    /**
+     *
+     * @return boolean
+     */
+    public static function getTrustedDefault()
+    {
+        return (bool) Settings::get('award', 'trustedDefault');
     }
 
     public static function removeEnabledAuthenticators(string $filename)
@@ -52,19 +72,24 @@ class SettingFactory
         }
     }
 
+    public static function setTrustedDefault(bool $trusted)
+    {
+        Settings::set('award', 'trustedDefault', $trusted);
+    }
+
     public static function setUseWarehouse(bool $useWarehouse)
     {
-        \phpws2\Settings::set('award', 'useWarehouse', $useWarehouse);
+        Settings::set('award', 'useWarehouse', $useWarehouse);
     }
 
     public static function useWarehouse()
     {
-        return (bool) \phpws2\Settings::get('award', 'useWarehouse');
+        return (bool) Settings::get('award', 'useWarehouse');
     }
 
     private static function saveAuthenticators(array $authenticators)
     {
-        \phpws2\Settings::set('award', 'enabledAuthenticators', implode(',', $authenticators));
+        Settings::set('award', 'enabledAuthenticators', implode(',', $authenticators));
     }
 
 }
