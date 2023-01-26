@@ -24,6 +24,14 @@ const TextType = ({
     setEmptyError(!allowEmpty && value.length === 0)
   }
 
+  const updateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {value} = e.target
+    if (value !== '') {
+      setEmptyError(false)
+    }
+    update(value)
+  }
+
   let input
   switch (type) {
     case 'textarea':
@@ -51,7 +59,7 @@ const TextType = ({
           onBlur={checkValue}
           value={value}
           required
-          onChange={(e) => update(e.target.value)}
+          onChange={updateEmail}
         />
       )
       break
