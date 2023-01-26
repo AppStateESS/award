@@ -17,10 +17,11 @@ namespace award\Controller\User;
 use Canopy\Request;
 use award\AbstractClass\AbstractController;
 use award\View\ParticipantView;
+use award\Factory\Authenticate;
+use award\Factory\EmailFactory;
+use award\Factory\InvitationFactory;
 use award\Factory\ParticipantFactory;
 use award\Factory\ParticipantHashFactory;
-use award\Factory\EmailFactory;
-use award\Factory\Authenticate;
 
 class Participant extends AbstractController
 {
@@ -28,11 +29,16 @@ class Participant extends AbstractController
     protected function authorizeHtml(Request $request)
     {
         $hash = $request->pullGetString('hash');
-        $email = $request->pullGetString('email');
-        if (ParticipantFactory::authorize($email, $hash)) {
-            return ParticipantView::authorizeComplete();
-        } else {
+        $pid = $request->pullGetInteger('pid');
+        if (!$participant = ParticipantFactory::build($pid)) {
             return ParticipantView::authorizeFailed();
+        }
+        $checkHash = ParticipantHashFactory::get($participant->getId());
+        if ($checkHash['timeout'] < time()) {
+            return ParticipantView::authorizeTimeout();
+        } else {
+            ParticipantFactory::authorize($participant);
+            return ParticipantView::authorizeComplete();
         }
     }
 
@@ -70,8 +76,9 @@ class Participant extends AbstractController
             EmailFactory::createWarningOnExisting($participant);
         } else {
             $newParticipant = ParticipantFactory::createInternal($email, $password, $firstName, $lastName);
-            $hash = ParticipantHashFactory::create($newParticipant->id, 12);
+            $hash = ParticipantHashFactory::create($newParticipant->id);
             EmailFactory::newParticipant($newParticipant, $hash);
+            InvitationFactory::confirmNewStatus($newParticipant->getEmail());
         }
         return ['success' => true];
     }
