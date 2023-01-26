@@ -11,6 +11,8 @@ type Props = {
   inviteSent: (message: string, messageType: string) => void
 }
 
+const optionMessage = () => 'No matching participants found.'
+
 const Form = ({inviteSent, cycleId}: Props) => {
   const [participantId, setParticipantId] = useState(0)
   const [email, setEmail] = useState('')
@@ -21,11 +23,10 @@ const Form = ({inviteSent, cycleId}: Props) => {
     const hold = () => {
       return new Promise<void>((resolve) => {
         clearTimeout(trackParticipant.current)
-        if (search.length > 3) {
-          trackParticipant.current = window.setTimeout(() => {
-            resolve()
-          }, 1000)
-        }
+
+        trackParticipant.current = window.setTimeout(() => {
+          resolve()
+        }, 1000)
       })
     }
 
@@ -73,7 +74,7 @@ const Form = ({inviteSent, cycleId}: Props) => {
             placeholder="Search participants"
             cacheOptions
             onChange={setParticipant}
-            noOptionsMessage={() => 'No matching participants found.'}
+            noOptionsMessage={optionMessage}
             loadOptions={getOptions}
           />
         </div>
