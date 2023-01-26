@@ -107,6 +107,16 @@ class AbstractFactory
         return get_defined_vars();
     }
 
+    /**
+     * Returns MySQL formatted DateTime stamp
+     * @return string
+     */
+    public static function getDateTimeString(): string
+    {
+        $now = new \DateTime;
+        return $now->format('Y-m-d H:i:s');
+    }
+
     public static function save(AbstractResource $resource)
     {
         $id = $resource->getId();
@@ -212,7 +222,7 @@ class AbstractFactory
         $partTable->addField('firstName', $firstName);
         $partTable->addField('lastName', $lastName);
         $partTable->addField('email', $email);
-        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField($idField), $partTable->getField('id'), '='));
+        $db->joinResources($table, $partTable, new Database\Conditional($db, $table->getField($idField), $partTable->getField('id'), '='), 'left');
     }
 
     protected static function injectResult(AbstractResource $resource, DB $db)
