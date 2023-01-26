@@ -2,19 +2,25 @@
 import React, {useState, FormEvent, useRef} from 'react'
 import PropTypes from 'prop-types'
 import {nominateText} from '../../Share/NominationXHR'
-import {nominateDocument} from '../../Share/DocumentXHR'
+import {uploadDocument} from '../../Share/DocumentXHR'
 import Message from '../../Share/Message'
 import {fileSize} from '../../Share/FileSize'
-import {ParticipantResource, NominationResource} from '../../ResourceTypes'
+import {
+  ParticipantResource,
+  NominationResource,
+  ReasonResource,
+} from '../../ResourceTypes'
+import {AxiosError} from 'axios'
 
 interface Props {
   maxsize: number
   nomination: NominationResource
   participant: ParticipantResource
+  reason: ReasonResource
 }
 
-const ReasonForm = ({maxsize, nomination, participant}: Props) => {
-  const [reasonText, setReasonText] = useState(nomination.reasonText)
+const ReasonForm = ({maxsize, nomination, participant, reason}: Props) => {
+  const [reasonText, setReasonText] = useState(reason.reasonText)
   const [reasonDocument, setReasonDocument] = useState<File | null>(null)
   const [fileSelected, setFileSelected] = useState(false)
   const [uploadError, setUploadError] = useState(false)
@@ -60,15 +66,17 @@ const ReasonForm = ({maxsize, nomination, participant}: Props) => {
       return
     }
 
-    nominateDocument(nomination.id, reasonDocument)
+    uploadDocument(reason, reasonDocument)
       .then((response) => {
-        console.log(response.data)
+        alert(response.data)
       })
-      .catch((e) => {
+      .catch((e: AxiosError) => {
         setUploadError(true)
-        setErrorMessage(
-          'An error occurred when uploading: ' + e.response.statusText
-        )
+        if (e.response !== undefined) {
+          setErrorMessage(
+            'An error occurred when uploading: ' + e.response.statusText
+          )
+        }
       })
   }
 
