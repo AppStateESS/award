@@ -31,6 +31,7 @@ class Setting extends AbstractController
     {
         $settings['authAvailable'] = AuthenticateFactory::getAuthtypeList();
         $settings['useWarehouse'] = (bool) SettingFactory::useWarehouse();
+        $settings['trustedDefault'] = SettingFactory::getTrustedDefault();
         return $settings;
     }
 
@@ -43,6 +44,13 @@ class Setting extends AbstractController
         } else {
             SettingFactory::removeEnabledAuthenticators($filename);
         }
+        return ['success' => true];
+    }
+
+    public function trustedTogglePost(Request $request)
+    {
+        $trustedDefault = $request->pullPostBoolean('trusted');
+        SettingFactory::setTrustedDefault($trustedDefault);
         return ['success' => true];
     }
 
