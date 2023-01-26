@@ -89,13 +89,29 @@ class Invitation extends AbstractController
         return InvitationFactory::listing($options);
     }
 
+    public function refuseHtml(Request $request)
+    {
+        $invitation = InvitationFactory::build($this->id);
+
+        switch ($invitation->getInviteType()) {
+            case AWARD_INVITE_TYPE_JUDGE:
+                return InvitationView::refuseJudge($invitation);
+            case AWARD_INVITE_TYPE_NOMINATED:
+                return InvitationView::refuseNominated($invitation);
+            case AWARD_INVITE_TYPE_REFERENCE:
+                return InvitationView::refuseReference($invitation);
+            default:
+                throw new ResourceNotFound();
+        }
+    }
+
     protected function refusePatch()
     {
         $invitation = InvitationFactory::build($this->id);
         if ($invitation->invitedId !== ParticipantFactory::getCurrentParticipant()->id) {
             return ['success' => false, 'error' => 'Current participant is not the invited'];
         } else {
-            InvitationFactory::refuseJudge($invitation);
+            InvitationFactory::refuse($invitation);
             EmailFactory::judgeRefused(AwardFactory::build($invitation->awardId), CycleFactory::build($invitation->cycleId), ParticipantFactory::build($invitation->invitedId));
         }
         return ['success' => true];
