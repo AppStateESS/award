@@ -112,12 +112,11 @@ class CycleFactory extends AbstractFactory
         $table->addField('voteAllowed');
         $table->addField('voteType');
         $table->addField('term');
+        $table->addField('startDate');
+        $table->addField('endDate');
 
         if (!empty($options['dateFormat'])) {
             self::formatDates($db, $table, $options['dateFormat']);
-        } else {
-            $table->addField('startDate');
-            $table->addField('endDate');
         }
 
         if (!empty($options['judgeId'])) {
@@ -139,6 +138,7 @@ class CycleFactory extends AbstractFactory
         }
 
         if (!empty($options['nominationCount'])) {
+            $db->setGroupBy($table->getField('id'));
             self::addNominationCount($db, $table);
         }
 
@@ -160,6 +160,7 @@ class CycleFactory extends AbstractFactory
         }
 
         $table->addOrderBy('startDate', 'desc');
+
         return $db->select();
     }
 
@@ -220,6 +221,7 @@ class CycleFactory extends AbstractFactory
 
     /**
      * Returns a list of cycles that a participant is judging.
+     * Not sure is used.
      * @param int $participantId
      * @return array
      */
@@ -234,6 +236,7 @@ class CycleFactory extends AbstractFactory
 
     /**
      * Returns cycle list in which a participant is serving as a reference.
+     * Not sure if in use.
      * @param int $participant
      * @return array
      */
@@ -257,7 +260,7 @@ class CycleFactory extends AbstractFactory
     {
         $nominationTable = $db->addTable('award_nomination');
         $nominationId = $nominationTable->getField('id');
-        $count = "count($nominationId)";
+        $count = "count(distinct($nominationId))";
 
         $expression = new Database\Expression($count, 'nominations');
         $nominationTable->addField($expression, 'nominations');
@@ -285,8 +288,8 @@ class CycleFactory extends AbstractFactory
             $format = '%l:%i %p, %b %e, %Y';
         }
 
-        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "' . $format . '")', 'startDate');
-        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "' . $format . '")', 'endDate');
+        $startDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('startDate') . ', "' . $format . '")', 'formatStartDate');
+        $endDateExpression = $db->getExpression('FROM_UNIXTIME(' . $table->getField('endDate') . ', "' . $format . '")', 'formatEndDate');
         $table->addField($startDateExpression);
         $table->addField($endDateExpression);
     }
