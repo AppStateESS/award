@@ -48,6 +48,22 @@ class AbstractView
         return $awardTitle;
     }
 
+    /**
+     * Returns the output of the values applied to the $templateFile. Default values
+     * sent to the template include:
+     * - siteName: the page title
+     * - sourceHttp: hub base url
+     * - homeHttp: branch base url
+     * - imageHttp: mod/award/img url
+     * - moduleCSS: mod/award/css url
+     * - contactName: contact name from Settings
+     * - contactEmail: email address of site from Settings
+     *
+     * @param string $templateFile
+     * @param array $values
+     * @param bool $css
+     * @return string
+     */
     public static function getTemplate(string $templateFile, array $values = [], bool $css = false)
     {
         if ($css) {
@@ -58,8 +74,8 @@ class AbstractView
         $values['siteName'] = \Layout::getPageTitle(true);
         $values['sourceHttp'] = PHPWS_SOURCE_HTTP;
         $values['homeHttp'] = PHPWS_HOME_HTTP;
-        $values['imageHttp'] = PHPWS_HOME_HTTP . 'mod/award/img/';
-        $values['moduleCSS'] = PHPWS_HOME_HTTP . 'mod/award/css/';
+        $values['imageHttp'] = PHPWS_SOURCE_HTTP . 'mod/award/img/';
+        $values['moduleCSS'] = PHPWS_SOURCE_HTTP . 'mod/award/css/';
         $template = new Template($values);
         $template->setModuleTemplate('award', $templateFile . '.html');
         return $template->get();
@@ -87,7 +103,7 @@ class AbstractView
         $react = implode("\n", $script);
         \Layout::addJSHeader($react);
         $content = <<<EOF
-<div id="$view_name"><div class="border rounded p-5"></div></div>
+<div id="$view_name">Loading area...</div>
 EOF;
         return $content;
     }
