@@ -36,7 +36,7 @@ class Invitation extends AbstractController
 
     protected function listJson(Request $request)
     {
-        $options['confirm'] = $request->pullGetInteger('confirm', true) ? $request->pullGetInteger('confirm') : null;
+        $options['confirm'] = $request->pullGetInteger('confirm', true) !== false ? $request->pullGetInteger('confirm') : null;
         $options['inviteType'] = $request->pullGetInteger('inviteType', true) ? $request->pullGetInteger('inviteType') : null;
         $options['awardId'] = (int) $request->pullGetInteger('awardId', true);
         $options['cycleId'] = (int) $request->pullGetInteger('cycleId', true);
