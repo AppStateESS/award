@@ -1,5 +1,5 @@
 'use strict'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import {createRoot} from 'react-dom/client'
 import {ReferenceResource} from '../../ResourceTypes'
 import Loading from '../../Share/Loading'
@@ -47,6 +47,10 @@ const ReferenceSummary = () => {
     })
   }
 
+  const closeModal = useCallback(() => {
+    setShowText(false)
+  }, ['showText'])
+
   if (loading) {
     return <Loading things="references" />
   } else if (referenceList.length === 0) {
@@ -59,9 +63,7 @@ const ReferenceSummary = () => {
           title="Text endorsement"
           show={showText}
           size="lg"
-          close={() => {
-            setShowText(false)
-          }}>
+          close={closeModal}>
           <ReferenceText text={referenceText} />
         </Modal>
         <table className="table table-striped">
