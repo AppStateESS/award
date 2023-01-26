@@ -71,6 +71,7 @@ const InvitationList = () => {
   } else {
     content = <ParticipantInvites {...{listing}} />
   }
+
   return (
     <div>
       <h2>Invitations</h2>
@@ -127,15 +128,25 @@ const InvitationList = () => {
               className={`btn ${isActive(1)}success`}>
               Confirmed
             </button>
-            <button
-              type="button"
-              onClick={() => setConfirm(2)}
-              className={`btn ${isActive(2)}danger`}>
-              Refused
-            </button>
+            {inviteType !== 0 && (
+              <button
+                type="button"
+                onClick={() => setConfirm(2)}
+                className={`btn ${isActive(2)}danger`}>
+                Refused
+              </button>
+            )}
+            {inviteType === 0 && (
+              <button
+                type="button"
+                onClick={() => setConfirm(3)}
+                className={`btn ${isActive(3)}danger`}>
+                No contact
+              </button>
+            )}
           </div>
         </div>
-        {confirm !== 0 && (
+        {inviteType !== 0 && (
           <div className="col-sm-6">
             <Select
               placeholder="Filter by award"
