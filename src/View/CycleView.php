@@ -98,9 +98,11 @@ class CycleView extends AbstractView
     public static function upcoming(): string
     {
         $options = ['incompleteOnly' => true, 'includeAward' => true, 'nominationCount' => true];
-
         $cycleList = CycleFactory::listing($options);
 
+        if (empty($cycleList)) {
+            return '<em>No upcoming cycles.</em>';
+        }
         $today = time();
         $format = '%b. %e, %Y - %l:%M %p';
 
