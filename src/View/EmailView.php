@@ -80,7 +80,7 @@ class EmailView extends AbstractView
     public static function newParticipant(Participant $participant, string $hash)
     {
         $values = self::defaultEmailValues();
-        $values['email'] = $participant->getEmail();
+        $values['pid'] = $participant->getId();
         $values['hash'] = $hash;
         return self::getTemplate('User/Email/NewParticipant', $values);
     }
